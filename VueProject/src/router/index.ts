@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "@/pages/login/App.vue";
 import Register from "@/pages/register/App.vue";
+import Step1Register from "@/components/Step1Register.vue";
+import Step2Register from "@/components/Step2Register.vue";
 import Product from "@/pages/product/App.vue";
 import Comments from "@/pages/comments/App.vue";
 import Details from "@/pages/details/App.vue";
@@ -32,7 +34,11 @@ const routes = [
         path: "/register",
         name: "register",
         component: Register,
-    }
+        children: [
+            { path: "step1", name: "Step1Register", component: Step1Register },
+            { path: "step2", name: "Step2Register", component: Step2Register },
+        ]
+    },
 ];
 
 const router = createRouter({

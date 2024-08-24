@@ -28,7 +28,7 @@
                 <a href="#">{{ linkText }} </a>
             </div>
             <div class="login-register-link">
-                <RouterLink to="/register"><button class="register-button"> 회원가입 </button></RouterLink>
+                <RouterLink to="/register/step1"><button class="register-button"> 회원가입 </button></RouterLink>
             </div>
         </form>
         <footer><FooterBlock /></footer>
@@ -118,6 +118,7 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
+    animation: up-shift 0.5s forwards;
 }
 
 form div {
@@ -125,7 +126,6 @@ form div {
 }
 
 footer {
-    border-top: 2px solid black;
     box-sizing: border-box;
     width: 90%;
 }
@@ -248,6 +248,17 @@ input[type="checkbox"]:checked + .custom-checkbox::after {
 
 .login-register-link {
     padding: 5% 0;
+}
+
+@keyframes up-shift {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 </style>

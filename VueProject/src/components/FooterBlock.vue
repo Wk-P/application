@@ -16,13 +16,15 @@
 
 <style scoped>
 .footer {
-    width: 100%;
+    width: 90%;
+    height: 100%;
     border-top: solid 1px white;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     font-size: 0.9rem;
     font-weight: bolder;
+    border-top: 1px solid black;
 }
 
 .information1 {
