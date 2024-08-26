@@ -1,4 +1,4 @@
 *.pyc
 .venv
-.log
-.pid
+*.log
+*.pid
