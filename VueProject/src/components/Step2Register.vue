@@ -88,9 +88,10 @@ async function register(event: Event) {
         password: password1.value,
     };
 
+    localStorage.clear();
 
     // 先申请向后端数据库保存用户数据, 再清除本地使用过的痕迹
-    fetch("/backend/api/user/register/", {
+    fetch("/api/user/register/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -106,7 +107,6 @@ async function register(event: Event) {
         })
         .then((data) => {
             console.log(data);
-            localStorage.clear();
 
             router.push({ name: "login" }).catch((err) => {
                 console.error("Navigation err:", err);

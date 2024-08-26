@@ -87,7 +87,7 @@ function login(event: Event) {
     isInputEmpty();
 
     // get token
-    fetch("/backend/api/token/auth/", {
+    fetch("/api/token/auth/", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -106,7 +106,7 @@ function login(event: Event) {
         })
         .then((data) => {
             const token = data.token;
-            fetch("/backend/api/user/login/", {
+            fetch("/api/user/login/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

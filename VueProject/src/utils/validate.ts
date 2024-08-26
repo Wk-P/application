@@ -1,5 +1,5 @@
 export function getCSRFToken(): Promise<string> {
-    return fetch("/backend/api/csrftoken/")
+    return fetch("/api/csrftoken/")
     .then(response => {
         if (!response.ok) {
             throw new Error("无法获取令牌");

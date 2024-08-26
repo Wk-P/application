@@ -35,7 +35,7 @@ async function logoutUser() {
         // test
         localStorage.clear();
         if (token !== null) {
-            fetch("/backend/api/user/logout/", {
+            fetch("/api/user/logout/", {
                 method: "POST",
                 headers: {
                     Authorization: `Token ${token}`,
