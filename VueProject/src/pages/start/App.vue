@@ -1,6 +1,6 @@
 <template>
     <div class="containers-head" ref="containersHead">
-        <optionHeader />
+        <OptionHeader />
     </div>
     <div class="containers" ref="containers">
         <waterFallFlow />
@@ -8,7 +8,7 @@
 </template>
 <script lang="ts" setup name="start">
 import waterFallFlow from "@/components/WaterFallFlow.vue";
-import optionHeader from "@/components/OptionHeader.vue";
+import OptionHeader from "@/components/OptionHeader.vue";
 import { onMounted, ref, watch, onUnmounted } from "vue";
 
 const containersHead = ref<HTMLElement | null>(null);

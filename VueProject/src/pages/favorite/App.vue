@@ -1,13 +1,9 @@
 <template>
-    <div>
-        这是收藏
-    </div>
+    Favorite
 </template>
 
-<script setup lang="ts" name="favorite">
-    
+<script lang="ts" setup name="Favorite">
 </script>
 
-<style scoped>
-    
+<style>
 </style>

@@ -18,7 +18,7 @@
             <div class="form-n">
                 <h5 class="sub-title">비밀번호</h5>
                 <div class="sub-input">
-                    <input type="text" v-model="tel_email" />
+                    <input type="text" v-model="password1" />
                 </div>
             </div>
 
@@ -27,6 +27,7 @@
                     ref="nextButton"
                     :style="nextButtonStyle"
                     @click="register"
+                    :disabled="isDisabled"
                 >
                     등록
                 </button>
@@ -36,161 +37,88 @@
 </template>
 
 <script lang="ts" setup name="Step1Register">
+import router from "@/router";
 import { ref } from "vue";
-import { getCSRFToken } from "@/utils/validate";
 import { onMounted } from "vue";
 import { watch } from "vue";
-import { useRouter } from "vue-router";
 
 const progressText = ref<string>("2/2");
 const username = ref<string>("");
-const tel_email = ref<string>("");
-const email = ref<string>("");
 const nextButton = ref<HTMLButtonElement | null>(null);
 const nextButtonStyle = ref();
 const password1 = ref<string>("");
-const router = useRouter();
 
-const handleClick = () => {
-    router.push({ name: "Step2Register" }).catch((err) => {
-        console.error("Navigation error:", err);
-    });
-};
+const isDisabled = ref<boolean>(false);
+
+function isValidUsername(name: string) {
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    return usernameRegex.test(name);
+}
+
+function isValidPassword(password: string) {
+    const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+}
 
 function register(event: Event) {
     event.preventDefault();
+    //
+    if (username.value == "") {
+        alert("이름을 입력하세요!");
+        return;
+    }
 
-    getCSRFToken().then((csrftoken) => {
-        // 检查输入是否合规
-        if (username.value == "") {
-            alert("이름을 입력하세요!");
-            return;
-        }
+    if (password1.value == "") {
+        alert("비밀번호를 입력하세요!");
+        return;
+    }
 
-        if (tel_email.value == "") {
-            alert("비밀번호를 입력하세요!");
-            return;
-        }
+    // if (!isValidUsername(username.value)) {
+    //     alert("名称格式不正确");
+    //     return;
+    // }
 
-        function isValidUsername(name: string) {
-            const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-            return usernameRegex.test(name);
-        }
+    // // 注意修改后端需要分类保存
+    // if (!isValidPassword(password1.value)) {
+    //     alert("密码格式不正确");
+    //     return;
+    // }
+    
+    // 后端请求写入用户数据
+    // Here TODO ..
+    
 
-        function isValidEmail(email: string) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        function isValidTel(tel: string): boolean {
-            const telRegex = /^\d{3}\d{4}\d{4}$/;
-            return telRegex.test(tel);
-        }
-
-        function isValidPassword(password: string) {
-            const passwordRegex =
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            return passwordRegex.test(password);
-        }
-
-        if (!isValidUsername(username.value)) {
-            alert("名称格式不正确");
-            return;
-        }
-
-        // 注意修改后端需要分类保存
-        if (!isValidEmail(tel_email.value) && !isValidTel(tel_email.value)) {
-            alert("邮箱/电话格式不正确");
-            return;
-        }
-
-        // test
-        // true: 密码不做检查
-        // false: 密码检查
-        const passwordTest = true;
-        if (!passwordTest) {
-            if (!isValidPassword(password1.value)) {
-                alert("密码格式不正确");
-                return;
-            }
-        }
-
-        const url = "/backend/api/user/register";
-        let params = "";
-
-        if (params == "") {
-            params += "/";
-        }
-
-        // 发起后端请求
-        fetch(`${url}/${params}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify({
-                username: username.value,
-                password: password1.value,
-                email: email.value,
-            }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Register User Conflict");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                window.location.href = "/";
-            })
-            .catch((error) => {
-                console.error(error);
-                alert(error.message);
-            });
-    });
+    router.push({ name: "usercenter"}).catch((err) => {
+        console.error("Navigation err:", err);
+    })
 }
 
 onMounted(() => {
+    // 检测localStorage 是否有前置 step1 信息
+    localStorage.getItem('name')
     updateButtonStyle();
 });
 
 function updateButtonStyle() {
-    const prefersLightScheme = window.matchMedia(
-        "(prefers-color-scheme: light)"
-    ).matches;
-
-    if (prefersLightScheme) {
+    if (username.value !== "" && password1.value !== "") {
+        isDisabled.value = false;
         nextButtonStyle.value = {
             color: "white",
-            backgroundColor:
-                username.value !== "" && tel_email.value !== ""
-                    ? "black"
-                    : "#ccc",
-            borderColor:
-                username.value !== "" && tel_email.value !== ""
-                    ? "black"
-                    : "#ccc",
+            backgroundColor: "black",
+            borderColor: "black",
         };
     } else {
+        isDisabled.value = true;
         nextButtonStyle.value = {
             color: "white",
-            backgroundColor:
-                username.value !== "" && tel_email.value !== ""
-                    ? "white"
-                    : "#555",
-            borderColor:
-                username.value !== "" && tel_email.value !== ""
-                    ? "white"
-                    : "#555",
+            backgroundColor: "#bbb",
+            borderColor: "#bbb",
         };
     }
 }
 
-watch([username, tel_email], updateButtonStyle);
-
-const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
-mediaQuery.addEventListener("change", updateButtonStyle);
+watch([username, password1], updateButtonStyle);
 </script>
 
 <style scoped>
@@ -294,24 +222,6 @@ form {
     to {
         opacity: 1;
         transform: translateX(0);
-    }
-}
-
-@media (prefers-color-scheme: dark) {
-    .custom-progress {
-        color-scheme: dark;
-        background-color: white;
-    }
-
-    .progress-bar {
-        color-scheme: dark;
-        background-color: #444;
-    }
-
-    .button-block button {
-        color-scheme: dark;
-        background-color: #555;
-        color: #000;
     }
 }
 </style>

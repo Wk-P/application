@@ -1,4 +1,5 @@
 <template>
+    <HomeBar />
     <div class="block">
         <h2 class="title">로그인</h2>
         <form>
@@ -25,13 +26,13 @@
                 <button @click="login"> 로그인 </button>
             </div>
             <div class="recover-link">
-                <a href="#">{{ linkText }} </a>
+                <p @click="find">{{ linkText }} </p>
             </div>
-            <div class="login-register-link">
+            <div class="register-link">
                 <RouterLink to="/register/step1"><button class="register-button"> 회원가입 </button></RouterLink>
             </div>
         </form>
-        <footer><FooterBlock /></footer>
+        <FooterBlock />
     </div>
 </template>
 
@@ -39,66 +40,48 @@
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
-import { userTokenStore } from "@/stores/index";
-import { getCSRFToken } from "@/utils/validate";
 import FooterBlock from "@/components/FooterBlock.vue";
+import HomeBar from "@/components/HomeBar.vue";
+import { useUserStore } from '@/stores/index';
+import { computed } from "vue";
+import { onMounted } from "vue";
 
-const tokenStore = userTokenStore();
+const userStore = useUserStore();
 const router = useRouter();
 const username = ref("");
 const password = ref("");
 const linkText = ref('아이디 찾기/비밀번호 찾기 >                               ');
+const isLoggedIn = computed(() => userStore.user?.loginStatus === true);
+const find = () => {
+    alert("No function");
+}
 
+onMounted(() => {
+    if (isLoggedIn.value) {
+        router.push('/start');
+    };
+})
 
 async function login(event: Event) {
-    event.preventDefault();
+    function isInputEmpty() {
+        // check idInput
+        if (username.value == "") {
+            alert("Username no input");
+            return;
+        } 
+        if (password.value == "") {
+            alert("Password no input");
+            return;
+        }
+    }
 
-    getCSRFToken()
-        .then((csrfToken) => {
-            if (csrfToken === null) {
-                throw new Error("Invalid Token");
-            }
+    // login, token, csrf-token
+    isInputEmpty();
+    // user id and password authenticate
 
-            const url = "/backend/api/user/login";
-            let params = "";
-
-            if (params == "") {
-                params += "/";
-            }
-
-            // 向后端Token处理器发出请求
-            fetch(`${url}/${params}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken,
-                },
-                body: JSON.stringify({
-                    username: username.value,
-                    password: password.value,
-                }),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Authentication Invalid");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    // save token and into pinia
-
-                    tokenStore.setToken(csrfToken, username.value);
-                    router.push("/");
-                })
-                .catch((error) => {
-                    console.error(error);
-                    alert(error.message);
-                });
-        })
-        .catch((error) => {
-            console.error(error.message);
-        });
+    alert("no function");
 }
+
 </script>
 <style scoped>
 .block {
@@ -234,19 +217,20 @@ input[type="checkbox"]:checked + .custom-checkbox::after {
     font-size: 0.7rem;
     border-bottom: 1px solid black;
     width: 80%;
-    padding-left: 5%;
+    padding: 0 0.5em;
 }
 
-.recover-link a {
+.recover-link p {
+    padding: 0 1em;
     text-decoration: none;
     color: black;
 }
 
-.recover-link a:hover {
+.recover-link p:hover {
     cursor: pointer;
 }
 
-.login-register-link {
+.register-link {
     padding: 5% 0;
 }
 

@@ -1,19 +1,11 @@
-export interface Item {
-    id: number;
-    title: string;
-    name: string;
-    desc: string;
-    price: number;
-}
-
-export interface Order {
-    orderId: string,
-    username: string | null,
-    itemName: string,
-    userId: number,
-    createdTime: string,
-    updatedTime: string,
-    quantity: number,
-    totalPrice: number,
-    price: number,
+export interface User {
+    id: string,
+    uid: string,
+    tel: string,
+    name: string,
+    email: string,
+    username: string,
+    loginStatus: boolean,
+    token: string | null,
+    cookies: string | null,
 }

@@ -1,20 +1,19 @@
 <template>
+    <HomeBar />
     <div class="page-block">
         <h2 class="title">회원가입</h2>
         <div class="form-block">
             <RouterView />
         </div>
-        <div class="footer-block">
-            <FooterBlock />
-        </div>
+        <FooterBlock />
     </div>
 </template>
 
 <script lang="ts" setup name="Register">
 import FooterBlock from "@/components/FooterBlock.vue";
+import HomeBar from "@/components/HomeBar.vue";
 </script>
 <style scoped>
-
 .page-block {
     height: 100vh;
     display: flex;

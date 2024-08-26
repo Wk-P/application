@@ -1,13 +1,10 @@
 <template>
-    <div>
-        这是购物车
-    </div>
+    <OptionHeader />
 </template>
 
-<script setup lang="ts" name="cart">
-    
+<script lang="ts" setup name="Cart">
+import OptionHeader from '@/components/OptionHeader.vue';
 </script>
 
 <style scoped>
-    
 </style>

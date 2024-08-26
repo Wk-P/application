@@ -3,16 +3,12 @@ import Login from "@/pages/login/App.vue";
 import Register from "@/pages/register/App.vue";
 import Step1Register from "@/components/Step1Register.vue";
 import Step2Register from "@/components/Step2Register.vue";
-import Product from "@/pages/product/App.vue";
-import Comments from "@/pages/comments/App.vue";
-import Details from "@/pages/details/App.vue";
 import UserCenter from "@/pages/usercenter/App.vue"
-import Orders from "@/pages/orders/App.vue";
-import Cart from "@/pages/cart/App.vue";
-import Favorite from "@/pages/favorite/App.vue";
-
 import MobileHome from  "@/pages/mobilehome/App.vue";
 import Start from "@/pages/start/App.vue";
+import Favorite from "@/pages/favorite/App.vue";
+import Cart from "@/pages/cart/App.vue";
+import NotFoundPage from "@/pages/404page/App.vue";
 
 const routes = [
     {
@@ -36,9 +32,34 @@ const routes = [
         component: Register,
         children: [
             { path: "step1", name: "Step1Register", component: Step1Register },
-            { path: "step2", name: "Step2Register", component: Step2Register },
+            { path: "step2", name: "Step2Register", component: Step2Register, meta: { requiresStep1: true }},
         ]
     },
+    {
+        path: "/usercenter",
+        name: "usercenter",
+        component: UserCenter
+    },
+    {
+        path: "/favorite",
+        name: "favorite",
+        component: Favorite,
+    },
+    {
+        path: "/cart",
+        name: "cart",
+        component: Cart,
+    },
+    {
+        path: "/404",
+        name: "404page",
+        component: NotFoundPage,
+    },
+    {
+        path: "/:pathMatch(.*)",
+        redirect: "/404",
+        hidden: true,
+    }
 ];
 
 const router = createRouter({

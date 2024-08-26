@@ -1,10 +1,5 @@
 <template>
-    <ul class="head">
-        <li @click="usercenter"><img src="/img/user.png" alt="usercenter" /></li>
-        <li class="title"><p>ASLIN</p></li>
-        <li @click="favorite"><img src="/img/heart.png" alt="favorite" /></li>
-        <li @click="cart"><img src="/img/cart.png" alt="cart" /></li>
-    </ul>
+    <HeadHomeBar />
     <ul class="filter-option">
         <li class="title"><p>BRAND</p></li>
         <li class="options-block">
@@ -44,26 +39,14 @@
 
 <script lang="ts" setup name="OptionHeader">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import HeadHomeBar from "@/components/HeadHomeBar.vue"
 
 const reloadTextContent = ref("&#8635");
-
-const router = useRouter();
-function usercenter() {
-    router.push("/usercenter");
-}
-
-function favorite() {
-    router.push("/favorite");
-}
-
-function cart() {
-    router.push("/cart");
-}
 
 function filterClick() {
     alert("Filter");
 }
+
 
 </script>
 <style scoped>
@@ -85,7 +68,6 @@ function filterClick() {
     padding: 0 5px;
 }
 
-.filter-title,
 .filter-option {
     box-sizing: border-box;
     height: 5vh;
@@ -98,31 +80,7 @@ function filterClick() {
     justify-content: start;
 }
 
-.head {
-    padding: 0 5px;
-    background-color: gray;
-    height: 5vh;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.head > li {
-    box-sizing: border-box;
-    height: 100%;
-    width: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 8px 5px;
-}
-
-.head img {
-    height: 100%;
-    width: auto;
-}
-
-.head .title {
+.title {
     color: white;
     width: 50%;
     font-size: 1.3rem;
@@ -130,7 +88,6 @@ function filterClick() {
     text-align: center;
 }
 
-.filter-title .title,
 .filter-option .title {
     color: white;
     width: 25%;
