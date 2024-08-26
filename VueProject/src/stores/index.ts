@@ -12,7 +12,7 @@ export const useUserStore = defineStore('user', () => {
 
     const clearUser = () => {
         user.value = null;
-        localStorage.removeItem("user");
+        localStorage.clear();
     }
 
     const loadUser = () => {
@@ -25,6 +25,6 @@ export const useUserStore = defineStore('user', () => {
     loadUser();
 
     return {
-        user, setUser, clearUser,
+        user, setUser, clearUser, loadUser,
     }
 });

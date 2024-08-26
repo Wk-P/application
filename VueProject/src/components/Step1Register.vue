@@ -71,19 +71,9 @@ function validateString(input: string): string {
     }
 }
 
-const nextStep = (): void => {
-    // check input empty
-    if (name.value == "") {
-        alert("이름을 입력하세요!");
-        return;
-    }
-
-    if (tel_email.value == "") {
-        alert("비밀번호를 입력하세요!");
-        return;
-    }
-
-    // 符合要求就在前端直接分类
+const nextStep = (event: Event): void => {
+    event.preventDefault();
+    // 输入检测
     const tel_email_type = validateString(tel_email.value);
 
     // 后端请求写入用户
@@ -94,8 +84,10 @@ const nextStep = (): void => {
     localStorage.setItem("name", name.value);
     if (tel_email_type == "tel") {
         localStorage.setItem("tel", tel_email.value);
+        localStorage.setItem("email", "");
     } else if (tel_email_type == "email") {
         localStorage.setItem("email", tel_email.value);
+        localStorage.setItem("tel", "");
     } else {
         alert("不符合标准");
         return;

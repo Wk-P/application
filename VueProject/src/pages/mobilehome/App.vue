@@ -17,13 +17,11 @@
 <script lang="ts" setup name="mobilehome">
 import { useRouter } from "vue-router";
 import FooterBlock from "@/components/FooterBlock.vue";
-import { useUserStore } from "@/stores/index";
 import { computed } from "vue";
 
-const userStore = useUserStore();
-
 // check login status
-const isLoggedIn = computed(() => userStore.user?.loginStatus === true);
+const isLoggedIn = computed(() => localStorage.length === 0 ? false : true)
+
 
 const router = useRouter();
 function start() {

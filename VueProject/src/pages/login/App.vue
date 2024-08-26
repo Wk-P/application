@@ -23,13 +23,17 @@
                 </label>
             </div>
             <div class="button-block">
-                <button @click="login"> 로그인 </button>
+                <button @click="login">로그인</button>
             </div>
             <div class="recover-link">
-                <p @click="find">{{ linkText }} </p>
+                <p @click="find">{{ linkText }}</p>
             </div>
             <div class="register-link">
-                <RouterLink to="/register/step1"><button class="register-button"> 회원가입 </button></RouterLink>
+                <RouterLink to="/register/step1"
+                    ><button class="register-button">
+                        회원가입
+                    </button></RouterLink
+                >
             </div>
         </form>
         <FooterBlock />
@@ -42,33 +46,37 @@ import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
 import FooterBlock from "@/components/FooterBlock.vue";
 import HomeBar from "@/components/HomeBar.vue";
-import { useUserStore } from '@/stores/index';
+import { useUserStore } from "@/stores/index";
 import { computed } from "vue";
 import { onMounted } from "vue";
+import type { User } from "@/types/index";
 
 const userStore = useUserStore();
 const router = useRouter();
 const username = ref("");
 const password = ref("");
-const linkText = ref('아이디 찾기/비밀번호 찾기 >                               ');
-const isLoggedIn = computed(() => userStore.user?.loginStatus === true);
+const linkText = ref(
+    "아이디 찾기/비밀번호 찾기 >                               "
+);
+const isLoggedIn = ref<boolean>(userStore.user?.loginStatus === true ? true : false);
 const find = () => {
     alert("No function");
-}
+};
 
 onMounted(() => {
     if (isLoggedIn.value) {
-        router.push('/start');
-    };
-})
+        router.push("/start");
+    }
+});
 
-async function login(event: Event) {
+function login(event: Event) {
+    event.preventDefault();
     function isInputEmpty() {
         // check idInput
         if (username.value == "") {
             alert("Username no input");
             return;
-        } 
+        }
         if (password.value == "") {
             alert("Password no input");
             return;
@@ -77,11 +85,71 @@ async function login(event: Event) {
 
     // login, token, csrf-token
     isInputEmpty();
+
+    // get token
+    fetch("/backend/api/token/auth/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            username: username.value,
+            password: password.value,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = response.json();
+            return data;
+        })
+        .then((data) => {
+            const token = data.token;
+            fetch("/backend/api/user/login/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: username.value,
+                    password: password.value,
+                }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`
+                        );
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    isLoggedIn.value = true;
+                    const userObj: User = {
+                        id: data.user.id,
+                        uid: data.user.uid,
+                        email: data.user.email,
+                        name: data.user.name,
+                        tel: data.user.tel,
+                        username: data.user.username,
+                        loginStatus: isLoggedIn.value,
+                        token: token,
+                        cookies: data.user.cookies,
+                    };
+                    userStore.setUser(userObj);
+                    userStore.loadUser();
+                    router
+                        .push("/start")
+                        .catch((err) => console.error("Navigation err:", err));
+                })
+                .catch((error: Error) => {
+                    console.error(error);
+                });
+        });
+
     // user id and password authenticate
-
-    alert("no function");
 }
-
 </script>
 <style scoped>
 .block {
@@ -212,7 +280,6 @@ input[type="checkbox"]:checked + .custom-checkbox::after {
     outline: none;
 }
 
-
 .recover-link {
     font-size: 0.7rem;
     border-bottom: 1px solid black;
@@ -244,5 +311,4 @@ input[type="checkbox"]:checked + .custom-checkbox::after {
         transform: translateY(0);
     }
 }
-
 </style>

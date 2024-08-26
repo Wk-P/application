@@ -3,6 +3,7 @@
         <OptionHeader />
     </div>
     <div class="block">
+        <div><button @click="logoutUser">Logout</button></div>
         <div class="title">나의 쇼핑 정보</div>
         <ul class="info-block">
             <!-- <li v-for="(value, key) in userInfoObj" :key="key">
@@ -17,21 +18,48 @@
 <script lang="ts" setup name="usercenter">
 import OptionHeader from "@/components/OptionHeader.vue";
 import FooterBlock from "@/components/FooterBlock.vue";
-import { computed } from "vue";
+import { ref } from "vue";
 import { useUserStore } from "@/stores";
 import { onMounted } from "vue";
 import router from "@/router";
 
-const userStore = useUserStore();
-
 // 检查是否登录
-const isLoggedIn = computed(() => userStore.user?.loginStatus === true);
+const userStore = useUserStore();
+const isLoggedIn = ref<boolean>(
+    userStore.user?.loginStatus === true ? true : false
+);
+const user = JSON.parse(localStorage.getItem("user") as string);
+const token: string | null = user?.token;
+async function logoutUser() {
+    try {
+        // test
+        localStorage.clear();
+        if (token !== null) {
+            fetch("/backend/api/user/logout/", {
+                method: "POST",
+                headers: {
+                    Authorization: `Token ${token}`,
+                },
+            }).then((response) => {
+                if (response.ok) {
+                    router.push({ name: "home" });
+                } else {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+            });
+        } else {
+            router.push({ name: "home" });
+        }
+    } catch (error) {
+        console.error("Error logging out:", error);
+    }
+}
+
 onMounted(() => {
     if (isLoggedIn.value === false) {
-        router.push('/login');
+        router.push("/login");
     }
-})
-
+});
 </script>
 <style scoped>
 .block {

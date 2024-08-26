@@ -18,7 +18,7 @@
             <div class="form-n">
                 <h5 class="sub-title">비밀번호</h5>
                 <div class="sub-input">
-                    <input type="text" v-model="password1" />
+                    <input type="password" v-model="password1" />
                 </div>
             </div>
 
@@ -41,6 +41,10 @@ import router from "@/router";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { watch } from "vue";
+import type { User } from "@/types/index";
+import { useUserStore } from "@/stores";
+
+const userStore = useUserStore();
 
 const progressText = ref<string>("2/2");
 const username = ref<string>("");
@@ -61,18 +65,8 @@ function isValidPassword(password: string) {
     return passwordRegex.test(password);
 }
 
-function register(event: Event) {
+async function register(event: Event) {
     event.preventDefault();
-    //
-    if (username.value == "") {
-        alert("이름을 입력하세요!");
-        return;
-    }
-
-    if (password1.value == "") {
-        alert("비밀번호를 입력하세요!");
-        return;
-    }
 
     // if (!isValidUsername(username.value)) {
     //     alert("名称格式不正确");
@@ -84,19 +78,49 @@ function register(event: Event) {
     //     alert("密码格式不正确");
     //     return;
     // }
-    
-    // 后端请求写入用户数据
-    // Here TODO ..
-    
 
-    router.push({ name: "usercenter"}).catch((err) => {
-        console.error("Navigation err:", err);
+    // 从前面获取name和 tel email
+    const userinfo = {
+        name: localStorage.getItem("name") !== null ? localStorage.getItem("name") : '',
+        email: localStorage.getItem("email") !== null ? localStorage.getItem("email") : '',
+        tel: localStorage.getItem("tel") !== null ? localStorage.getItem("tel") : '',
+        username: username.value,
+        password: password1.value,
+    };
+
+    // 先申请向后端数据库保存用户数据
+    fetch("/backend/api/user/register/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userinfo),
     })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = response.json();
+            return data;
+        })
+        .then((data) => {
+            console.log(data);
+            // 后端请求写入用户数据
+            // Here TODO ..
+            
+
+            router.push({ name: "login" }).catch((err) => {
+                console.error("Navigation err:", err);
+            });
+        })
+        .catch((error: Error) => {
+            console.error(error);
+        });
 }
 
 onMounted(() => {
     // 检测localStorage 是否有前置 step1 信息
-    localStorage.getItem('name')
+    localStorage.getItem("name");
     updateButtonStyle();
 });
 
