@@ -11,7 +11,7 @@ export default defineConfig({
         vueJsx(),
     ],
     server: {
-        host: "192.168.1.6",
+        host: "localhost",
         port: 3000,
         proxy: {
             "/backend": {
