@@ -1,7 +1,10 @@
 #!/bin/bash
-source /home/ecs-user/application/DjangoProject/.venv/bin/activate &&
-    uwsgi --stop /home/ecs-user/application/scripts/run/uwsgi.pid
+source ~/application/DjangoProject/.venv/bin/activate && \
+    uwsgi --stop ~/application/scripts/run/uwsgi.pid && \
 
-uwsgi --ini /home/ecs-user/application/scripts/uwsgi.ini &&
-    sudo systemctl restart nginx &&
+python3 ~/application/DjangoProject/BackendService/manage.py makemigrations && \
+python3 ~/application/DjangoProject/BackendService/manage.py migrate
+
+uwsgi --ini ~/application/scripts/uwsgi.ini && \
+    sudo systemctl restart nginx && \
     sudo systemctl reload nginx
