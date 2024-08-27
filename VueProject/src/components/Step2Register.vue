@@ -13,12 +13,14 @@
                 <h5 class="sub-title">이이디</h5>
                 <div class="sub-input">
                     <input type="text" v-model="username" />
+                    <label ref="usernameFor">{{ usernameLabalText }}</label>
                 </div>
             </div>
             <div class="form-n">
                 <h5 class="sub-title">비밀번호</h5>
                 <div class="sub-input">
                     <input type="password" v-model="password1" />
+                    <label ref="passwordFor">{{ passwordLabelText }}</label>
                 </div>
             </div>
 
@@ -43,6 +45,9 @@ import { onMounted } from "vue";
 import { watch } from "vue";
 import type { User } from "@/types/index";
 import { useUserStore } from "@/stores";
+
+const usernameLabalText = ref<string>(" ");
+const passwordLabelText = ref<string>(" ");
 
 const userStore = useUserStore();
 
