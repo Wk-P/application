@@ -12,6 +12,9 @@
             <div class="form-n">
                 <h5 class="sub-title">이름</h5>
                 <div class="sub-input">
+                    <label class="hint-style"
+                        >수취인 성명</label
+                    >
                     <input type="text" v-model="name" />
                 </div>
             </div>
@@ -19,7 +22,11 @@
             <div class="form-n">
                 <h5 class="sub-title">이메일/휴대폰 번호</h5>
                 <div class="sub-input">
+                    <label class="hint-style"
+                        >전화나 이메일 주소</label
+                    >
                     <input type="text" v-model="tel_email" />
+                    <label class="hint-label">{{ telEmailLabelText }}</label>
                 </div>
             </div>
 
@@ -47,6 +54,7 @@ import { useRouter } from "vue-router";
 const progressText = ref<string>("1/2");
 const name = ref<string>("");
 const tel_email = ref<string>("");
+const telEmailLabelText = ref<string>(" ");
 const nextButton = ref<HTMLButtonElement | null>(null);
 const nextButtonStyle = ref();
 const router = useRouter();
@@ -61,12 +69,15 @@ function validateString(input: string): string {
 
     // 检测是否符合电话号码
     if (phonePattern.test(input)) {
+        telEmailLabelText.value = "";
         return "tel";
     }
     // 检测是否符合电子邮件地址
     else if (emailPattern.test(input)) {
+        telEmailLabelText.value = "";
         return "email";
     } else {
+        telEmailLabelText.value = "이메일 주소나 전화번호가 맞지 않습니다";
         return "error";
     }
 }
@@ -89,7 +100,6 @@ const nextStep = (event: Event): void => {
         localStorage.setItem("email", tel_email.value);
         localStorage.setItem("tel", "");
     } else {
-        alert("不符合标准");
         return;
     }
 
@@ -124,6 +134,11 @@ watch([name, tel_email], updateButtonStyle);
 </script>
 
 <style scoped>
+.hint-label {
+    color: red;
+    font-size: 0.3em;
+}
+
 .block {
     width: 100%;
     height: 100%;
@@ -215,6 +230,11 @@ form {
 .progress-text-block span {
     font-weight: bold;
     font-family: "Courier New", Courier, monospace;
+}
+
+.hint-style {
+    color: #1c1ccc;
+    font-size: 0.2em;
 }
 
 @keyframes up-shift {

@@ -32,8 +32,8 @@ const user = JSON.parse(localStorage.getItem("user") as string);
 const token: string | null = user?.token;
 async function logoutUser() {
     try {
-        // test
         localStorage.clear();
+        userStore.clearUser();
         if (token !== null) {
             fetch("/api/user/logout/", {
                 method: "POST",

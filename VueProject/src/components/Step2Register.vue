@@ -12,15 +12,24 @@
             <div class="form-n">
                 <h5 class="sub-title">이이디</h5>
                 <div class="sub-input">
+                    <label class="hint-style"
+                        >사용자 이름은 3~20개의 문자, 숫자 또는 밑줄로
+                        구성되어야 합니다</label
+                    >
                     <input type="text" v-model="username" />
-                    <label ref="usernameFor">{{ usernameLabalText }}</label>
+                    <label class="hint-label">{{ usernameLabelText }}</label>
                 </div>
             </div>
             <div class="form-n">
                 <h5 class="sub-title">비밀번호</h5>
                 <div class="sub-input">
+                    <label class="hint-style"
+                        >비밀번호는 다음을 포함해야 합니다. 최소 소문자 (a-z)
+                        최소 이니셜 (A-Z) 최소 하나의 숫자(0-9) 비밀번호 길이:
+                        최소 6자 이상.</label
+                    >
                     <input type="password" v-model="password1" />
-                    <label ref="passwordFor">{{ passwordLabelText }}</label>
+                    <label class="hint-label">{{ passwordLabelText }}</label>
                 </div>
             </div>
 
@@ -46,7 +55,7 @@ import { watch } from "vue";
 import type { User } from "@/types/index";
 import { useUserStore } from "@/stores";
 
-const usernameLabalText = ref<string>(" ");
+const usernameLabelText = ref<string>(" ");
 const passwordLabelText = ref<string>(" ");
 
 const userStore = useUserStore();
@@ -65,30 +74,42 @@ function isValidUsername(name: string) {
 }
 
 function isValidPassword(password: string) {
-    const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
     return passwordRegex.test(password);
 }
 
 async function register(event: Event) {
     event.preventDefault();
 
-    // if (!isValidUsername(username.value)) {
-    //     
-    //     return;
-    // }
+    if (!isValidUsername(username.value)) {
+        usernameLabelText.value = "사용할 수 없는 사용자 이름";
+        return;
+    } else {
+        usernameLabelText.value = "";
+    }
 
-    // // 注意修改后端需要分类保存
-    // if (!isValidPassword(password1.value)) {
-    //     alert("密码格式不正确");
-    //     return;
-    // }
+    // 注意修改后端需要分类保存
+    if (!isValidPassword(password1.value)) {
+        passwordLabelText.value = "사용할 수 없는 암호";
+        return;
+    } else {
+        passwordLabelText.value = "";
+    }
 
     // 从前面获取name和 tel email
     const userinfo = {
-        name: localStorage.getItem("name") !== null ? localStorage.getItem("name") : '',
-        email: localStorage.getItem("email") !== null ? localStorage.getItem("email") : '',
-        tel: localStorage.getItem("tel") !== null ? localStorage.getItem("tel") : '',
+        name:
+            localStorage.getItem("name") !== null
+                ? localStorage.getItem("name")
+                : "",
+        email:
+            localStorage.getItem("email") !== null
+                ? localStorage.getItem("email")
+                : "",
+        tel:
+            localStorage.getItem("tel") !== null
+                ? localStorage.getItem("tel")
+                : "",
         username: username.value,
         password: password1.value,
     };
@@ -150,6 +171,10 @@ watch([username, password1], updateButtonStyle);
 </script>
 
 <style scoped>
+.hint-label {
+    color: red;
+    font-size: 0.3em;
+}
 .block {
     width: 100%;
     height: 100%;
@@ -240,6 +265,11 @@ form {
 .progress-text-block span {
     font-weight: bold;
     font-family: "Courier New", Courier, monospace;
+}
+
+.hint-style {
+    color: #1c1ccc;
+    font-size: 0.2em;
 }
 
 @keyframes left-shift {

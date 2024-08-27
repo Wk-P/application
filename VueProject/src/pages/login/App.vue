@@ -42,7 +42,7 @@
 
 <script lang="ts" setup name="login">
 import { ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, loadRouteLocation } from "vue-router";
 import { useRouter } from "vue-router";
 import FooterBlock from "@/components/FooterBlock.vue";
 import HomeBar from "@/components/HomeBar.vue";
@@ -99,6 +99,7 @@ function login(event: Event) {
     })
         .then((response) => {
             if (!response.ok) {
+                alert("비밀번호 아이디 정보가 일치하지 않습니다");
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = response.json();
@@ -138,7 +139,6 @@ function login(event: Event) {
                         cookies: data.user.cookies,
                     };
                     userStore.setUser(userObj);
-                    userStore.loadUser();
                     router
                         .push("/start")
                         .catch((err) => console.error("Navigation err:", err));
