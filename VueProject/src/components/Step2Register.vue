@@ -74,7 +74,7 @@ async function register(event: Event) {
     event.preventDefault();
 
     // if (!isValidUsername(username.value)) {
-    //     alert("名称格式不正确");
+    //     
     //     return;
     // }
 
