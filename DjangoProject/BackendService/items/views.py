@@ -32,4 +32,5 @@ class ItemUpload(APIView):
         imgLink = request_body.get('imgLink')
         # 创建或者修改item文件
         print(imgLink)
+
         return Response({'imgLink': imgLink}, status=200)
