@@ -11,6 +11,7 @@ import Cart from "@/pages/cart/App.vue";
 import NotFoundPage from "@/pages/404page/App.vue";
 import UsercenterHome from "@/components/UsercenterHome.vue";
 import UsercenterModified from "@/components/UsercenterModified.vue";
+import UploadImage from "@/pages/uploadimage/App.vue";
 
 const routes = [
     {
@@ -64,24 +65,15 @@ const routes = [
         component: NotFoundPage,
     },
     {
+        path: "/upload",
+        name: "upload",
+        component: UploadImage,
+    },
+    {
         path: "/:pathMatch(.*)",
         redirect: "/404",
         hidden: true,
     },
-    // {
-    //     path: '/admin',
-    //     redirect: () => {
-    //         window.location.href = '/api/admin/';
-    //         return '/';
-    //     }
-    // },
-    // {
-    //     path: '/admin/logout',
-    //     redirect: () => {
-    //         window.location.href = '/api/admin/logout';
-    //         return '/';
-    //     }
-    // },
 ];
 
 const router = createRouter({

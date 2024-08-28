@@ -24,3 +24,14 @@ class ItemsSearch(APIView):
             searchResults = self.search(name)
         print(searchResults)
         return Response(searchResults)
+
+
+class ItemUpload(APIView):
+    def post(self, request):
+        request_body = request.data
+        imgLink = request_body.get('imgLink')
+        print(imgLink)
+        return Response({'imgLink': imgLink}, status=200)
+    
+    def get(self, request):
+        return Response({'message': "OK", "request": request}, status=200)
