@@ -71,14 +71,14 @@ const routes = [
     {
         path: '/admin',
         redirect: () => {
-            window.location.href = '/api/admin/';
+            window.location.href = '/admin/';
             return '/';
         }
     },
     {
         path: '/admin/logout',
         redirect: () => {
-            window.location.href = '/api/admin/logout';
+            window.location.href = '/admin/logout';
             return '/';
         }
     },
