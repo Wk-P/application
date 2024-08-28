@@ -8,4 +8,5 @@ export interface User {
     loginStatus: boolean,
     token: string | null,
     cookies: string | null,
+    address: string | null,
 }

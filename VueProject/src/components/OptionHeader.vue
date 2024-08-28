@@ -1,40 +1,5 @@
 <template>
     <HeadHomeBar />
-    <ul class="filter-option">
-        <li class="title"><p>BRAND</p></li>
-        <li class="options-block">
-            <select class="selector">
-                <option value="brandOption1Sub1">brand1</option>
-                <option value="brandOption1Sub2">brand2</option>
-                <option value="brandOption1Sub3">brand3</option>
-            </select>
-        </li>
-    </ul>
-    <ul class="filter-option">
-        <li class="title"><p>KIND</p></li>
-        <li class="options-block">
-            <select class="selector">
-                <option value="brandOption1Sub1">brand1</option>
-                <option value="brandOption1Sub2">brand2</option>
-                <option value="brandOption1Sub3">brand3</option>
-            </select>
-        </li>
-    </ul>
-    <ul class="filter-option">
-        <li class="title"><p>PEOPLE</p></li>
-        <li class="options-block">
-            <select class="selector">
-                <option value="brandOption1Sub1">brand1</option>
-                <option value="brandOption1Sub2">brand2</option>
-                <option value="brandOption1Sub3">brand3</option>
-            </select>
-        </li>
-    </ul>
-    <div class="filter">
-        <button @click="filterClick()">
-            <span v-html="reloadTextContent"></span>filter
-        </button>
-    </div>
 </template>
 
 <script lang="ts" setup name="OptionHeader">

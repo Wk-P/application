@@ -4,7 +4,7 @@ import { ref } from "vue";
 import type { User } from "@/types/index";
 
 export const useUserStore = defineStore('user', () => {
-    const user = ref<User | null>();
+    const user = ref<User | null>(null);
     const setUser = (newUser: User) => {
         user.value = newUser;
         localStorage.setItem("user", JSON.stringify(newUser));
@@ -12,7 +12,7 @@ export const useUserStore = defineStore('user', () => {
 
     const clearUser = () => {
         user.value = null;
-        localStorage.clear();
+        localStorage.removeItem("user");
     }
 
     const loadUser = () => {
@@ -22,9 +22,15 @@ export const useUserStore = defineStore('user', () => {
         }
     }
 
+    const updateUserField = <KEY extends keyof User>(field: KEY, value: User[KEY]) => {
+        if (user.value) {
+            user.value[field] = value as User[typeof field];
+        }
+    };
+
     loadUser();
 
     return {
-        user, setUser, clearUser, loadUser,
+        user, setUser, clearUser, loadUser, updateUserField,
     }
 });

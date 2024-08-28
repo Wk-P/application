@@ -72,12 +72,13 @@ class CustomRegister(APIView):
         email = request_body.get('email')
         tel = request_body.get('tel')
         uid = str(uuid.uuid4()).replace('-', '')
+        address = request_body.get('address')
 
         try:
             if CustomUser.objects.filter(username=username).exists():
                 return Response({"error": "User already exists"}, status=status.HTTP_409_CONFLICT)
             try:
-                user = CustomUser.objects.create_user(username=username, password=password, email=email, tel=tel, uid=uid)
+                user = CustomUser.objects.create_user(username=username, password=password, email=email, tel=tel, uid=uid, address=address)
                 return Response({"message": "User registered successfully", "user": model_to_dict(user)}, status=status.HTTP_200_OK)
             except ValidationError as e:
                 raise e

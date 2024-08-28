@@ -30,6 +30,16 @@
                 </div>
             </div>
 
+            <div class="form-n">
+                <h5 class="sub-title">주소</h5>
+                <div class="sub-input">
+                    <label class="hint-style"
+                        >메일 주소</label
+                    >
+                    <input type="text" v-model="address" />
+                </div>
+            </div>
+
             <div class="button-block">
                 <button
                     ref="nextButton"
@@ -51,6 +61,7 @@ import { onMounted } from "vue";
 import { watch } from "vue";
 import { useRouter } from "vue-router";
 
+const address = ref<string>("");
 const progressText = ref<string>("1/2");
 const name = ref<string>("");
 const tel_email = ref<string>("");
@@ -93,6 +104,7 @@ const nextStep = (event: Event): void => {
 
     // 保存入localStorage 下一个界面使用
     localStorage.setItem("name", name.value);
+    localStorage.setItem("address", address.value);
     if (tel_email_type == "tel") {
         localStorage.setItem("tel", tel_email.value);
         localStorage.setItem("email", "");

@@ -112,6 +112,10 @@ async function register(event: Event) {
                 : "",
         username: username.value,
         password: password1.value,
+        address:
+            localStorage.getItem("address") !== null
+                ? localStorage.getItem("address")
+                : "",
     };
 
     localStorage.clear();
@@ -145,7 +149,6 @@ async function register(event: Event) {
 
 onMounted(() => {
     // 检测localStorage 是否有前置 step1 信息
-    localStorage.getItem("name");
     updateButtonStyle();
 });
 

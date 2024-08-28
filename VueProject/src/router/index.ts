@@ -9,6 +9,8 @@ import Start from "@/pages/start/App.vue";
 import Favorite from "@/pages/favorite/App.vue";
 import Cart from "@/pages/cart/App.vue";
 import NotFoundPage from "@/pages/404page/App.vue";
+import UsercenterHome from "@/components/UsercenterHome.vue";
+import UsercenterModified from "@/components/UsercenterModified.vue";
 
 const routes = [
     {
@@ -30,6 +32,7 @@ const routes = [
         path: "/register",
         name: "register",
         component: Register,
+        redirect: "/register/step1",
         children: [
             { path: "step1", name: "Step1Register", component: Step1Register },
             { path: "step2", name: "Step2Register", component: Step2Register, meta: { requiresStep1: true }},
@@ -38,7 +41,12 @@ const routes = [
     {
         path: "/usercenter",
         name: "usercenter",
-        component: UserCenter
+        component: UserCenter,
+        redirect: "/usercenter/home",
+        children: [
+            { path: "home", name: "usercenterhome", component: UsercenterHome },
+            { path: "modified", name: "usercentermodified", component: UsercenterModified },
+        ]
     },
     {
         path: "/favorite",

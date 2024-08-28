@@ -15,13 +15,13 @@
             <div class="sub-input">
                 <input type="password" v-model="password" autocomplete="on" />
             </div>
-            <div>
+            <!-- <div>
                 <label class="checkbox-label">
                     <input type="checkbox" name="autologin" value="autologin" />
                     <div class="custom-checkbox"></div>
                     <span> 자동그로인 </span>
                 </label>
-            </div>
+            </div> -->
             <div class="button-block">
                 <button @click="login">로그인</button>
             </div>
@@ -137,6 +137,7 @@ function login(event: Event) {
                         loginStatus: isLoggedIn.value,
                         token: token,
                         cookies: data.user.cookies,
+                        address: data.user.address,
                     };
                     userStore.setUser(userObj);
                     router

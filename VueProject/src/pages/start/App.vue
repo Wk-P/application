@@ -1,6 +1,7 @@
 <template>
     <div class="containers-head" ref="containersHead">
         <OptionHeader />
+        <FilterBlock />
     </div>
     <div class="containers" ref="containers">
         <waterFallFlow />
@@ -10,6 +11,7 @@
 import waterFallFlow from "@/components/WaterFallFlow.vue";
 import OptionHeader from "@/components/OptionHeader.vue";
 import { onMounted, ref, watch, onUnmounted } from "vue";
+import FilterBlock from "@/components/FilterBlock.vue";
 
 const containersHead = ref<HTMLElement | null>(null);
 const containers = ref<HTMLElement | null>(null);
