@@ -4,7 +4,7 @@ import Register from "@/pages/register/App.vue";
 import Step1Register from "@/components/Step1Register.vue";
 import Step2Register from "@/components/Step2Register.vue";
 import UserCenter from "@/pages/usercenter/App.vue"
-import MobileHome from  "@/pages/mobilehome/App.vue";
+import MobileHome from "@/pages/mobilehome/App.vue";
 import Start from "@/pages/start/App.vue";
 import Favorite from "@/pages/favorite/App.vue";
 import Cart from "@/pages/cart/App.vue";
@@ -35,7 +35,7 @@ const routes = [
         redirect: "/register/step1",
         children: [
             { path: "step1", name: "Step1Register", component: Step1Register },
-            { path: "step2", name: "Step2Register", component: Step2Register, meta: { requiresStep1: true }},
+            { path: "step2", name: "Step2Register", component: Step2Register, meta: { requiresStep1: true } },
         ]
     },
     {
@@ -67,7 +67,21 @@ const routes = [
         path: "/:pathMatch(.*)",
         redirect: "/404",
         hidden: true,
-    }
+    },
+    {
+        path: '/admin',
+        redirect: () => {
+            window.location.href = '/api/admin/';
+            return '/';
+        }
+    },
+    {
+        path: '/admin/logout',
+        redirect: () => {
+            window.location.href = '/api/admin/logout';
+            return '/';
+        }
+    },
 ];
 
 const router = createRouter({

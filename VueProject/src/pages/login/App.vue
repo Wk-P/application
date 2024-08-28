@@ -42,7 +42,7 @@
 
 <script lang="ts" setup name="login">
 import { ref } from "vue";
-import { RouterLink, loadRouteLocation } from "vue-router";
+import { RouterLink } from "vue-router";
 import { useRouter } from "vue-router";
 import FooterBlock from "@/components/FooterBlock.vue";
 import HomeBar from "@/components/HomeBar.vue";
@@ -77,6 +77,7 @@ function login(event: Event) {
             alert("Username no input");
             return;
         }
+
         if (password.value == "") {
             alert("Password no input");
             return;
@@ -139,7 +140,9 @@ function login(event: Event) {
                         cookies: data.user.cookies,
                         address: data.user.address,
                     };
-                    userStore.setUser(userObj);
+                    if (username.value !== "admin") {
+                        userStore.setUser(userObj);
+                    }
                     router
                         .push("/start")
                         .catch((err) => console.error("Navigation err:", err));
