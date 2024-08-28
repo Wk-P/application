@@ -4,11 +4,11 @@
         <FilterBlock />
     </div>
     <div class="containers" ref="containers">
-        <waterFallFlow />
+        <WaterFallFlow />
     </div>
 </template>
 <script lang="ts" setup name="start">
-import waterFallFlow from "@/components/WaterFallFlow.vue";
+import WaterFallFlow from "@/components/WaterFallFlow.vue";
 import OptionHeader from "@/components/OptionHeader.vue";
 import { onMounted, ref, watch, onUnmounted } from "vue";
 import FilterBlock from "@/components/FilterBlock.vue";

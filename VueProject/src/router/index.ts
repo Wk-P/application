@@ -68,20 +68,20 @@ const routes = [
         redirect: "/404",
         hidden: true,
     },
-    {
-        path: '/admin',
-        redirect: () => {
-            window.location.href = '/admin/';
-            return '/';
-        }
-    },
-    {
-        path: '/admin/logout',
-        redirect: () => {
-            window.location.href = '/admin/logout';
-            return '/';
-        }
-    },
+    // {
+    //     path: '/admin',
+    //     redirect: () => {
+    //         window.location.href = '/api/admin/';
+    //         return '/';
+    //     }
+    // },
+    // {
+    //     path: '/admin/logout',
+    //     redirect: () => {
+    //         window.location.href = '/api/admin/logout';
+    //         return '/';
+    //     }
+    // },
 ];
 
 const router = createRouter({

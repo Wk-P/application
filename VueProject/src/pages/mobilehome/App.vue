@@ -20,8 +20,7 @@ import FooterBlock from "@/components/FooterBlock.vue";
 import { computed } from "vue";
 
 // check login status
-const isLoggedIn = computed(() => localStorage.length === 0 ? false : true)
-
+const isLoggedIn = computed(() => localStorage.getItem("user"))
 
 const router = useRouter();
 function start() {

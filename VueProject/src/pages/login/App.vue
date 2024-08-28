@@ -15,13 +15,6 @@
             <div class="sub-input">
                 <input type="password" v-model="password" autocomplete="on" />
             </div>
-            <!-- <div>
-                <label class="checkbox-label">
-                    <input type="checkbox" name="autologin" value="autologin" />
-                    <div class="custom-checkbox"></div>
-                    <span> 자동그로인 </span>
-                </label>
-            </div> -->
             <div class="button-block">
                 <button @click="login">로그인</button>
             </div>
@@ -47,8 +40,7 @@ import { useRouter } from "vue-router";
 import FooterBlock from "@/components/FooterBlock.vue";
 import HomeBar from "@/components/HomeBar.vue";
 import { useUserStore } from "@/stores/index";
-import { computed } from "vue";
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
 import type { User } from "@/types/index";
 
 const userStore = useUserStore();
@@ -68,6 +60,7 @@ onMounted(() => {
         router.push("/start");
     }
 });
+
 
 function login(event: Event) {
     event.preventDefault();

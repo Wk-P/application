@@ -17,8 +17,6 @@
 </template>
 
 <script lang="ts" setup name="usercenter">
-import OptionHeader from "@/components/OptionHeader.vue";
-import FooterBlock from "@/components/FooterBlock.vue";
 import { ref, computed } from "vue";
 import { useUserStore } from "@/stores";
 import { onMounted } from "vue";

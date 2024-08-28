@@ -10,3 +10,11 @@ export interface User {
     cookies: string | null,
     address: string | null,
 }
+
+export interface Item {
+    id: string,
+    name: string,
+    desc: string,
+    title: string,
+    price: number,
+}

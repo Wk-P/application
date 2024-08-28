@@ -18,6 +18,10 @@ import { nextTick, onMounted, ref, onUnmounted } from "vue";
 
 const imgUrlList = ref<Array<string>>([]);
 const waitingImgUrlList = ref<Array<string>>([]);
+// 像后端索要，（隐式）查询本地
+
+
+
 imgUrlList.value = [
     "/img/image10.png",
     "/img/image12.png",
