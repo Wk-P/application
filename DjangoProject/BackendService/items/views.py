@@ -30,8 +30,9 @@ class ItemUpload(APIView):
     def post(self, request):
         request_body = request.data
         imgLink = request_body.get('imgLink')
+        # 创建或者修改item文件
         print(imgLink)
         return Response({'imgLink': imgLink}, status=200)
     
     def get(self, request):
-        return Response({'message': "OK", "request": request}, status=200)
+        return Response({'message': "OK"}, status=200)
