@@ -9,7 +9,7 @@
                 <div class="right-info-box-style">
                     <div class="up-others-block">
                         <div class="left-item-img">
-                            <img src="" alt="" />
+                            <img :src="`${item.imgLink}`" alt="" />
                         </div>
                         <div class="right-label">
                             <ul>
@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <div class="down-price-block">
-                        {{ item.price }}
+                        <span>Price:</span><span>{{ item.price }}</span>
                     </div>
                 </div>
             </li>
@@ -82,6 +82,7 @@ const item = ref<Item>({
     title: "가방1",
     desc: "가방, ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
     price: 10,
+    imgLink: "/img/image11.png",
 });
 
 for (let i = 0; i < 5; i++) {
@@ -138,7 +139,12 @@ footer {
 
 .left-item-img {
     width: 48%;
-    background-color: gray;
+    background-color: white;
+    border: 1px solid grey;
+}
+
+.left-item-img img {
+    width: 100%;
 }
 
 .right-label {
@@ -170,6 +176,9 @@ footer {
 }
 
 .down-price-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
     box-sizing: border-box;
     padding: 0.2rem;
     text-align: center;

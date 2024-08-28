@@ -17,4 +17,5 @@ export interface Item {
     desc: string,
     title: string,
     price: number,
+    imgLink: string,
 }
