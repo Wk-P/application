@@ -197,10 +197,23 @@ footer {
 }
 
 .bottom-block button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none; 
     box-sizing: border-box;
     width: 100%;
     height: 100%;
     background-color: white;
     padding: 0.8rem 0;
+    border: 1px solid black;
+    font-size: 1rem;
+    color: black; 
+    cursor: pointer;
+    text-align: center;
+    outline: none;
+}
+
+.bottom-block button:active {
+    background-color: #e0e0e0; /* 按钮点击时背景颜色变为更深的灰色 */
 }
 </style>

@@ -11,11 +11,12 @@
     </ul>
     <p ref="loader" class="loader-text">{{ loaderText }}</p>
     <div class="to-top"><button v-if="loaderText != initLoadText" @click="scrollToTop" >Back to Top</button></div>
+    <FooterBlock />
 </template>
 
-<script lang="ts" setup name="waterfallflow">
+<script lang="ts" setup name="Waterfallflow">
 import { nextTick, onMounted, ref, onUnmounted } from "vue";
-
+import FooterBlock from "./FooterBlock.vue";
 const imgUrlList = ref<Array<string>>([]);
 const waitingImgUrlList = ref<Array<string>>([]);
 // 像后端索要，（隐式）查询本地
@@ -123,10 +124,14 @@ onUnmounted(() => {
 }
 
 .to-top button {
-    padding: 15px 20px;
+    appearance: none;
+    padding: 0.8rem 0.8rem;
     border: 1px solid #999;
     background-color: white;
     border-radius: 5px;
+    outline: none;
+    width: 50%;
+    color: black;
 }
 
 .name-block,
