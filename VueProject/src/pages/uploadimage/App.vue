@@ -59,7 +59,7 @@ const uploadFile = () => {
         .catch((error) => {
             console.error("Error uploading file:", error);
         });
-};
+};  
 </script>
 
 <style scoped>
