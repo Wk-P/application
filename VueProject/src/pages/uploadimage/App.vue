@@ -47,7 +47,7 @@ const uploadFile = () => {
     formData.append("file", selectedFile.value);
 
     // 发送文件到后端
-    fetch("/api/items/upload", {
+    fetch("/api/items/upload/", {
         method: "POST",
         body: formData,
     })

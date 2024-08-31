@@ -11,11 +11,11 @@ export default defineConfig({
         vueJsx(),
     ],
     server: {
-        host: "localhost",
+        host: "127.0.0.1",
         port: 3000,
         proxy: {
             "/api": {
-                target: "http://localhost:8000",
+                target: "http://127.0.0.1:8000",
                 changeOrigin: true,
             }
         }
