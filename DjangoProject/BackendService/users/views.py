@@ -4,7 +4,6 @@ from rest_framework import status
 from users.models import CustomUser
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
-from items.models import Item, UserItem
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
 from rest_framework.authtoken.models import Token
@@ -91,80 +90,3 @@ class CustomRegister(APIView):
                 # tel number conflict
                 error_code = 1
             return Response({"error": 1, 'error_code': error_code}, status=status.HTTP_409_CONFLICT)
-        
-
-
-# search cart items
-class CartItems(APIView):
-    def get(self, request):
-        return Response({"message": "OK"})
-    
-
-    def post(self, request, username):
-        if not username:
-            return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
-        
-        items = UserItem.objects.filter(username=username)
-        print(items)
-
-        return Response({"cart-items": items}, status=status.HTTP_200_OK)
-
-        
-# add cart items
-class ItemAddToCart(APIView):
-    def get(self, request):
-        return Response({"message": "OK"})
-    
-
-    def post(self, request):
-        request_body = request.data
-        username = request_body.get('username')
-        itemname = request_body.get('itemname')
-
-        if not username:
-            return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
-        
-        if not itemname:
-            return Response({"error": "Itemname deficiency"}, status=status.HTTP_204_NO_CONTENT)
-        
-        users = CustomUser.objects.filter(username=username)
-        if not users.exists():
-            return Response({"error": "Username not found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        items = Item.objects
-        if not items.exists():
-            return Response({"error": "Username not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        user = users.first()
-        item = items.first()
-
-
-        # UserItem
-        items = UserItem.objects.filter(user=user, item=item)
-
-        if items.exists():
-            item = items.first()
-            if item.is_cart:
-                return Response({"message": "Has been added to cart"}, status=status.HTTP_200_OK)
-            else:
-                item.is_cart = True
-        # item does not exist
-        else:
-            cart_item = UserItem(user=user, item=item, is_cart=True)
-            cart_item.save()
-
-        updated_cart_items = UserItem.objects.filter(user=user)
-
-        return Response({"cart-items": updated_cart_items}, status=status.HTTP_200_OK)
-    
-
-class FavoriteItems(APIView):
-    def get(self, request):
-        return Response({"message": "OK"})
-    
-
-    def post(self, request, username):
-        if not username:
-            return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
-        
-        

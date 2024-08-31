@@ -2,7 +2,7 @@
     <OptionHeader />
     <div class="content-block">
         <ul class="item-list">
-            <li v-for="item in itemList">
+            <li v-for="item in cartItemsList">
                 <div class="left-check-box-style">
                     <input type="checkbox" />
                 </div>
@@ -36,13 +36,16 @@
 </template>
 
 <script lang="ts" setup name="Cart">
+import { useUserStore } from "@/stores/index";
 import OptionHeader from "@/components/OptionHeader.vue";
 import type { Item } from "@/types/index";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import FooterBlock from "@/components/FooterBlock.vue";
 
 const btmBlockDiv = ref<HTMLElement | null>(null);
 const footerBlock = ref<HTMLElement | null>(null);
+const cartItemsList = ref<Array<Item>>([]);
+const userStore = useUserStore();
 
 const handleScroll = () => {
     if (footerBlock.value) {
@@ -55,16 +58,35 @@ const handleScroll = () => {
 
         const targetValue = footerRect.height;
         if (distanceFromBottom <= targetValue) {
-            (btmBlockDiv.value as HTMLDivElement).style.position = 'relative';
+            (btmBlockDiv.value as HTMLDivElement).style.position = "relative";
         } else {
-            (btmBlockDiv.value as HTMLDivElement).style.position = 'fixed';
+            (btmBlockDiv.value as HTMLDivElement).style.position = "fixed";
         }
     }
+};
+
+const fetchAllCartItems = (username: string) => {
+    fetch(`api/items/cart/${username}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error! HTTP status code ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            cartItemsList.value = data;
+            console.log(cartItemsList.value);
+        });
 };
 
 onMounted(() => {
     window.addEventListener("scroll", handleScroll);
     handleScroll(); // 初始化时检查
+
+    const username = userStore.user?.username;
+    if (username !== null && username !== undefined && username !== "") {
+        fetchAllCartItems(username);
+    }
 });
 
 onUnmounted(() => {
@@ -74,20 +96,6 @@ onUnmounted(() => {
 const order = () => {
     alert("No function");
 };
-
-const itemList = ref<Array<Item>>([]);
-const item = ref<Item>({
-    id: "001",
-    name: "item1",
-    title: "가방1",
-    desc: "가방, ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ",
-    price: 10,
-    imgLink: "/img/image11.png",
-});
-
-for (let i = 0; i < 5; i++) {
-    itemList.value.push(item.value);
-}
 </script>
 
 <style scoped>
@@ -199,7 +207,7 @@ footer {
 .bottom-block button {
     -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none; 
+    appearance: none;
     box-sizing: border-box;
     width: 100%;
     height: 100%;
@@ -207,7 +215,7 @@ footer {
     padding: 0.8rem 0;
     border: 1px solid black;
     font-size: 1rem;
-    color: black; 
+    color: black;
     cursor: pointer;
     text-align: center;
     outline: none;
