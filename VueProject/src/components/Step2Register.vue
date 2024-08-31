@@ -28,7 +28,7 @@
                         최소 이니셜 (A-Z) 최소 하나의 숫자(0-9) 비밀번호 길이:
                         최소 6자 이상.</label
                     >
-                    <input type="password" v-model="password1" />
+                    <input type="password" v-model="password" />
                     <label class="hint-label">{{ passwordLabelText }}</label>
                 </div>
             </div>
@@ -64,7 +64,7 @@ const progressText = ref<string>("2/2");
 const username = ref<string>("");
 const nextButton = ref<HTMLButtonElement | null>(null);
 const nextButtonStyle = ref();
-const password1 = ref<string>("");
+const password = ref<string>("");
 
 const isDisabled = ref<boolean>(false);
 
@@ -80,7 +80,6 @@ function isValidPassword(password: string) {
 
 async function register(event: Event) {
     event.preventDefault();
-
     if (!isValidUsername(username.value)) {
         usernameLabelText.value = "사용할 수 없는 사용자 이름";
         return;
@@ -89,7 +88,7 @@ async function register(event: Event) {
     }
 
     // 注意修改后端需要分类保存
-    if (!isValidPassword(password1.value)) {
+    if (!isValidPassword(password.value)) {
         passwordLabelText.value = "사용할 수 없는 암호";
         return;
     } else {
@@ -111,7 +110,7 @@ async function register(event: Event) {
                 ? localStorage.getItem("tel")
                 : "",
         username: username.value,
-        password: password1.value,
+        password: password.value,
         address:
             localStorage.getItem("address") !== null
                 ? localStorage.getItem("address")
@@ -128,16 +127,27 @@ async function register(event: Event) {
         },
         body: JSON.stringify(userinfo),
     })
-        .then((response) => {
+        .then(async (response) => {
+            console.log(response);
             if (!response.ok) {
+                if (response.status === 409) {
+                    const errorData = await response.json();
+                    // 获取 error_code
+                    const errorCode = errorData.error_code;
+                    if (errorCode == 1) {
+                        alert(`전화번호가 이미 등록되어 있습니다`);
+                        router.push({ name: "register" });
+                    }
+                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = response.json();
+            console.log(data);
             return data;
         })
         .then((data) => {
             console.log(data);
-
+            alert(`회원가입 성공됐습니다!`)
             router.push({ name: "login" }).catch((err) => {
                 console.error("Navigation err:", err);
             });
@@ -153,7 +163,7 @@ onMounted(() => {
 });
 
 function updateButtonStyle() {
-    if (username.value !== "" && password1.value !== "") {
+    if (username.value !== "" && password.value !== "") {
         isDisabled.value = false;
         nextButtonStyle.value = {
             color: "white",
@@ -170,7 +180,7 @@ function updateButtonStyle() {
     }
 }
 
-watch([username, password1], updateButtonStyle);
+watch([username, password], updateButtonStyle);
 </script>
 
 <style scoped>

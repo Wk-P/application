@@ -9,6 +9,7 @@ from django.forms.models import model_to_dict
 from django.shortcuts import redirect
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 import uuid
 # Create your views here.
 
@@ -24,10 +25,10 @@ class UserStatusView(APIView):
 class CustomLogout(APIView):
     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
 
-    def get(self, request):
+    def get(self, request: Request):
          return Response({"message": "User is logged in."}, status=status.HTTP_200_OK)
     
-    def post(self, request):
+    def post(self, request: Request):
         try:
             if request.auth:
                 request.auth.delete()
@@ -40,10 +41,10 @@ class CustomLogout(APIView):
 
 
 class CustomLogin(APIView):
-    def get(self, request):
+    def get(self, request: Request):
         return Response({"message": "OK"})
 
-    def post(self, request):
+    def post(self, request: Request):
         request_body = request.data
         username = request_body.get('username')
         password = request_body.get('password')
@@ -61,16 +62,17 @@ class CustomLogin(APIView):
         
         
 class CustomRegister(APIView):
-    def get(self, request):
+    def get(self, request: Request):
         return Response({"message": "OK"})
 
-    def post(self, request):
+    def post(self, request: Request):
 
         request_body = request.data
         username = request_body.get('username')
         password = request_body.get('password')
         email = request_body.get('email')
         tel = request_body.get('tel')
+        name = request_body.get('name')
         uid = str(uuid.uuid4()).replace('-', '')
         address = request_body.get('address')
 
@@ -78,14 +80,17 @@ class CustomRegister(APIView):
             if CustomUser.objects.filter(username=username).exists():
                 return Response({"error": "User already exists"}, status=status.HTTP_409_CONFLICT)
             try:
-                user = CustomUser.objects.create_user(username=username, password=password, email=email, tel=tel, uid=uid, address=address)
+                user = CustomUser.objects.create_user(username=username, name=name, password=password, email=email, tel=tel, uid=uid, address=address)
                 return Response({"message": "User registered successfully", "user": model_to_dict(user)}, status=status.HTTP_200_OK)
             except ValidationError as e:
                 raise e
         except Exception as e:
             # Log the exception
             print(e)
-            return Response({"error": "An error occurred during registration"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            if str(e) == 'UNIQUE constraint failed: users_customuser.tel':
+                # tel number conflict
+                error_code = 1
+            return Response({"error": 1, 'error_code': error_code}, status=status.HTTP_409_CONFLICT)
         
 
 

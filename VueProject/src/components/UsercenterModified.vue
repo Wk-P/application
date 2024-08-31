@@ -23,7 +23,7 @@ import type { User } from "@/types/index";
 const userStore = useUserStore();
 const user = computed(() => userStore.user as User);
 
-const fieldsToShow: Array<keyof User> = ["username", "tel", "email", "address"];
+const fieldsToShow: Array<keyof User> = ["username", "tel", "email", "name", "address"];
 const filteredUser = computed(() => {
     if (!userStore.user) return null;
     const filtered: Partial<User | any> = {};

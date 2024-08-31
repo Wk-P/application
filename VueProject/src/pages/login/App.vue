@@ -80,6 +80,11 @@ function login(event: Event) {
     // login, token, csrf-token
     isInputEmpty();
 
+    if (username.value == "admin") {
+        alert("관리자 계정으로 로그인 금지");
+        return;
+    }
+
     // get token
     fetch("/api/token/auth/", {
         method: "POST",
@@ -93,8 +98,12 @@ function login(event: Event) {
     })
         .then((response) => {
             if (!response.ok) {
-                alert("비밀번호 아이디 정보가 일치하지 않습니다");
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.status == 400 || response.status == 403) {
+                    alert("비밀번호 아이디 정보가 일치하지 않습니다");
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return;
             }
             const data = response.json();
             return data;
