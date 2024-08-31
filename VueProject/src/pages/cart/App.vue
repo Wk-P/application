@@ -1,7 +1,7 @@
 <template>
     <OptionHeader />
     <div class="content-block">
-        <ul class="item-list">
+        <ul v-if="cartItemsList.length > 0" class="item-list">
             <li v-for="item in cartItemsList">
                 <div class="left-check-box-style">
                     <input type="checkbox" />
@@ -28,6 +28,9 @@
                 </div>
             </li>
         </ul>
+        <div v-else class="empty-hint">
+            쇼핑 카트가 비어 있습니다.
+        </div>
     </div>
     <div class="bottom-block" ref="btmBlockDiv">
         <button @click="order">주문함</button>
@@ -99,6 +102,13 @@ const order = () => {
 </script>
 
 <style scoped>
+.empty-hint {
+    box-sizing: border-box;
+    text-align: center;
+    padding: 33vh 5vh;
+    width: 100%;
+}
+
 footer {
     width: 100%;
 }
