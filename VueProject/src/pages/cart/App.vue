@@ -4,7 +4,11 @@
         <ul v-if="cartItemsList.length > 0" class="item-list">
             <li v-for="item in cartItemsList">
                 <div class="left-check-box-style">
-                    <input type="checkbox" />
+                    <input
+                        type="checkbox"
+                        :value="item.id"
+                        v-model="selectedItems"
+                    />
                 </div>
                 <div class="right-info-box-style">
                     <div class="up-others-block">
@@ -28,12 +32,11 @@
                 </div>
             </li>
         </ul>
-        <div v-else class="empty-hint">
-            쇼핑 카트가 비어 있습니다.
-        </div>
+        <div v-else class="empty-hint">쇼핑 카트가 비어 있습니다.</div>
     </div>
     <div class="bottom-block" ref="btmBlockDiv">
-        <button @click="order">주문함</button>
+        <button @click="order">주문</button>
+        <button @click="deleteHandle">삭제</button>
     </div>
     <footer class="footer-block" ref="footerBlock"><FooterBlock /></footer>
 </template>
@@ -44,6 +47,28 @@ import OptionHeader from "@/components/OptionHeader.vue";
 import type { Item } from "@/types/index";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import FooterBlock from "@/components/FooterBlock.vue";
+
+const selectedItems = ref<string[]>([]);
+const selectedCartItems = computed(() => {
+    return cartItemsList.value.filter((item) =>
+        selectedItems.value.includes(item.id)
+    );
+});
+
+const deleteHandle = () => {
+    if (selectedItems.value.length === 0) {
+        alert("No items selected to delete.");
+        return;
+    }
+
+    // 过滤掉选中的项
+    cartItemsList.value = cartItemsList.value.filter(
+        (item) => !selectedItems.value.includes(item.id)
+    );
+
+    // 清空选中的复选框
+    selectedItems.value = [];
+};
 
 const btmBlockDiv = ref<HTMLElement | null>(null);
 const footerBlock = ref<HTMLElement | null>(null);
@@ -229,6 +254,7 @@ footer {
     cursor: pointer;
     text-align: center;
     outline: none;
+    margin: 0.5rem 0;
 }
 
 .bottom-block button:active {
