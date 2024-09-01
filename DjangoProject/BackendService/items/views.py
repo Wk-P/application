@@ -5,8 +5,9 @@ from rest_framework.request import Request
 from rest_framework import status
 from users.models import CustomUser
 from items.models import UserCartItem
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from pathlib import Path
+import platform
 # Create your views here.
 
 
@@ -34,47 +35,61 @@ class ItemsSearch(APIView):
 
 
 class ItemUpload(APIView):
-    parser_classes = (MultiPartParser, FormParser)  # 确保支持多部分表单数据解析
+    # 支持处理多部分表单数据（用于文件上传）和 JSON 数据
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        system = platform.system()
+
+        if system == 'Windows':
+            self.directory = Path.cwd().parent / 'VueProject' / 'public' / 'item_img'
+        elif system in ['Linux', 'Darwin']:  # 适用于 Unix 和 macOS
+            self.directory = Path.home() / 'application' / 'VueProject' / 'public' / 'item_img'
+        else:
+            raise NotImplementedError(
+                f"Unsupported operating system: {system}")
+
+    def delete(self, request: Request):
+        file_name = request.data.get('file_name')  # 从请求中获取文件名
+        if not file_name:
+            return Response({"error": "File name not provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        file_path = self.directory / file_name
+
+        if file_path.exists() and file_path.is_file():
+            try:
+                file_path.unlink()  # 删除文件
+                return Response({"message": f"File '{file_name}' deleted successfully!"}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return Response({"error": f"File '{file_name}' not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request: Request):
-        directory = Path.home() / 'application' / 'VueProject' / 'public' / 'img'
-        all_file_names = [f.name for f in directory.iterdir() if f.is_file()]
-        return Response(all_file_names)
-
+        all_file_names = [
+            f.name for f in self.directory.iterdir() if f.is_file()]
+        return Response(all_file_names, status=status.HTTP_200_OK)
 
     def post(self, request: Request, *args, **kwargs):
         uploaded_file = request.FILES.get('file')  # 获取上传的文件
         if uploaded_file:
             # 使用 pathlib 处理路径
-            save_dir = Path.home() / 'application' / 'VueProject' / 'public' / 'img'
+            file_path = self.directory / uploaded_file.name
 
             # 确保目标目录存在
-            save_dir.mkdir(parents=True, exist_ok=True)
+            self.directory.mkdir(parents=True, exist_ok=True)
 
             # 保存文件
-            file_path = save_dir / uploaded_file.name
-            with file_path.open('wb+') as destination:
-                for chunk in uploaded_file.chunks():
-                    destination.write(chunk)
-
-            return Response({"message": "File uploaded successfully!", "file_name": uploaded_file.name}, status=200)
+            try:
+                with file_path.open('wb+') as destination:
+                    for chunk in uploaded_file.chunks():
+                        destination.write(chunk)
+                return Response({"message": "File uploaded successfully!", "file_name": uploaded_file.name}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            return Response({"error": "No file uploaded"}, status=400)
-
-    def delete(self, request: Request, *args, **kwargs):
-        file_name = request.data.get('file_name')  # 获取要删除的文件名
-        if not file_name:
-            return Response({"error": "File name not provided"}, status=400)
-
-        # 使用 pathlib 处理路径
-        file_path = Path.home() / 'application' / 'VueProject' / 'public' / 'img' / file_name
-
-        # 检查文件是否存在并删除
-        if file_path.exists():
-            file_path.unlink()  # 删除文件
-            return Response({"message": f"File '{file_name}' deleted successfully!"}, status=200)
-        else:
-            return Response({"error": f"File '{file_name}' not found"}, status=404)
+            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FetchAllCartItems(APIView):
