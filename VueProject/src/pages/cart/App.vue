@@ -57,7 +57,7 @@ const selectedCartItems = computed(() => {
 
 const deleteHandle = () => {
     if (selectedItems.value.length === 0) {
-        alert("No items selected to delete.");
+        alert("삭제할 항목이 선택되지 않았습니다.");
         return;
     }
 
