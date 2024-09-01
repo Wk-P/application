@@ -12,6 +12,7 @@ import NotFoundPage from "@/pages/404page/App.vue";
 import UsercenterHome from "@/components/UsercenterHome.vue";
 import UsercenterModified from "@/components/UsercenterModified.vue";
 import UploadImage from "@/pages/uploadimage/App.vue";
+import Details from "@/pages/details/App.vue";
 
 const routes = [
     {
@@ -73,6 +74,12 @@ const routes = [
         path: "/:pathMatch(.*)",
         redirect: "/404",
         hidden: true,
+    },
+    {
+        path: '/details/:id',
+        name: 'Details',
+        component: Details,
+        props: true, // 使路由参数作为 props 传递给组件
     },
 ];
 

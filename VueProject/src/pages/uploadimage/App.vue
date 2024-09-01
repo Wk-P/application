@@ -20,9 +20,10 @@
             >
                 Upload File
             </button>
+            <button @click="clearFile" class="clear-button">Clear Files</button>
         </div>
         <div class="item-view-block">
-            <p>선택한 파일</p>
+            <div class="sub-title">선택한 파일</div>
             <ul>
                 <li v-for="(name, index) in allFileNames" :key="index">
                     <div>{{ name }}</div>
@@ -42,6 +43,10 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const triggerFileInput = () => {
     fileInput.value?.click();
 };
+
+const clearFile = () => {
+    selectedFile.value = null;
+}
 
 const handleDelete = (index: number) => {
     if (allFileNames.value) {
@@ -129,6 +134,15 @@ const uploadFile = () => {
 </script>
 
 <style scoped>
+.clear-button {
+    padding: 0.5rem;
+}
+
+.sub-title {
+    padding: 0.5rem;
+    text-align: center;
+}
+
 .item-view-block {
     box-sizing: border-box;
     width: 100%;
@@ -165,7 +179,8 @@ const uploadFile = () => {
 
 .button-group {
     display: flex;
-    gap: 10px;
+    flex-direction: row;
+    justify-content: space-evenly;
 }
 
 .add-button,
