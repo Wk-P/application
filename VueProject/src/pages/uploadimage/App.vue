@@ -22,6 +22,7 @@
             </button>
         </div>
         <div class="item-view-block">
+            <p>선택한 파일</p>
             <ul>
                 <li v-for="(name, index) in allFileNames" :key="index">
                     <div>{{ name }}</div>
