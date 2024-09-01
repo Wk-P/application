@@ -24,5 +24,6 @@ export default defineConfig({
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
-    }
+    },
+    cacheDir: 'node_modules/.vite',
 })

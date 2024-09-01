@@ -21,16 +21,22 @@
                 Upload File
             </button>
         </div>
+        <div class="item-view-block">
+            <ul>
+                <li v-for="name of allFileNames">{{ name }}</li>
+            </ul>
+        </div>
     </div>
 </template>
 
 <script lang="ts" setup name="UploadImage">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 const selectedFile = ref<File | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
 const triggerFileInput = () => {
     fileInput.value?.click();
 };
+
 
 const onFileSelected = (event: Event) => {
     const target = event.target as HTMLInputElement;
@@ -38,6 +44,20 @@ const onFileSelected = (event: Event) => {
         selectedFile.value = target.files[0];
     }
 };
+
+
+const allFileNames = ref<Array<string> | null>([]);
+const getAllFilesName = () => {
+    fetch("/api/items/upload/")
+    .then((response) => response.json())
+    .then((data) => {
+        allFileNames.value = data;
+    })
+}
+
+onMounted(() => {
+    getAllFilesName();
+})
 
 // 上传文件
 const uploadFile = () => {
@@ -59,10 +79,14 @@ const uploadFile = () => {
         .catch((error) => {
             console.error("Error uploading file:", error);
         });
-};  
+};
 </script>
 
 <style scoped>
+.item-view-block {
+    width: 100%;
+}
+
 .container {
     padding: 20px;
 }
