@@ -49,6 +49,7 @@ const handleDelete = (index: number) => {
         if (!confirm(`Delete: ${deleteFileName} ?`)) {
             return;
         }
+        
         fetch(`/api/items/upload/`, {
             method: "DELETE",
             headers: {
@@ -115,8 +116,10 @@ const uploadFile = () => {
     })
         .then((response) => response.json())
         .then((data) => {
+            alert(`Upload successfully!`);
             console.log("File uploaded successfully:", data);
             selectedFile.value = null; // 重置选中的文件
+            location.reload();
         })
         .catch((error) => {
             console.error("Error uploading file:", error);
