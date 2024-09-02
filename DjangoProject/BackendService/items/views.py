@@ -74,6 +74,7 @@ class ItemFileUpload(APIView):
 
     def post(self, request: Request, *args, **kwargs):
         uploaded_file = request.FILES.get('file')  # 获取上传的文件
+        request_data = request.data.get('')
         if uploaded_file:
             # 使用 pathlib 处理路径
             file_path = self.directory / uploaded_file.name

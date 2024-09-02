@@ -1,5 +1,11 @@
 <template>
     <div class="container">
+        <div class="item-info-block">
+            <div class="line-input">
+                <span class="input-title">item name</span>
+                <input type="text" />
+            </div>
+        </div>
         <div class="content-block">
             <p v-if="selectedFile">Selected file: {{ selectedFile.name }}</p>
         </div>
@@ -23,7 +29,7 @@
             <button @click="clearFile" class="clear-button">Clear Files</button>
         </div>
         <div class="item-view-block">
-            <div class="sub-title">선택한 파일</div>
+            <div class="sub-title">저장된 파일들</div>
             <ul>
                 <li v-for="(name, index) in allFileNames" :key="index">
                     <div>{{ name }}</div>
@@ -37,16 +43,18 @@
 </template>
 
 <script lang="ts" setup name="UploadImage">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
+import type { Item } from "@/types/index";
 const selectedFile = ref<File | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
+const item: Item | null = null;
 const triggerFileInput = () => {
     fileInput.value?.click();
 };
 
 const clearFile = () => {
     selectedFile.value = null;
-}
+};
 
 const handleDelete = (index: number) => {
     if (allFileNames.value) {
@@ -55,7 +63,7 @@ const handleDelete = (index: number) => {
         if (!confirm(`Delete: ${deleteFileName} ?`)) {
             return;
         }
-        
+
         fetch(`/api/items/upload/`, {
             method: "DELETE",
             headers: {
@@ -108,6 +116,11 @@ onMounted(() => {
     getAllFilesName();
 });
 
+onUnmounted(() => {
+    selectedFile.value = null;
+    allFileNames.value = null;
+})
+
 // 上传文件
 const uploadFile = () => {
     if (!selectedFile.value) return;
@@ -130,6 +143,18 @@ const uploadFile = () => {
         .catch((error) => {
             console.error("Error uploading file:", error);
         });
+    
+    // 发送 item 信息给后端创建
+    fetch("/api/items/upload/", {
+        method: "POST",
+        body: JSON.stringify({
+            item: item,
+        }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+        }).catch;
 };
 </script>
 
