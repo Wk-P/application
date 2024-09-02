@@ -22,7 +22,7 @@
                                     <span>{{ item.desc }}</span>
                                 </li>
                                 <li>{{ item.name }}</li>
-                                <li>option</li>
+                                <li class="option-style" @click="optionSelect">option</li>
                             </ul>
                         </div>
                     </div>
@@ -44,18 +44,18 @@
 <script lang="ts" setup name="Cart">
 import { useUserStore } from "@/stores/index";
 import OptionHeader from "@/components/OptionHeader.vue";
-import type { Item } from "@/types/index";
-import { ref, onMounted, onUnmounted, computed } from "vue";
 import FooterBlock from "@/components/FooterBlock.vue";
+import type { Item } from "@/types/index";
+import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 
 const selectedItems = ref<string[]>([]);
-const selectedCartItems = computed(() => {
-    return cartItemsList.value.filter((item) =>
-        selectedItems.value.includes(item.id)
-    );
-});
 
 const deleteHandle = () => {
+    if (!confirm(`선택하는 것을 삭제하겠습니까?`)) {
+        return;
+    }
+
     if (selectedItems.value.length === 0) {
         alert("삭제할 항목이 선택되지 않았습니다.");
         return;
@@ -74,6 +74,11 @@ const btmBlockDiv = ref<HTMLElement | null>(null);
 const footerBlock = ref<HTMLElement | null>(null);
 const cartItemsList = ref<Array<Item>>([]);
 const userStore = useUserStore();
+const router = useRouter();
+
+const optionSelect = () => {
+    alert("No function");
+}
 
 const handleScroll = () => {
     if (footerBlock.value) {
@@ -94,7 +99,7 @@ const handleScroll = () => {
 };
 
 const fetchAllCartItems = (username: string) => {
-    fetch(`api/items/cart/${username}`)
+    fetch(`/api/items/cart/${username}`)
         .then((response) => {
             if (!response.ok) {
                 throw new Error(`Error! HTTP status code ${response.status}`);
@@ -102,12 +107,26 @@ const fetchAllCartItems = (username: string) => {
             return response.json();
         })
         .then((data) => {
-            cartItemsList.value = data;
+            for (const d of data) {
+                const newItem: Item = {
+                    id: d.item.id,
+                    name: d.item.name,
+                    desc: d.item.desc,
+                    title: d.item.title,
+                    price: d.item.price,
+                    imgLink: `/item_img/${d.item.filename}`,
+                }
+                cartItemsList.value.push(newItem);
+            }
             console.log(cartItemsList.value);
         });
 };
 
 onMounted(() => {
+    if (userStore.user === null) {
+        router.push({ name: "login" });
+    }
+
     window.addEventListener("scroll", handleScroll);
     handleScroll(); // 初始化时检查
 
@@ -127,6 +146,11 @@ const order = () => {
 </script>
 
 <style scoped>
+.option-style {
+    border: 1px solid grey;
+    text-align: center;
+    font-size: 0.8rem;
+}
 .empty-hint {
     box-sizing: border-box;
     text-align: center;
@@ -197,7 +221,7 @@ footer {
 .right-label ul {
     box-sizing: border-box;
     list-style: none;
-    padding: 0.4rem;
+    padding: 0 0.4rem;
     display: flex;
     flex-direction: column;
     justify-content: space-around;

@@ -10,8 +10,8 @@
 <script lang="ts" setup name="start">
 import WaterFallFlow from "@/components/WaterFallFlow.vue";
 import OptionHeader from "@/components/OptionHeader.vue";
-import { onMounted, ref, watch, onUnmounted } from "vue";
 import FilterBlock from "@/components/FilterBlock.vue";
+import { onMounted, ref, watch, onUnmounted } from "vue";
 
 const containersHead = ref<HTMLElement | null>(null);
 const containers = ref<HTMLElement | null>(null);

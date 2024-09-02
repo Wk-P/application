@@ -79,7 +79,6 @@ const routes = [
         path: '/details/:id',
         name: 'Details',
         component: Details,
-        props: true, // 使路由参数作为 props 传递给组件
     },
 ];
 

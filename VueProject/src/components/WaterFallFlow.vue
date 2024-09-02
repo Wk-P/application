@@ -1,50 +1,66 @@
 <template>
     <ul class="waterfall-ul">
-        <li v-for="(url, index) in imgUrlList" :key="index">
-            <img :src="url" alt="" />
-            <div class="name-block">itemname</div>
-            <div class="tool-block">
+        <li
+            v-for="(item, index) in itemsList"
+            :key="index"
+            @click="pushToDetailPage(item)"
+        >
+            <img :src="item.imgLink" alt="" />
+            <div class="name-block">{{ item.name }}</div>
+            <!-- <div class="tool-block">
                 <span>heart | </span>
                 <span>cart</span>
-            </div>
+            </div> -->
         </li>
     </ul>
     <p ref="loader" class="loader-text">{{ loaderText }}</p>
-    <div class="to-top"><button v-if="loaderText != initLoadText" @click="scrollToTop" >Back to Top</button></div>
+    <div class="to-top">
+        <button v-if="loaderText != initLoadText" @click="scrollToTop">
+            Back to Top
+        </button>
+    </div>
     <FooterBlock />
 </template>
 
 <script lang="ts" setup name="Waterfallflow">
 import { nextTick, onMounted, ref, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 import FooterBlock from "./FooterBlock.vue";
-const imgUrlList = ref<Array<string>>([]);
-const waitingImgUrlList = ref<Array<string>>([]);
-// 像后端索要，（隐式）查询本地
+import type { Item } from "@/types/index";
+import { useItemsListStore, useItemStore } from "@/stores/index";
 
+const itemsList = ref<Array<Item>>([]);
+const waitingItemsList = ref<Array<Item>>([]);
+const router = useRouter();
+const itemsListStore = useItemsListStore();
+const itemStore = useItemStore();
 
+const pushToDetailPage = (item: Item) => {
+    itemStore.setCustomItem(item);
+    router.push({ path: `/details/${item.id}` });
+};
 
-imgUrlList.value = [
-    "/img/image10.png",
-    "/img/image12.png",
-    "/img/image9.png",
-    "/img/image11.png",
-];
-waitingImgUrlList.value = [
-    "/img/image10.png",
-    "/img/image12.png",
-    "/img/image9.png",
-    "/img/image11.png",
-
-    "/img/image10.png",
-    "/img/image12.png",
-    "/img/image9.png",
-    "/img/image11.png",
-
-    "/img/image10.png",
-    "/img/image12.png",
-    "/img/image9.png",
-    "/img/image11.png",
-];
+// 向后端索要，（隐式）查询本地
+const fetchAllItemLink = () => {
+    fetch("api/items/all/")
+        .then((response) => response.json())
+        .then((data) => {
+            console.log(data);
+            for (let d of data) {
+                const newItem: Item = {
+                    id: d.id,
+                    name: d.name,
+                    desc: d.desc,
+                    title: d.title,
+                    price: d.price,
+                    imgLink: `/item_img/${d.filename}`,
+                };
+                itemsList.value.push(newItem);
+            }
+            itemsListStore.setItemsList(itemsList.value);
+        })
+        .catch((error) => console.error(error));
+};
 
 // to Top
 const scrollToTop = () => {
@@ -66,16 +82,16 @@ const loadMore = () => {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    if (waitingIndex >= waitingImgUrlList.value.length) {
+    if (waitingIndex >= waitingItemsList.value.length) {
         isLoading.value = false;
         loaderText.value = "- End -";
         return;
     }
 
     // simulate http request
-    imgUrlList.value.push(waitingImgUrlList.value[waitingIndex]);
+    itemsList.value.push(waitingItemsList.value[waitingIndex]);
     waitingIndex += 1;
-    imgUrlList.value.push(waitingImgUrlList.value[waitingIndex]);
+    itemsList.value.push(waitingItemsList.value[waitingIndex]);
     waitingIndex += 1;
     isLoading.value = false;
 };
@@ -83,6 +99,7 @@ const loadMore = () => {
 let observer: IntersectionObserver | null = null;
 
 onMounted(() => {
+    fetchAllItemLink();
     // 监视器对象
     // observer object
     observer = new IntersectionObserver(
@@ -103,7 +120,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-    // bind target 
+    // bind target
     if (loader.value && observer) {
         observer.unobserve(loader.value);
     }
