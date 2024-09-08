@@ -1,7 +1,7 @@
 <template>
     <div class="containers-head" ref="containersHead">
         <OptionHeader />
-        <FilterBlock />
+        <!-- <FilterBlock /> -->
     </div>
     <div class="containers" ref="containers">
         <WaterFallFlow />
@@ -11,7 +11,7 @@
 import WaterFallFlow from "@/components/WaterFallFlow.vue";
 import OptionHeader from "@/components/OptionHeader.vue";
 import FilterBlock from "@/components/FilterBlock.vue";
-import { onMounted, ref, watch, onUnmounted } from "vue";
+import { onMounted, ref, watch, onUnmounted, computed } from "vue";
 
 const containersHead = ref<HTMLElement | null>(null);
 const containers = ref<HTMLElement | null>(null);
@@ -23,6 +23,7 @@ const updateContainerHeight = () => {
         containers.value.style.marginTop = `${headHeight}px`;
     }
 };
+
 
 onMounted(() => {
     updateContainerHeight();

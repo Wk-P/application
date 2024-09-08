@@ -26,11 +26,12 @@ class ItemsSearch(APIView):
         print(searchResultList)
         return searchResultList
 
-    def get(self, request, name):
-        if name == "all":
+    def get(self, request: Request, keywords: str):
+        print(request)
+        if keywords == "all" or keywords == "":
             searchResults = list(Item.objects.all().values())
         else:
-            searchResults = self.search(name)
+            searchResults = self.search(keywords)
         print(searchResults)
         return Response(searchResults)
 

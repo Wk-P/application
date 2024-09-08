@@ -23,29 +23,72 @@
 </template>
 
 <script lang="ts" setup name="Waterfallflow">
-import { nextTick, onMounted, ref, onUnmounted } from "vue";
+import { nextTick, onMounted, ref, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import FooterBlock from "./FooterBlock.vue";
 import type { Item } from "@/types/index";
-import { useItemsListStore, useItemStore } from "@/stores/index";
+import { useItemsListStore, useItemStore, useQueryStore } from "@/stores/index";
 
+const queryStore = useQueryStore();
 const itemsList = ref<Array<Item>>([]);
 const waitingItemsList = ref<Array<Item>>([]);
 const router = useRouter();
 const itemsListStore = useItemsListStore();
 const itemStore = useItemStore();
 
+const query = computed(() => queryStore.query);
+
 const pushToDetailPage = (item: Item) => {
     itemStore.setCustomItem(item);
     router.push({ path: `/details/${item.id}` });
 };
 
-// 向后端索要，（隐式）查询本地
+const queryItem = () => {
+    if (
+        query.value !== null &&
+        query.value !== undefined &&
+        query.value.trim() !== ""
+    ) {
+        fetch(`/api/items/search/${query.value}/`)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Search results:", data);
+                itemsList.value = []; // 清空 itemsList
+                for (let d of data) {
+                    const newItem: Item = {
+                        id: d.id,
+                        name: d.name,
+                        desc: d.desc,
+                        title: d.title,
+                        price: d.price,
+                        imgLink: `/item_img/${d.filename}`,
+                    };
+                    itemsList.value.push(newItem);
+                    console.log(itemsList.value);
+                }
+                itemsListStore.setItemsList(itemsList.value);
+            })
+            .catch((error) =>
+                console.error("Error fetching search results:", error.message)
+            );
+    }
+};
+
 const fetchAllItemLink = () => {
-    fetch("api/items/all/")
-        .then((response) => response.json())
+    fetch("/api/items/all/")
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`);
+            }
+            return response.json();
+        })
         .then((data) => {
-            console.log(data);
+            itemsList.value = []; // 清空 itemsList
             for (let d of data) {
                 const newItem: Item = {
                     id: d.id,
@@ -59,7 +102,17 @@ const fetchAllItemLink = () => {
             }
             itemsListStore.setItemsList(itemsList.value);
         })
-        .catch((error) => console.error(error));
+        .catch((error) =>
+            console.error("Error fetching all items:", error.message)
+        );
+};
+
+const fetchItems = () => {
+    if (query.value) {
+        queryItem();
+    } else {
+        fetchAllItemLink();
+    }
 };
 
 // to Top
@@ -99,8 +152,8 @@ const loadMore = () => {
 let observer: IntersectionObserver | null = null;
 
 onMounted(() => {
-    fetchAllItemLink();
-    // 监视器对象
+    fetchItems(); // Initial fetch
+
     // observer object
     observer = new IntersectionObserver(
         ([entry]) => {
@@ -120,10 +173,15 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+    sessionStorage.removeItem("searchQuery");
+    sessionStorage.removeItem("searchQueryResult");
+    queryStore.clearQuery();
+    
     // bind target
     if (loader.value && observer) {
         observer.unobserve(loader.value);
     }
+    
 });
 </script>
 

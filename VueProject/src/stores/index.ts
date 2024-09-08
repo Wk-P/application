@@ -168,3 +168,33 @@ export const useOrdersListStore = defineStore('orders', () => {
         ordersList, setOrdersList, clearOrdersList, loadOrdersList, updateOrdersList,
     }
 })
+
+export const useQueryStore = defineStore('query', () => {
+    const query = ref<string | null>(null);
+    const setQuery = (newQuery: string) => {
+        query.value = newQuery;
+        localStorage.setItem("query", JSON.stringify(newQuery));
+    };
+
+    const clearQuery = () => {
+        query.value = null;
+        localStorage.removeItem("query");
+    }
+
+    const loadQuery = () => {
+        const storedOrder = localStorage.getItem("query");
+        if (storedOrder) {
+            query.value = JSON.parse(storedOrder);
+        }
+    }
+
+    const updateQuery = (newQuery: string) => {
+        query.value = newQuery;
+    };
+
+    loadQuery();
+
+    return {
+        query, setQuery, clearQuery, loadQuery, updateQuery,
+    }
+})

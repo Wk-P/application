@@ -258,6 +258,7 @@ const order = () => {
         }
 
         const newOrder: Order = {
+            orderId: "",
             item: i,
             userId: userStore.user?.id,
             totalQuantity: optionQuantity.value,

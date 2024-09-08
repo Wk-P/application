@@ -79,6 +79,7 @@ const routes = [
         path: "/customadmin",
         name: "customadmin",
         component: CustomAdmin,
+        redirect: "/customadmin/home",
         children: [
             {
                 path: "home",
