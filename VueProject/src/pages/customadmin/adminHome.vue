@@ -1,7 +1,7 @@
 <template>
     <div class="wel">
         Welcome to Custom Admin System
-        <a href="http://cskbusiness.com/admin" target="_blank">to Django Admin System</a>
+        <a href="https://cskbusiness.com/admin" target="_blank">to Django Admin System</a>
     </div>
 </template>
 
