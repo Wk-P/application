@@ -35,7 +35,7 @@
         <div class="hint">
             <p><strong>Hint: </strong>Please add the specific content of the Item in the Django Admin interface</p>
             <p style="color: blue"><strong>item filename</strong> -> <strong>Filename</strong></p>
-            <a href="/admin/items/item/" target="_blank">To Django Admin Interface Link</a>
+            <a href="http://cskbusiness.com/admin/items/item/" target="_blank">To Django Admin Interface Link</a>
         </div>
         <div class="item-view-block">
             <div class="sub-title">저장된 파일들</div>

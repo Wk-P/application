@@ -8,7 +8,10 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build --force"
+    "type-check": "vue-tsc --build --force",
+    "clean": "rm -rf dist",
+    "clean-cache": "npm cache verify",
+    "prebuild": "npm run clean && npm run clean-cache"
   },
   "dependencies": {
     "pinia": "^2.1.7",
