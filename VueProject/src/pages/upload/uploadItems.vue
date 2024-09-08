@@ -35,7 +35,7 @@
         <div class="hint">
             <p><strong>Hint: </strong>Please add the specific content of the Item in the Django Admin interface</p>
             <p style="color: blue"><strong>item filename</strong> -> <strong>Filename</strong></p>
-            <a href="https://cskbusiness.com/admin/items/item/" target="_blank">To Django Admin Interface Link</a>
+            <a :href="adminUrl" target="_blank">To Django Admin Interface Link</a>
         </div>
         <div class="item-view-block">
             <div class="sub-title">저장된 파일들</div>
@@ -52,10 +52,21 @@
 </template>
 
 <script lang="ts" setup name="uploadItems">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import type { Item } from "@/types/index";
 import { useUserStore } from "@/stores/index";
 import { useRouter } from "vue-router";
+
+
+// 这里可以从环境变量中读取当前环境
+const isProduction = import.meta.env.MODE === "production";
+
+const adminUrl = computed(() => {
+    return isProduction
+        ? "https://cskbusiness.com/admin"
+        : "http://localhost:8000/admin";
+});
+
 const userStore = useUserStore();
 const router = useRouter();
 const selectedFile = ref<File | null>(null);
