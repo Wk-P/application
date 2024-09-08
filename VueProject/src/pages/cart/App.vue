@@ -22,9 +22,63 @@
                                     <span>{{ item.desc }}</span>
                                 </li>
                                 <li>{{ item.name }}</li>
-                                <li class="option-style" @click="optionSelect">option</li>
+                                <li class="option-style" @click="optionSelect">
+                                    option
+                                </li>
                             </ul>
+                            <teleport to="body">
+                                <div
+                                    v-if="showPopup"
+                                    class="popup-overlay"
+                                    @click="closePopup"
+                                >
+                                    <div class="popup-content" @click.stop>
+                                        <h3>Option</h3>
+                                        <div>
+                                            <h4>수량</h4>
+                                            <div class="content">
+                                                <button
+                                                    class="sub"
+                                                    @click="
+                                                        subQuantity(
+                                                            cartItemsList.indexOf(
+                                                                item
+                                                            )
+                                                        )
+                                                    "
+                                                >
+                                                    -
+                                                </button>
+                                                <div class="number-content">
+                                                    <input
+                                                        type="text"
+                                                        v-model="optionQuantity"
+                                                    />
+                                                </div>
+                                                <button
+                                                    class="add"
+                                                    @click="
+                                                        addQuantity(
+                                                            cartItemsList.indexOf(
+                                                                item
+                                                            )
+                                                        )
+                                                    "
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <button @click="closePopup">
+                                            확인
+                                        </button>
+                                    </div>
+                                </div>
+                            </teleport>
                         </div>
+                    </div>
+                    <div class="down-price-block">
+                        <span>Quantity:</span><span>{{ optionQuantity }}</span>
                     </div>
                     <div class="down-price-block">
                         <span>Price:</span><span>{{ item.price }}</span>
@@ -38,19 +92,53 @@
         <button @click="order">주문</button>
         <button @click="deleteHandle">삭제</button>
     </div>
+
     <footer class="footer-block" ref="footerBlock"><FooterBlock /></footer>
 </template>
 
 <script lang="ts" setup name="Cart">
-import { useUserStore } from "@/stores/index";
+import {
+    useUserStore,
+    useOrderStore,
+    useOrdersListStore,
+} from "@/stores/index";
 import OptionHeader from "@/components/OptionHeader.vue";
 import FooterBlock from "@/components/FooterBlock.vue";
-import type { Item } from "@/types/index";
+import type { Item, Order } from "@/types/index";
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 
-const selectedItems = ref<string[]>([]);
+// 直接生成 order 变量管理多个 item
+// cartItem 类要有 quantity
+const ordersListStore = useOrdersListStore();
+const orderStore = useOrderStore();
+const optionQuantity = ref<number>(0);
+const subQuantity = (index: number) => {
+    optionQuantity.value -= 1;
+    if (optionQuantity.value < 0) {
+        optionQuantity.value = 0;
+    }
+    // 获取到 item 信息
+    let itemsOption = JSON.parse(localStorage.getItem("item-option") as string);
+    itemsOption[index] = optionQuantity.value;
+};
 
+const addQuantity = (index: number) => {
+    optionQuantity.value += 1;
+    if (optionQuantity.value < 0) {
+        optionQuantity.value = 0;
+    }
+};
+
+// 创建一个响应式的变量来控制悬浮层的显示
+const showPopup = ref<boolean>(false);
+
+// 关闭悬浮层的函数
+const closePopup = () => {
+    showPopup.value = false;
+};
+
+const selectedItems = ref<string[]>([]);
 const deleteHandle = () => {
     if (!confirm(`선택하는 것을 삭제하겠습니까?`)) {
         return;
@@ -70,6 +158,7 @@ const deleteHandle = () => {
     selectedItems.value = [];
 };
 
+const orderCartItems = ref<Array<Item>>([]);
 const btmBlockDiv = ref<HTMLElement | null>(null);
 const footerBlock = ref<HTMLElement | null>(null);
 const cartItemsList = ref<Array<Item>>([]);
@@ -77,8 +166,8 @@ const userStore = useUserStore();
 const router = useRouter();
 
 const optionSelect = () => {
-    alert("No function");
-}
+    showPopup.value = true;
+};
 
 const handleScroll = () => {
     if (footerBlock.value) {
@@ -115,10 +204,19 @@ const fetchAllCartItems = (username: string) => {
                     title: d.item.title,
                     price: d.item.price,
                     imgLink: `/item_img/${d.item.filename}`,
-                }
+                };
                 cartItemsList.value.push(newItem);
             }
-            console.log(cartItemsList.value);
+            localStorage.setItem(
+                "item-option",
+                JSON.stringify({
+                    items: cartItemsList.value,
+                    options: Array.from(
+                        { length: cartItemsList.value.length },
+                        () => 0
+                    ),
+                })
+            );
         });
 };
 
@@ -141,11 +239,141 @@ onUnmounted(() => {
 });
 
 const order = () => {
-    alert("No function");
+    orderCartItems.value = cartItemsList.value.filter((item) =>
+        selectedItems.value.includes(item.id)
+    );
+
+    if (orderCartItems.value.length == 0) {
+        return;
+    }
+
+    let orderedItems: Array<Order> = [];
+
+    // 向后端传输 order 信息
+    for (const i of orderCartItems.value) {
+
+        if (optionQuantity.value == 0) {
+            alert("Error quantity");
+            return;
+        }
+
+        const newOrder: Order = {
+            item: i,
+            userId: userStore.user?.id,
+            totalQuantity: optionQuantity.value,
+        };
+        orderedItems.push(newOrder);
+    }
+
+    fetch("/api/orders/create/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            newOrders: orderedItems,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Error! HTTP status code ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            alert(JSON.stringify(data));
+            cartItemsList.value = cartItemsList.value.filter(
+                (item) => !selectedItems.value.includes(item.id)
+            );
+        })
+        .catch((error) => console.error(error));
 };
 </script>
 
 <style scoped>
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.popup-content {
+    background: white;
+    width: 80%;
+    height: 50%;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.popup-content > button {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.6rem;
+}
+
+.popup-content > h3 {
+    display: block;
+    padding: 0.3rem;
+}
+
+.popup-content h4 {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 0.7rem;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    box-sizing: border-box;
+    height: 10vh;
+    padding: 0.3rem;
+    height: 6vh;
+}
+
+.content .sub,
+.content .add {
+    background-color: black;
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    height: 100%;
+    width: 20vw;
+}
+
+.content .number-content {
+    height: 100%;
+    appearance: none;
+    box-sizing: border-box;
+    margin: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.content .number-content input {
+    box-sizing: border-box;
+    height: 100%;
+    border: 2px solid black;
+    text-align: center;
+    outline: none;
+    font-size: 1.12rem;
+}
+
 .option-style {
     border: 1px solid grey;
     text-align: center;

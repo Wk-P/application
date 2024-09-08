@@ -16,7 +16,7 @@
                 <input type="password" v-model="password" autocomplete="on" />
             </div>
             <div class="button-block">
-                <button @click="login">로그인</button>
+                <button @click="handleLogin($event, username, password)">로그인</button>
             </div>
             <div class="recover-link">
                 <p @click="find">{{ linkText }}</p>
@@ -36,13 +36,15 @@
 <script lang="ts" setup name="login">
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import FooterBlock from "@/components/FooterBlock.vue";
 import HomeBar from "@/components/HomeBar.vue";
 import { useUserStore } from "@/stores/index";
 import { onMounted, computed } from "vue";
 import type { User } from "@/types/index";
+import { login } from "@/utils/utils";
 
+const route = useRoute();
 const userStore = useUserStore();
 const router = useRouter();
 const username = ref("");
@@ -50,9 +52,24 @@ const password = ref("");
 const linkText = ref(
     "아이디 찾기/비밀번호 찾기 >                               "
 );
-const isLoggedIn = ref<boolean>(userStore.user?.loginStatus === true ? true : false);
+const isLoggedInUsername = userStore.user?.username;
+const isLoggedIn = ref<boolean>(isLoggedInUsername !== undefined && isLoggedInUsername !== "admin");
 const find = () => {
     alert("No function");
+};
+
+const handleLogin = async (
+    event: Event,
+    username: string,
+    password: string
+) => {
+    const result = await login(event, username, password, route);
+    if (result.success && result.user) {
+        userStore.setUser(result.user);
+        router.push({ name: "start" });
+    } else {
+        alert(`${result.success}`);
+    }
 };
 
 onMounted(() => {
@@ -60,103 +77,8 @@ onMounted(() => {
         router.push("/start");
     }
 });
-
-
-function login(event: Event) {
-    event.preventDefault();
-    function isInputEmpty() {
-        // check idInput
-        if (username.value == "") {
-            alert("Username no input");
-            return;
-        }
-
-        if (password.value == "") {
-            alert("Password no input");
-            return;
-        }
-    }
-
-    // login, token, csrf-token
-    isInputEmpty();
-
-    if (username.value == "admin") {
-        alert("관리자 계정으로 로그인 금지");
-        return;
-    }
-
-    // get token
-    fetch("/api/token/auth/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username: username.value,
-            password: password.value,
-        }),
-    })
-        .then((response) => {
-            if (!response.ok) {
-                if (response.status == 400 || response.status == 403) {
-                    alert("비밀번호 아이디 정보가 일치하지 않습니다");
-                } else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return;
-            }
-            const data = response.json();
-            return data;
-        })
-        .then((data) => {
-            const token = data.token;
-            fetch("/api/user/login/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    username: username.value,
-                    password: password.value,
-                }),
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(
-                            `HTTP error! status: ${response.status}`
-                        );
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    isLoggedIn.value = true;
-                    const userObj: User = {
-                        id: data.user.id,
-                        uid: data.user.uid,
-                        email: data.user.email,
-                        name: data.user.name,
-                        tel: data.user.tel,
-                        username: data.user.username,
-                        loginStatus: isLoggedIn.value,
-                        token: token,
-                        cookies: data.user.cookies,
-                        address: data.user.address,
-                    };
-                    if (username.value !== "admin") {
-                        userStore.setUser(userObj);
-                    }
-                    router
-                        .push("/start")
-                        .catch((err) => console.error("Navigation err:", err));
-                })
-                .catch((error: Error) => {
-                    console.error(error);
-                });
-        });
-
-    // user id and password authenticate
-}
 </script>
+
 <style scoped>
 .block {
     width: 100%;

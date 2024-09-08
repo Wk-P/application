@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, type RouteLocationNormalized, type NavigationGuardNext } from "vue-router";
+import { useUserStore } from '@/stores/index';
 import Login from "@/pages/login/App.vue";
 import Register from "@/pages/register/App.vue";
 import Step1Register from "@/components/Step1Register.vue";
@@ -11,8 +12,11 @@ import Cart from "@/pages/cart/App.vue";
 import NotFoundPage from "@/pages/404page/App.vue";
 import UsercenterHome from "@/components/UsercenterHome.vue";
 import UsercenterModified from "@/components/UsercenterModified.vue";
-import UploadImage from "@/pages/uploadimage/App.vue";
+import UploadItems from "@/pages/upload/uploadItems.vue";
+import CustomAdmin from "@/pages/customadmin/App.vue";
+import CustomAdminHome from "@/pages/customadmin/adminHome.vue";
 import Details from "@/pages/details/App.vue";
+import CustomOrder from "@/pages/usercenter/Order.vue";
 
 const routes = [
     {
@@ -48,6 +52,7 @@ const routes = [
         children: [
             { path: "home", name: "usercenterhome", component: UsercenterHome },
             { path: "modified", name: "usercentermodified", component: UsercenterModified },
+            { path: "orders", name: "orders", component: CustomOrder },
         ]
     },
     {
@@ -66,9 +71,42 @@ const routes = [
         component: NotFoundPage,
     },
     {
-        path: "/upload",
-        name: "upload",
-        component: UploadImage,
+        path: "/customadmin",
+        name: "customadmin",
+        component: CustomAdmin,
+    },
+    {
+        path: "/customadmin",
+        name: "customadmin",
+        component: CustomAdmin,
+        children: [
+            {
+                path: "home",
+                name: "adminHome",
+                component: CustomAdminHome,
+                beforeEnter: (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+                    const userStore = useUserStore();
+                    if (userStore.user?.loginStatus) {
+                        next(); // 已登录，继续访问
+                    } else {
+                        next({ name: 'customadmin' }); // 未登录，重定向到登录页
+                    }
+                },
+            },
+            {
+                path: "uploaditems",
+                name: "uploaditems",
+                component: UploadItems,
+                beforeEnter: (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+                    const userStore = useUserStore();
+                    if (userStore.user?.loginStatus) {
+                        next(); // 已登录，继续访问
+                    } else {
+                        next({ name: 'customadmin' }); // 未登录，重定向到登录页
+                    }
+                },
+            },
+        ]
     },
     {
         path: "/:pathMatch(.*)",
@@ -84,7 +122,7 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes,
+    routes: routes,
 });
 
 export default router;

@@ -34,10 +34,11 @@ class Item(models.Model):
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['name', 'desc', 'price', 'title', 'filename']
+        fields = ['id', 'name', 'desc', 'price', 'title', 'filename']
 
 
 
 class UserCartItem(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    quantity = models.BigIntegerField(default=0)

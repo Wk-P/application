@@ -2,8 +2,12 @@
     <div class="container">
         <div class="item-info-block">
             <div class="line-input">
-                <span class="input-title">item name</span>
-                <input type="text" />
+                <span class="input-title">item filename</span>
+                <input
+                    type="text"
+                    :value="selectedFile ? selectedFile.name : ''"
+                    readonly
+                />
             </div>
         </div>
         <div class="content-block">
@@ -28,6 +32,11 @@
             </button>
             <button @click="clearFile" class="clear-button">Clear Files</button>
         </div>
+        <div class="hint">
+            <p><strong>Hint: </strong>Please add the specific content of the Item in the Django Admin interface</p>
+            <p style="color: blue"><strong>item filename</strong> -> <strong>Filename</strong></p>
+            <a href="http://localhost:8000/admin/items/item/" target="_blank">To Django Admin Interface Link</a>
+        </div>
         <div class="item-view-block">
             <div class="sub-title">저장된 파일들</div>
             <ul>
@@ -42,12 +51,23 @@
     </div>
 </template>
 
-<script lang="ts" setup name="UploadImage">
+<script lang="ts" setup name="uploadItems">
 import { ref, onMounted, onUnmounted } from "vue";
 import type { Item } from "@/types/index";
+import { useUserStore } from "@/stores/index";
+import { useRouter } from "vue-router";
+const userStore = useUserStore();
+const router = useRouter();
 const selectedFile = ref<File | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
-const item: Item | null = null;
+const item = ref<Item>({
+    id: "",
+    name: "",
+    desc: "",
+    price: 0,
+    title: "",
+    imgLink: "",
+});
 const triggerFileInput = () => {
     fileInput.value?.click();
 };
@@ -96,7 +116,19 @@ const handleDelete = (index: number) => {
 const onFileSelected = (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files.length > 0) {
-        selectedFile.value = target.files[0];
+        const file = target.files[0];
+
+        // 检查文件类型是否为 jpg 或 png
+        const allowedTypes = ["image/jpeg", "image/png"];
+        if (!allowedTypes.includes(file.type)) {
+            alert("Only JPG and PNG files are allowed!");
+            selectedFile.value = null; // 重置选中的文件
+            return;
+        }
+
+        selectedFile.value = file;
+
+        item.value.imgLink = selectedFile.value.name;
     }
 };
 
@@ -113,13 +145,17 @@ const getAllFilesName = () => {
 };
 
 onMounted(() => {
+    console.log(userStore.user?.loginStatus);
+    if (userStore.user?.loginStatus !== true) {
+        router.push({ name: "customadmin" });
+    }
     getAllFilesName();
 });
 
 onUnmounted(() => {
     selectedFile.value = null;
     allFileNames.value = null;
-})
+});
 
 // 上传文件
 const uploadFile = () => {
@@ -143,7 +179,7 @@ const uploadFile = () => {
         .catch((error) => {
             console.error("Error uploading file:", error);
         });
-    
+
     // 发送 item 信息给后端创建
     fetch("/api/items/upload/", {
         method: "POST",
@@ -159,6 +195,27 @@ const uploadFile = () => {
 </script>
 
 <style scoped>
+.hint {
+    color: red;
+    padding: 1rem 1rem 1.5rem 1rem;
+}
+.hint a {
+    color: #222;
+}
+.line-input {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.line-input > input {
+    outline: none;
+    border: 2px solid black;
+    padding: 0.3rem;
+}
+.input-title {
+    display: block;
+}
+
 .clear-button {
     padding: 0.5rem;
 }
@@ -171,6 +228,7 @@ const uploadFile = () => {
 .item-view-block {
     box-sizing: border-box;
     width: 100%;
+    border-top: 2px solid black;
 }
 
 .item-view-block ul {
@@ -203,6 +261,7 @@ const uploadFile = () => {
 }
 
 .button-group {
+    padding: 1rem 0;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

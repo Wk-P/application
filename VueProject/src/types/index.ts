@@ -19,3 +19,10 @@ export interface Item {
     price: number,
     imgLink: string,
 }
+
+export interface Order {
+    orderId: string | undefined,
+    item: Item,
+    userId: string | undefined,
+    totalQuantity?: number,
+}

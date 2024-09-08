@@ -1,5 +1,6 @@
 <template>
     <OptionHeader />
+    <ReturnBar />
     <div class="block">
         <div class="img-block">
             <img :src="item?.imgLink" alt="" />
@@ -17,15 +18,28 @@
 <script lang="ts" setup name="Details">
 import OptionHeader from "@/components/OptionHeader.vue";
 import FooterBlock from "@/components/FooterBlock.vue";
+import ReturnBar from "@/components/ReturnBar.vue";
 import { useItemStore, useUserStore } from "@/stores";
 import type { Item, User } from "@/types/index";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
+
 const itemStore = useItemStore();
 const userStore = useUserStore();
 const item = ref<Item | null>(null);
 const user = ref<User | null>(null);
+const isLoggedIn = computed(() => userStore.user?.loginStatus);
+const router = useRouter();
 
 const addToCart = () => {
+    if (!isLoggedIn.value) {
+        if (!confirm("로그인 먼저 해주세요!")) {
+            return;
+        }
+        router.push({ name: "login" });
+        return;
+    }
+
     if (!confirm(`Add to your cart?`)) {
         return;
     }
@@ -37,19 +51,20 @@ const addToCart = () => {
         },
         body: JSON.stringify({
             username: user.value?.username,
-            item_id: item.value?.id
+            item_id: item.value?.id,
         }),
-    }).then((response => {
-        if (response.ok) {
-            alert(`장바구니에 가입 완료됐습니다!`);
-        } else {
-            throw Error(`HTTP error, status ${response.status}`);
-        }
-    }))
-    .catch(error => {
-        console.log(error);
     })
-}
+        .then((response) => {
+            if (response.ok) {
+                alert(`장바구니에 가입 완료됐습니다!`);
+            } else {
+                throw Error(`HTTP error, status ${response.status}`);
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
 
 onMounted(() => {
     item.value = itemStore.item;
@@ -93,9 +108,10 @@ onMounted(() => {
     height: auto;
 }
 
-.title, .name, .description {
+.title,
+.name,
+.description {
     box-sizing: border-box;
     padding: 1rem 2rem;
 }
-
 </style>

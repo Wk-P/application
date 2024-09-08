@@ -95,7 +95,7 @@ class ItemFileUpload(APIView):
 
 
 class FetchAllCartItems(APIView):
-    def get(self, request, username):
+    def get(self, request: Request, username):
         if not username:
             return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -108,6 +108,9 @@ class FetchAllCartItems(APIView):
             items = UserCartItem.objects.filter(user=user)
 
             serialized_data = []
+
+            user_data = None
+            item_data = None
 
             for item in items:
                 user_data = CustomUserSerializer(item.user).data

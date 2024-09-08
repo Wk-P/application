@@ -19,11 +19,20 @@
 import { useUserStore } from "@/stores";
 import { computed } from "vue";
 import type { User } from "@/types/index";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const userStore = useUserStore();
 const user = computed(() => userStore.user as User);
 
-const fieldsToShow: Array<keyof User> = ["username", "tel", "email", "name", "address"];
+const fieldsToShow: Array<keyof User> = [
+    "username",
+    "tel",
+    "email",
+    "name",
+    "address",
+];
+
 const filteredUser = computed(() => {
     if (!userStore.user) return null;
     const filtered: Partial<User | any> = {};
@@ -36,7 +45,23 @@ const filteredUser = computed(() => {
 });
 
 function save() {
-    alert("No function");
+    fetch("/api/user/modified/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user: user.value }),
+    })
+        .then((response) => {
+            if (response.ok) {
+                alert(`사용자 정보 수정 완료!`);
+                userStore.clearUser();
+                router.push({ name: "login"});
+            } else {
+                throw Error(`HTTP error, status ${response.status}`);
+            }
+        })
+        .catch((error) => console.error(error));
 }
 </script>
 

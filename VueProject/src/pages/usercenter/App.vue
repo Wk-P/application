@@ -2,13 +2,13 @@
     <div class="containers-head" ref="containersHead">
         <OptionHeader />
     </div>
-    
     <div>
         <RouterView />
     </div>
     <nav>
         <RouterLink to="/usercenter/home" class="nav-link" v-if="route.path === '/usercenter/modified'">Home</RouterLink>
         <RouterLink to="/usercenter/modified" class="nav-link" v-if="route.path === '/usercenter/home'">Modifed</RouterLink>
+        <RouterLink to="/usercenter/orders" class="nav-link" v-if="route.path === '/usercenter/home'">Orders</RouterLink>
     </nav>
     <FooterBlock />
 </template>
@@ -17,6 +17,7 @@
 import { RouterView, RouterLink, useRoute } from "vue-router";
 import OptionHeader from "@/components/OptionHeader.vue";
 import FooterBlock from "@/components/FooterBlock.vue";
+import ReturnBar from "@/components/ReturnBar.vue";
 
 const route = useRoute();
 

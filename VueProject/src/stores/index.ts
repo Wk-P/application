@@ -1,7 +1,7 @@
 // src/stores/index.ts
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { User, Item } from "@/types/index";
+import type { User, Item, Order } from "@/types/index";
 
 
 export const useUserStore = defineStore('user', () => {
@@ -19,13 +19,21 @@ export const useUserStore = defineStore('user', () => {
     const loadUser = () => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
-            user.value = JSON.parse(storedUser);
+            try {
+                user.value = JSON.parse(storedUser);
+            } catch (error) {
+                console.error("Failed to parse user from localStorage:", error);
+                user.value = null;
+                localStorage.removeItem("user");
+            }
         }
-    }
+    };
+    
 
     const updateUserField = <KEY extends keyof User>(field: KEY, value: User[KEY]) => {
         if (user.value) {
             user.value[field] = value as User[typeof field];
+            setUser(user.value);
         }
     };
 
@@ -96,5 +104,67 @@ export const useItemsListStore = defineStore('items', () => {
 
     return {
         itemsList, setItemsList, clearItemsList, loadItemsList, updateItemsList,
+    }
+})
+
+
+export const useOrderStore = defineStore('order', () => {
+    const order = ref<Order | null>(null);
+    const setOrder = (newOrder: Order) => {
+        order.value = newOrder;
+        localStorage.setItem("order", JSON.stringify(newOrder));
+    };
+
+    const clearOrder = () => {
+        order.value = null;
+        localStorage.removeItem("order");
+    }
+
+    const loadOrder = () => {
+        const storedOrder = localStorage.getItem("order");
+        if (storedOrder) {
+            order.value = JSON.parse(storedOrder);
+        }
+    }
+
+    const updateOrder = (newOrder: Order) => {
+        order.value = newOrder;
+    };
+
+    loadOrder();
+
+    return {
+        order, setOrder, clearOrder, loadOrder, updateOrder,
+    }
+})
+
+
+export const useOrdersListStore = defineStore('orders', () => {
+    const ordersList = ref<Array<Order> | null>(null);
+    const setOrdersList = (newOrdersList: Array<Order>) => {
+        ordersList.value = newOrdersList;
+        localStorage.setItem("orders", JSON.stringify(newOrdersList));
+    };
+
+    const clearOrdersList = () => {
+        ordersList.value = null;
+        localStorage.removeItem("orders");
+    }
+
+    const loadOrdersList = () => {
+        const storedOrder = localStorage.getItem("orders");
+        if (storedOrder) {
+            ordersList.value = JSON.parse(storedOrder);
+        }
+    }
+
+    const updateOrdersList = (newOrdersList: Array<Order>) => {
+        ordersList.value = newOrdersList;
+    };
+
+    loadOrdersList();
+
+    return {
+        ordersList, setOrdersList, clearOrdersList, loadOrdersList, updateOrdersList,
     }
 })

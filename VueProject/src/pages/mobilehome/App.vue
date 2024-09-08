@@ -9,6 +9,7 @@
             <div class="button-group">
                 <button @click="start">START NOW</button>
                 <button v-if="!isLoggedIn" @click="login">LOG IN</button>
+                <button @click="admin">ADMIN</button>
             </div>
             <FooterBlock />
         </div>
@@ -20,11 +21,15 @@ import FooterBlock from "@/components/FooterBlock.vue";
 import { computed } from "vue";
 
 // check login status
-const isLoggedIn = computed(() => localStorage.getItem("user"))
+const isLoggedIn = computed(() => localStorage.getItem("user"));
 
 const router = useRouter();
 function start() {
     router.push("/start");
+}
+
+function admin() {
+    router.push({ name: "customadmin" });
 }
 
 function login() {
