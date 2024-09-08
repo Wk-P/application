@@ -9,7 +9,7 @@
             <div class="button-group">
                 <button @click="start">START NOW</button>
                 <button v-if="!isLoggedIn" @click="login">LOG IN</button>
-                <button @click="admin">ADMIN</button>
+                <button @click="toAdmin">ADMIN</button>
             </div>
             <FooterBlock />
         </div>
@@ -28,7 +28,7 @@ function start() {
     router.push("/start");
 }
 
-function admin() {
+function toAdmin() {
     router.push({ name: "customadmin" });
 }
 

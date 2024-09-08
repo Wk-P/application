@@ -79,16 +79,15 @@ const routes = [
         path: "/customadmin",
         name: "customadmin",
         component: CustomAdmin,
-        redirect: "/customadmin/home",
         children: [
             {
                 path: "home",
                 name: "adminHome",
                 component: CustomAdminHome,
-                beforeEnter: (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+                beforeEnter: (_to: any, _from: any, next: any) => {
                     const userStore = useUserStore();
                     if (userStore.user?.loginStatus) {
-                        next(); // 已登录，继续访问
+                        next();
                     } else {
                         next({ name: 'customadmin' }); // 未登录，重定向到登录页
                     }
@@ -98,12 +97,12 @@ const routes = [
                 path: "uploaditems",
                 name: "uploaditems",
                 component: UploadItems,
-                beforeEnter: (_to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+                beforeEnter: (_to: any, _from: any, next: any) => {
                     const userStore = useUserStore();
                     if (userStore.user?.loginStatus) {
-                        next(); // 已登录，继续访问
+                        next();
                     } else {
-                        next({ name: 'customadmin' }); // 未登录，重定向到登录页
+                        next({ name: 'customadmin' });
                     }
                 },
             },

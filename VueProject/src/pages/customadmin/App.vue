@@ -42,8 +42,8 @@ const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.user?.loginStatus === true);
 
 onMounted(() => {
-    if (userStore.user) {
-        router.push(route.path);
+    if (userStore.user?.loginStatus === true) {
+        router.push({ name: "adminHome" });
     }
 });
 
