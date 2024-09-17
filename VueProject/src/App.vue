@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container">
+    <div class="container">
         <RouterView></RouterView>
     </div>
     <Footer1 />
@@ -11,7 +11,8 @@ import Footer1 from "@/components/Footer1.vue";
 </script>
 
 <style scoped>
-.app-container {
+.container {
+    height: 100%;
     padding-bottom: 4rem;
 }
 </style>

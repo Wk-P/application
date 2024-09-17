@@ -251,17 +251,19 @@ const order = () => {
 
     // 向后端传输 order 信息
     for (const i of orderCartItems.value) {
-
         if (optionQuantity.value == 0) {
             alert("Error quantity");
             return;
         }
 
         const newOrder: Order = {
-            orderId: "",
-            item: i,
-            userId: userStore.user?.id,
-            totalQuantity: optionQuantity.value,
+            orderId: undefined,
+            user: undefined,
+            item: undefined,
+            quantity: undefined,
+            totalPrice: undefined,
+            createdTime: undefined,
+            updatedTime: undefined,
         };
         orderedItems.push(newOrder);
     }

@@ -1,5 +1,4 @@
 <template>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <div class="container">
         <div class="left">
             <button @click="backToPrev">
@@ -7,7 +6,7 @@
             </button>
         </div>
         <div class="middle">
-            <input type="text" ref="searchInput"/>
+            <input type="text" ref="searchInput" v-model="searchInputTextValue"/>
         </div>
         <div class="right">
             <button @click="search">
@@ -17,11 +16,13 @@
     </div>
 </template>
 
-<script lang="ts" setup name="search">
+<script lang="ts" setup name="searchpage">
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
+const searchInputTextValue = ref<string | undefined>("");
 const searchInput = ref<HTMLInputElement | null>(null);
 
 const backToPrev = () => {
@@ -32,10 +33,6 @@ const search = () => {
     alert("search");
 }
 
-onMounted(() => {
-    searchInput.value?.focus();
-})
-
 </script>
 
 <style scoped>
@@ -44,51 +41,46 @@ onMounted(() => {
     flex-direction: row;
     justify-content: space-between;
     height: 2rem;
-    padding: 0.7rem;
+    padding: 1rem;
 }
 
-.container > div {
+.left, .right, .middle {
+    box-sizing: border-box;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.left button, .right button {
+    box-sizing: border-box;
+    appearance: none;
+    height: 100%;
+    display: block;
+    border: none;
+    outline: none;
+    background: none;
+}
+
+img {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 0.25rem;
 }
 
 .middle {
+    box-sizing: border-box;
     flex: 1;
     padding: 0 1rem;
 }
 
-input {
-    display: block;
-    box-sizing: border-box;
-    height: 100%;
+.middle input {
     width: 100%;
-    background-color: #eee;
-    border-radius: 1rem;
-    padding: 0 1rem;
-    border: none;
-    outline: none;
-}
-
-button {
-    display: block;
-    height: 100%;
-    border: none;
-    background-color: white;
-}
-
-button img {
     box-sizing: border-box;
-    height: 100%;
-}
-
-.right button img {
-    padding: 0.25rem;
-}
-
-input {
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-text-size-adjust: 100%; /* 防止 iOS 缩放 */
-    -ms-text-size-adjust: 100%;
-    text-size-adjust: 100%;
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    outline: none;
+    background-color: #eee;
+    border: 1px solid #eee;
 }
 </style>

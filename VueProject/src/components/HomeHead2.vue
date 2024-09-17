@@ -86,7 +86,7 @@ let timerId: number | undefined;
 const changeLink = (index: number, event: Event) => {
     event.preventDefault();
     activeIndex.value = index;
-
+    
     nextTick(() => {
         timerId = window.setTimeout(() => {
             const target = (event.target as HTMLElement).closest("a");
@@ -125,14 +125,16 @@ const initialScroll = () => {
 
     nextTick(() => {
         // 找到目标元素并滚动到视图中
-        const target = document.querySelectorAll(".head2")[index] as HTMLElement;
+        const target = document.querySelectorAll(".head2")[
+            index
+        ] as HTMLElement;
         if (target) {
             scrollToElement(target);
         } else {
             console.error("Target element not found.");
         }
     });
-}
+};
 
 onMounted(() => {
     initialScroll();

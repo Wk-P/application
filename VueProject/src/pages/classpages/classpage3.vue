@@ -1,5 +1,5 @@
 <template>
-    page3
+    <h3>Class Page 3</h3>
 </template>
 
 <script lang="ts" setup name="ClassPage3">

@@ -1,7 +1,7 @@
 // src/stores/index.ts
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { User, Item, Order } from "@/types/index";
+import type { User, Item, Order, AdminUser } from "@/types/index";
 
 
 export const useUserStore = defineStore('user', () => {
@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', () => {
             }
         }
     };
-    
+
 
     const updateUserField = <KEY extends keyof User>(field: KEY, value: User[KEY]) => {
         if (user.value) {
@@ -196,5 +196,35 @@ export const useQueryStore = defineStore('query', () => {
 
     return {
         query, setQuery, clearQuery, loadQuery, updateQuery,
+    }
+})
+
+
+export const useAdminStore = defineStore('adminuser', () => {
+    const adminuser = ref<AdminUser | null>();
+    const setAdminUser = (user: AdminUser) => {
+        adminuser.value = user;
+        localStorage.setItem("adminuser", JSON.stringify(user));
+    };
+
+    const clearAdminUser = () => {
+        localStorage.removeItem('adminuser');
+    };
+
+    const loadAdminUser = () => {
+        const storedAdminUser = localStorage.getItem('adminuser');
+        if (storedAdminUser) {
+            adminuser.value = JSON.parse(storedAdminUser);
+        }
+    };
+
+    const updateAdminUser = (user: AdminUser) => {
+        adminuser.value = user;
+    }
+
+    loadAdminUser();
+
+    return {
+        adminuser, setAdminUser, clearAdminUser, loadAdminUser, updateAdminUser
     }
 })

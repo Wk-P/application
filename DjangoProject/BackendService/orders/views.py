@@ -4,27 +4,20 @@ import typing
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
-from orders.models import Order
+from orders.models import Order, OrderSerializer
 from items.models import Item, UserCartItem, ItemSerializer
 from users.models import CustomUser, CustomUserSerializer
 from rest_framework import status
 import datetime
 
+# 订单控制
 class Orders(APIView):
     def get(self, request: Request):
         ordersSet = Order.objects.all().values('id', 'order_id', 'user_id', 'item_id', 'quantity')
 
         result_list = list()
         for order in ordersSet:
-            item_info = ItemSerializer(Item.objects.filter(id=order.get('item_id')).first()).data
-            user_info = CustomUserSerializer(CustomUser.objects.filter(id=order.get('user_id')).first()).data
-
-            result_list.append({
-                "item_info": item_info,
-                "user_info": user_info,
-                "order_id": order.get("order_id"),
-                "totalQuantity": order.get("quantity")
-            })
+            result_list.append(OrderSerializer(order).data)
 
         print(result_list)
         return Response(result_list, status=status.HTTP_200_OK)

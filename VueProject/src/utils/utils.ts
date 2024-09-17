@@ -43,7 +43,7 @@ export async function login(
 
     const current_path = route.path;
 
-    if (username === "admin" && !current_path.startsWith('/customadmin')) {
+    if (username === "admin" && !current_path.startsWith('/admin')) {
         alert("관리자 계정으로 로그인 금지");
         return { success: false };
     }
@@ -104,3 +104,36 @@ export async function login(
     }
 }
 
+
+export function logout() {
+    const userStore = useUserStore();
+    const token = userStore.user?.token; // 获取 token
+    console.log(token);
+
+    if (!token) {
+        console.error("No token found");
+        return;
+    }
+
+    fetch('/api/user/logout/', {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${userStore.user?.token}`
+        },
+        body: JSON.stringify({})
+    }).then(async (response) => {
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Logout failed');
+        } else {
+            return response.json();
+        }
+    }).then((data) => {
+        alert("Logout success");
+    }).catch((error: Error) => {
+        alert("Logout failed")
+        console.error(error.message);
+    });
+    userStore.clearUser();
+}

@@ -22,7 +22,16 @@ export interface Item {
 
 export interface Order {
     orderId: string | undefined,
-    item: Item,
-    userId: string | undefined,
-    totalQuantity?: number,
+    user: Object | undefined,
+    item: Object | undefined,
+    quantity: number | undefined,
+    totalPrice: number | undefined,
+    createdTime: string | undefined,
+    updatedTime: string | undefined,
+}
+
+export interface AdminUser {
+    username: string,
+    token: string | null,
+    loginStatus: boolean,
 }

@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from users.models import CustomUser
+from users.models import CustomUser, CustomUserSerializer
 from django.contrib.auth import authenticate, login, logout
 from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
@@ -31,7 +31,6 @@ class CustomLogout(APIView):
         try:
             if request.auth:
                 request.auth.delete()
-                logout(request)
                 return Response({'detail': 'Successfully logged out.'}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'No active token found.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -81,7 +80,8 @@ class CustomRegister(APIView):
             try:
                 user = CustomUser.objects.create_user(
                     username=username, name=name, password=password, email=email, tel=tel, uid=uid, address=address)
-                return Response({"message": "User registered successfully", "user": model_to_dict(user)}, status=status.HTTP_200_OK)
+                user_data = CustomUserSerializer(user).data
+                return Response({"message": "User registered successfully", "user": user_data}, status=status.HTTP_200_OK)
             except ValidationError as e:
                 raise e
         except Exception as e:

@@ -1,14 +1,9 @@
 <template>
+    <ReturnBar />
     <div class="container-block">
-        <div class="order-container">
-            <div class="select-title">Select</div>
-            <div class="orderId-title">Order id</div>
-            <div class="user-title">User name</div>
-            <div class="item-title">User</div>
-            <div class="quantity-title">quantity</div>
-        </div>
+        <h2 class="title">Orders</h2>
         <ul>
-            <li v-for="(value, index) of allOrdersList" class="order-container">
+            <li v-for="(order, index) of allOrdersList" class="order-container">
                 <div class="check-block">
                     <input
                         type="checkbox"
@@ -16,33 +11,50 @@
                         v-model="selectedOrders"
                     />
                 </div>
-                <div class="orderId-block">{{ value.orderId }}</div>
-                <div class="user-block">{{ username }}</div>
-                <div class="item-block">{{ value.item.name }}</div>
-                <div class="quantity-block">{{ value.totalQuantity }}</div>
+                <RouterLink
+                    :to="{ name: 'orderdetail' }"
+                    class="order-link"
+                    @click="storeOrder(index)"
+                >
+                    <div class="img-container">
+                        <img src="/src_img/ring1.png" alt="/no" />
+                    </div>
+                    <div class="info-container">
+                        <div class="item-name-block">{{ order.orderId }}</div>
+                        <div class="time-block">2024-02-20</div>
+                        <div class="price-quantity">
+                            <div class="quantity-block">
+                                {{ order.quantity }}
+                            </div>
+                            <div class="price-block">$ 20000</div>
+                        </div>
+                    </div>
+                </RouterLink>
             </li>
         </ul>
     </div>
     <div class="button-group">
-        <button @click="deleteSelectedOrders">Delete Selected</button>
-        <button @click="toHome">Home</button>
+        <button @click="deleteSelectedOrders">Cancel selected orders</button>
+        <button @click="toHome">My Page</button>
     </div>
 </template>
 
 <script lang="ts" setup name="CustomOrder">
 import { ref, onMounted } from "vue";
 import type { Order, Item, User } from "@/types/index";
-import { useUserStore } from "@/stores/index";
-import { useRouter } from "vue-router";
+import { useOrderStore, useUserStore } from "@/stores/index";
+import { useRouter, RouterLink } from "vue-router";
+import ReturnBar from "@/components/ReturnBar.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
-const username = ref<string | undefined>(userStore.user?.username);
+const orderStore = useOrderStore();
 const allOrdersList = ref<Array<Order>>([]);
+
 const selectedOrders = ref<Array<Order>>([]); // 存储选中的订单项
 
 const toHome = () => {
-    router.push({ name: "usercenter" });
+    router.push({ name: "user" });
 };
 
 const deleteSelectedOrders = () => {
@@ -100,18 +112,26 @@ const fetchAllOrders = () => {
         .then((data) => {
             for (const d of data) {
                 console.log(d);
-                const _item: Item = d.item_info;
-                const _userId: string = d.user_info.id;
+                const _item = d.item;
+                const _user = d.user;
                 const _order: Order = {
                     orderId: d.order_id,
                     item: _item,
-                    userId: _userId,
-                    totalQuantity: d.totalQuantity,
+                    user: _user,
+                    quantity: d.quantity,
+                    totalPrice: d.total_price,
+                    createdTime: d.created_at,
+                    updatedTime: d.updated_at,
                 };
                 allOrdersList.value.push(_order);
             }
         })
         .catch((error) => console.error(error));
+};
+
+const storeOrder = (index: number) => {
+    const storedOrder = allOrdersList.value[index];
+    orderStore.setOrder(storedOrder);
 };
 
 onMounted(() => {
@@ -121,16 +141,65 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.order-container {
-    padding: 0.2rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+.container-block > h2 {
+    margin: 2rem 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid black;
 }
 
-.order-container div {
+.container-block {
+    padding-top: 2rem;
+    height: calc(100% - 11rem);
+    overflow: auto;
+}
+
+.order-container {
+    box-sizing: border-box;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ccc;
+}
+
+.check-block {
+    padding: 0.5rem;
+}
+
+.order-link {
+    box-sizing: border-box;
+    display: flex;
     flex: 1;
-    text-align: center;
+    padding: 0.4rem;
+    color: black;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.img-container {
+    box-sizing: border-box;
+    height: 8rem;
+}
+
+.img-container img {
+    box-sizing: border-box;
+    height: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+}
+
+.info-container {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+}
+
+.price-quantity {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .button-group {
@@ -139,17 +208,14 @@ onMounted(() => {
     flex-direction: row;
     justify-content: space-evenly;
     padding-top: 1rem;
+    box-shadow: 0 -2px 2px rgba(0, 0, 0, 0.1);
+    height: 3rem;
 }
+
 .button-group button {
     padding: 1rem 3rem;
     background-color: white;
     color: black;
     border: 1px solid black;
-}
-
-.orderId-block {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 </style>

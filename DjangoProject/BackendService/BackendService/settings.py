@@ -166,6 +166,11 @@ CSRF_USE_SESSIONS = False
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-LANGUAGE_CODE = 'zh-hans'
+LANGUAGE_CODE = 'ko'
 
 APPEND_SLASH = TrueCSRF_COOKIE_HTTPONLY = True
+
+
+VUE_BASE_DIR = Path.cwd() / 'vueProjects' / 'src' / 'src_img'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = VUE_BASE_DIR

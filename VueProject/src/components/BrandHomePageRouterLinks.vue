@@ -19,8 +19,7 @@
     </nav>
 </template>
 
-<script lang="ts" setup name="ClassHomePageRouterLinks">
-import SearchBar from "@/components/SearchBar.vue";
+<script lang="ts" setup name="BrandHomePageRouterLinks">
 import { RouterLink, useRoute } from "vue-router";
 import { ref, computed, onMounted, watch, onUnmounted, nextTick } from "vue";
 const route = useRoute();
@@ -34,28 +33,28 @@ const linkStyle = {
 
 const linksList = ref([
     {
-        hrefName: "classpage1",
-        textContent: "class1",
+        hrefName: "brandpage1",
+        textContent: "brand1",
         style: linkStyle,
     },
     {
-        hrefName: "classpage2",
-        textContent: "class2",
+        hrefName: "brandpage2",
+        textContent: "brand2",
         style: linkStyle,
     },
     {
-        hrefName: "classpage3",
-        textContent: "class3",
+        hrefName: "brandpage3",
+        textContent: "brand3",
         style: linkStyle,
     },
     {
-        hrefName: "classpage4",
-        textContent: "class4",
+        hrefName: "brandpage4",
+        textContent: "brand4",
         style: linkStyle,
     },
     {
-        hrefName: "classpage5",
-        textContent: "class5",
+        hrefName: "brandpage5",
+        textContent: "brand5",
         style: linkStyle,
     },
 ]);

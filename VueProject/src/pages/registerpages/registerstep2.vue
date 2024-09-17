@@ -10,7 +10,7 @@
         </div>
         <form>
             <div class="form-n">
-                <h5 class="sub-title">이이디</h5>
+                <h3 class="sub-title">이이디</h3>
                 <div class="sub-input">
                     <label class="hint-style"
                         >사용자 이름은 3~20개의 문자, 숫자 또는 밑줄로
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="form-n">
-                <h5 class="sub-title">비밀번호</h5>
+                <h3 class="sub-title">비밀번호</h3>
                 <div class="sub-input">
                     <label class="hint-style"
                         >비밀번호는 다음을 포함해야 합니다. 최소 소문자 (a-z)
@@ -183,116 +183,103 @@ function updateButtonStyle() {
 watch([username, password], updateButtonStyle);
 </script>
 
-<style scoped>
-.hint-label {
-    color: red;
-    font-size: 0.3em;
-}
-.block {
-    width: 100%;
-    height: 100%;
+<style scoped>.block {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: start;
-    padding-top: 3em;
-    margin-bottom: 1px;
-}
-
-form {
-    font-family: "Courier New", Courier, monospace;
     width: 100%;
-    height: 75%;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
-    animation: left-shift 0.5s ease-out forwards;
 }
 
 .progress-bar-block {
-    width: 75%;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.form-n {
-    width: 75%;
-}
-
-.sub-title {
-    width: 100%;
-    text-align: left;
-}
-
-.sub-input {
-    padding: 2% 0 5% 0;
-    width: 100%;
-}
-
-.sub-input input {
-    outline: none;
-    box-sizing: border-box;
-    padding: 15px;
-    border-radius: 0;
-    font-size: 0.8rem;
-    border: 1px solid #bbb;
-    font: 13px;
-    width: 100%;
-}
-
-.button-block {
-    padding: 10% 0 10px 0;
-    width: 75%;
-}
-
-.button-block button {
-    border: 2px solid black;
-    background-color: black;
-    color: white;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 15px;
-    font-size: 0.8em;
-    outline: none;
+    padding: 2rem 3rem 0 3rem;
 }
 
 .progress-bar {
-    height: 2px;
+    box-sizing: border-box;
     width: 100%;
-    background-color: #bbb;
+    height: 2px;
+    background-color: #ccc;
 }
 
 .custom-progress {
+    width: 50%;
     height: 100%;
-    width: 100%;
     background-color: black;
 }
 
 .progress-text-block {
-    padding-top: 5%;
+    box-sizing: border-box;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+}
+
+form {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form-n {
+    box-sizing: border-box;
+    width: 100%;
+    padding-bottom: 1rem;
+}
+
+.sub-input {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.sub-input input {
+    box-sizing: border-box;
+    display: block;
+    border: 2px solid black;
+    padding: 0.7rem;
+    font-size: 1.1rem;
+    width: 100%;
+    outline: none;
+    border-radius: 0;
+}
+
+.sub-title {
+    padding: 0.2rem 0;
+}
+.hint-style {
+    color:rgb(3, 3, 209);
     font-size: 0.8rem;
 }
 
-.progress-text-block span {
-    font-weight: bold;
-    font-family: "Courier New", Courier, monospace;
+.button-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2rem;
 }
 
-.hint-style {
-    color: #1c1ccc;
-    font-size: 0.2em;
+.button-block button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
 }
 
-@keyframes left-shift {
+@keyframes up-shift {
     from {
         opacity: 0;
-        transform: translateX(100px);
+        transform: translateY(100px);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
     }
 }
 </style>

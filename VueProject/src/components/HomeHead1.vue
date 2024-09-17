@@ -2,8 +2,13 @@
     <nav>
         <ul>
             <li v-for="(item, index) in navItems" :key="index">
+                <RouterLink v-if="index !== 1" :to="{ name: item.routeName }">
+                    <img :src="item.imgSrc" :alt="item.altText" />
+                </RouterLink>
                 <RouterLink
-                    :to="{ name: item.route }"
+                    v-else
+                    :to="{}"
+                    @click="$event.preventDefault()"
                 >
                     <img :src="item.imgSrc" :alt="item.altText" />
                 </RouterLink>
@@ -18,28 +23,28 @@ import { ref, onMounted } from "vue";
 
 const navItems = ref([
     {
-        route: "home",
+        routeName: "home",
         imgSrc: "/src_img/ring1.png",
         altText: "ring",
         imgSrcInitial: "/src_img/ring1.png",
         imgSrcActive: "/src_img/ring.png",
     },
     {
-        route: "home",
+        routeName: "home",
         imgSrc: "/src_img/title.png",
         altText: "brand",
         imgSrcInitial: "/src_img/title.png",
         imgSrcActive: "/src_img/title.png",
     },
     {
-        route: "search",
+        routeName: "search",
         imgSrc: "/src_img/search1.png",
         altText: "search",
         imgSrcInitial: "/src_img/search1.png",
         imgSrcActive: "/src_img/search.png",
     },
     {
-        route: "home",
+        routeName: "cart",
         imgSrc: "/src_img/cart1.png",
         altText: "cart",
         imgSrcInitial: "/src_img/cart1.png",

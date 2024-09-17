@@ -10,32 +10,26 @@
         </div>
         <form>
             <div class="form-n">
-                <h5 class="sub-title">이름</h5>
+                <h3 class="sub-title">이름</h3>
                 <div class="sub-input">
-                    <label class="hint-style"
-                        >수취인 성명</label
-                    >
+                    <label class="hint-style">수취인 성명</label>
                     <input type="text" v-model="name" />
                 </div>
             </div>
 
             <div class="form-n">
-                <h5 class="sub-title">이메일/휴대폰 번호</h5>
+                <h3 class="sub-title">이메일/휴대폰 번호</h3>
                 <div class="sub-input">
-                    <label class="hint-style"
-                        >전화나 이메일 주소</label
-                    >
+                    <label class="hint-style">전화나 이메일 주소</label>
                     <input type="text" v-model="tel_email" />
                     <label class="hint-label">{{ telEmailLabelText }}</label>
                 </div>
             </div>
 
             <div class="form-n">
-                <h5 class="sub-title">주소</h5>
+                <h3 class="sub-title">주소</h3>
                 <div class="sub-input">
-                    <label class="hint-style"
-                        >메일 주소</label
-                    >
+                    <label class="hint-style">메일 주소</label>
                     <input type="text" v-model="address" />
                 </div>
             </div>
@@ -71,7 +65,6 @@ const nextButtonStyle = ref();
 const router = useRouter();
 const isDisabled = ref<boolean>(false);
 const userStore = useUserStore();
-
 
 function validateString(input: string): string {
     // 定义正则表达式模式
@@ -146,107 +139,93 @@ watch([name, tel_email], updateButtonStyle);
 </script>
 
 <style scoped>
-.hint-label {
-    color: red;
-    font-size: 0.3em;
-}
-
 .block {
-    width: 100%;
-    height: 100%;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: start;
-    padding-top: 3em;
-    margin-bottom: 1px;
-    background-color: white;
-}
-
-form {
-    font-family: "Courier New", Courier, monospace;
     width: 100%;
-    height: 75%;
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
-    animation: up-shift 0.5s ease-out forwards;
 }
 
 .progress-bar-block {
-    width: 75%;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.form-n {
-    width: 75%;
-}
-
-.sub-title {
-    width: 100%;
-    text-align: left;
-}
-
-.sub-input {
-    padding: 2% 0 5% 0;
-    width: 100%;
-}
-
-.sub-input input {
-    outline: none;
-    box-sizing: border-box;
-    padding: 15px;
-    border-radius: 0;
-    font-size: 0.8rem;
-    border: 1px solid #bbb;
-    font: 13px;
-    width: 100%;
-}
-
-.button-block {
-    padding: 10% 0 10px 0;
-    width: 75%;
-}
-
-.button-block button {
-    border: 2px solid #bbb;
-    background-color: #bbb;
-    color: white;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 15px;
-    font-size: 0.8em;
-    outline: none;
+    padding: 2rem 3rem 0 3rem;
 }
 
 .progress-bar {
-    height: 2px;
+    box-sizing: border-box;
     width: 100%;
-    background-color: #bbb;
+    height: 2px;
+    background-color: #ccc;
 }
 
 .custom-progress {
-    height: 100%;
     width: 50%;
+    height: 100%;
     background-color: black;
 }
 
 .progress-text-block {
-    padding-top: 5%;
+    box-sizing: border-box;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+}
+
+form {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.form-n {
+    box-sizing: border-box;
+    width: 100%;
+    padding-bottom: 1rem;
+}
+
+.sub-input {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.sub-input input {
+    box-sizing: border-box;
+    display: block;
+    border: 2px solid black;
+    padding: 0.7rem;
+    font-size: 1.1rem;
+    width: 100%;
+    outline: none;
+    border-radius: 0;
+}
+
+.sub-title {
+    padding: 0.2rem 0;
+}
+.hint-style {
+    color:rgb(3, 3, 209);
     font-size: 0.8rem;
 }
 
-.progress-text-block span {
-    font-weight: bold;
-    font-family: "Courier New", Courier, monospace;
+.button-block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2rem;
 }
 
-.hint-style {
-    color: #1c1ccc;
-    font-size: 0.2em;
+.button-block button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
 }
 
 @keyframes up-shift {

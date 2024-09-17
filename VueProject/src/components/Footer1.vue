@@ -133,7 +133,6 @@ nav {
     flex-direction: row;
     height: 4rem;
     width: 100%;
-    overflow: auto;
     animation: 0.3s linear 0.1s slideIn;
     box-shadow: 0 -2px 20px 1px rgba(0, 0, 0, 0.1);
     z-index: 1000;
