@@ -182,7 +182,7 @@ onMounted(() => {
 }
 
 .container-block {
-    padding-top: 2rem;
+    padding-top: 2.8rem;
     height: calc(100% - 11rem);
     overflow: auto;
 }

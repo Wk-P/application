@@ -169,3 +169,6 @@ AUTH_USER_MODEL = 'users.CustomUser'
 LANGUAGE_CODE = 'ko'
 
 APPEND_SLASH = TrueCSRF_COOKIE_HTTPONLY = True
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/home/ecs-user/application/VueProject/public/'

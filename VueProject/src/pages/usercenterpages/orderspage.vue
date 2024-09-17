@@ -148,7 +148,7 @@ onMounted(() => {
 }
 
 .container-block {
-    padding-top: 2rem;
+    padding-top: 2.8rem;
     height: calc(100% - 11rem);
     overflow: auto;
 }
@@ -213,7 +213,7 @@ onMounted(() => {
 }
 
 .button-group button {
-    padding: 1rem 3rem;
+    padding: 1rem 2rem;
     background-color: white;
     color: black;
     border: 1px solid black;
