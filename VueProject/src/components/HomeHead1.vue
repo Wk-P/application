@@ -2,7 +2,7 @@
     <nav>
         <ul>
             <li v-for="(item, index) in navItems" :key="index">
-                <RouterLink v-if="index !== 1" :to="{ name: item.routeName }">
+                <RouterLink v-if="index !== 1 && index !== 0" :to="{ name: item.routeName }">
                     <img :src="item.imgSrc" :alt="item.altText" />
                 </RouterLink>
                 <RouterLink
