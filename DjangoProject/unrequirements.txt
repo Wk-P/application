@@ -5,3 +5,4 @@ djangorestframework
 PyMySQL
 sqlparse
 typing_extensions
+Pillow
