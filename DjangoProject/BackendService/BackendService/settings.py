@@ -23,10 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6#6ifya0@c-$ktc%&(g2c&9xiof!tdrhl9th-0(12$)gaiz5o('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
 ALLOWED_HOSTS = ["*",]
-
 
 # Application definition
 
@@ -125,8 +122,6 @@ STATIC_ROOT = [
     BASE_DIR / 'static'
 ]
 
-STATIC_ROOT = '/home/ecs-user/application/DjangoProject/static'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -168,7 +163,33 @@ AUTH_USER_MODEL = 'users.CustomUser'
 
 LANGUAGE_CODE = 'ko'
 
-APPEND_SLASH = TrueCSRF_COOKIE_HTTPONLY = True
+APPEND_SLASH = True
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = '/home/ecs-user/application/VueProject/public/'
+CSRF_COOKIE_HTTPONLY = True
+
+
+import os
+import platform 
+
+current_system = platform.system()
+
+if current_system == 'Linux':
+    # Linux 系统（生产环境）
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
+
+    DEBUG = False
+    
+elif current_system == 'Windows':
+    # Windows 系统（开发环境）
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
+
+    DEBUG = True
+else:
+    # macOS 或其他系统
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+    DEBUG = True
+    ALLOWED_HOSTS = []
