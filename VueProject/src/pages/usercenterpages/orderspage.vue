@@ -2,7 +2,7 @@
     <ReturnBar />
     <div class="container-block">
         <h2 class="title">Orders</h2>
-        <ul>
+        <ul v-if="allOrdersList.length > 0">
             <li v-for="(order, index) of allOrdersList" class="order-container">
                 <div class="check-block">
                     <input
@@ -32,6 +32,12 @@
                 </RouterLink>
             </li>
         </ul>
+        <div v-else class="empty-block">
+            <strong> - No Orders - </strong>
+            <RouterLink :to="{ name: 'home' }" class="link"
+                >Go to shopping</RouterLink
+            >
+        </div>
     </div>
     <div class="button-group">
         <button @click="deleteSelectedOrders">Cancel selected orders</button>
@@ -141,6 +147,26 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.empty-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 10rem;
+}
+
+.link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+    padding: 0.6rem 3rem;
+    text-decoration: none;
+    color: black;
+    border: 2px solid black;
+    font-size: 0.88rem;
+    font-weight: bold;
+}
 .container-block > h2 {
     margin: 2rem 1rem;
     padding-bottom: 1rem;

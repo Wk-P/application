@@ -6,10 +6,11 @@ from pathlib import Path
 # Create your models here.
 # 商品字段
 class Item(models.Model):
-    name = models.CharField(default="noname", max_length=255)
+    name = models.CharField(default="Noname", max_length=255)
+    brand = models.CharField(default='Unknown', max_length=255)
     desc = models.TextField(default=None)
     price = models.BigIntegerField(default=0)
-    title = models.CharField(default='notitle', max_length=255)
+    title = models.CharField(default='Notitle', max_length=255)
     image = models.ImageField(upload_to='item_img/', null=True, blank=True)
 
     def __str__(self):

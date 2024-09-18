@@ -1,15 +1,30 @@
 <template>
     <HomeHead1 />
     <HomeHead2 />
-    <RouterView></RouterView>
+    <div class="page-view-container">
+        <RouterView></RouterView>
+        <BrandBar />
+        <!-- 显示商品列表信息 -->
+    </div>
 </template>
 
 <script lang="ts" setup name="homepage">
 import HomeHead1 from "@/components/HomeHead1.vue";
 import HomeHead2 from "@/components/HomeHead2.vue";
+import BrandBar from "@/components/BrandBar.vue";
 import { RouterView } from "vue-router";
 </script>
 
 <style scoped>
+.page-view-container {
+    height: calc(100% - 8rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
 
+.page-view-container::-webkit-scrollbar {
+    display: none;
+}
 </style>

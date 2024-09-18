@@ -35,7 +35,9 @@
         </ul>
         <div v-else class="empty-block">
             <strong> - No Items - </strong>
-            <RouterLink :to="{ name: 'user' }" class="link">Go to shopping</RouterLink>
+            <RouterLink :to="{ name: 'home' }" class="link"
+                >Go to shopping</RouterLink
+            >
         </div>
     </div>
     <div class="button-group">

@@ -105,7 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
@@ -160,7 +159,6 @@ CSRF_USE_SESSIONS = False
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-LANGUAGE_CODE = 'ko'
 
 APPEND_SLASH = True
 
@@ -176,6 +174,9 @@ if current_system == 'Linux':
     # Linux 系统（生产环境）
     MEDIA_URL = '/media/'
     MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
+    LANGUAGE_CODE = 'en-us'
+    # LANGUAGE_CODE = 'ko'
+    # LANGUAGE_CODE = 'zh-hans'
 
     DEBUG = False
     
@@ -183,6 +184,9 @@ elif current_system == 'Windows':
     # Windows 系统（开发环境）
     MEDIA_URL = '/media/'
     MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
+    # LANGUAGE_CODE = 'en-us'
+    LANGUAGE_CODE = 'ko'
+    # LANGUAGE_CODE = 'zh-hans'
 
     DEBUG = True
 else:

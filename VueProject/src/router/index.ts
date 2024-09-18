@@ -3,10 +3,7 @@ import { useUserStore } from '@/stores/index';
 import Register from "@/pages/registerpages/registerpage.vue";
 import Step1Register from "@/pages/registerpages/registerstep1.vue";
 import Step2Register from "@/pages/registerpages/registerstep2.vue";
-import Start from "@/pages/start/App.vue";
-import Cart from "@/pages/cart/App.vue";
 import NotFoundPage from "@/pages/404page/App.vue";
-import UploadItems from "@/pages/upload/uploadItems.vue";
 
 import Home1 from "@/pages/homepages/homepage.vue";
 import homepage1 from "@/pages/homepages/page1.vue";
@@ -104,11 +101,6 @@ const routes = [
         path: "/search",
         name: "search",
         component: searchpage,
-    },
-    {
-        path: "/start",
-        name: "start",
-        component: Start,
     },
     {
         path: "/register",
