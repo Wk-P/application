@@ -105,7 +105,7 @@ class FetchAllCartItems(APIView):
         else:
             users = CustomUser.objects.filter(username=username)
             if not users.exists():
-                return Response({"error": "Username does not exist"})
+                return Response({"error": "Username does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
             user = users.first()
             items = UserCartItem.objects.filter(user=user)

@@ -2,7 +2,7 @@
     <ReturnBar />
     <div class="container-block">
         <h2 class="title">Cart</h2>
-        <ul>
+        <ul v-if="allCartItemsList.length !== 0">
             <li
                 v-for="(item, index) of allCartItemsList"
                 class="cart-container"
@@ -14,7 +14,11 @@
                         v-model="selectedCartItems"
                     />
                 </div>
-                <RouterLink :to="{ name: 'itemdetail' }" class="cart-link" @click="toItemDetailPage(index)">
+                <RouterLink
+                    :to="{ name: 'itemdetail' }"
+                    class="cart-link"
+                    @click="toItemDetailPage(index)"
+                >
                     <div class="img-container">
                         <img src="/src_img/ring1.png" alt="/no" />
                     </div>
@@ -29,6 +33,10 @@
                 </RouterLink>
             </li>
         </ul>
+        <div v-else class="empty-block">
+            <strong> - No Items - </strong>
+            <RouterLink :to="{ name: 'user' }" class="link">Go to shopping</RouterLink>
+        </div>
     </div>
     <div class="button-group">
         <button @click="deleteSelectedOrders">Delete selected items</button>
@@ -38,7 +46,7 @@
 </template>
 
 <script lang="ts" setup name="CustomOrder">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import type { Order, Item, User } from "@/types/index";
 import { useItemsListStore, useUserStore, useItemStore } from "@/stores/index";
 import { useRouter, RouterLink } from "vue-router";
@@ -49,6 +57,8 @@ const userStore = useUserStore();
 const itemStore = useItemStore();
 const itemsListStore = useItemsListStore();
 const allCartItemsList = ref<Array<Item>>([]);
+
+const isLoggedIn = computed(() => userStore.user?.loginStatus === true);
 
 const selectedCartItems = ref<Array<Item>>([]); // 存储选中的订单项
 const toHome = () => {
@@ -155,9 +165,12 @@ const fetchAllOrders = () => {
             return response.json();
         })
         .then((data) => {
-            for (const d of data) {
-                const _item: Item = d;
-                allCartItemsList.value.push(_item);
+            console.log(data);
+            if (data) {
+                for (const d of data) {
+                    const _item: Item = d;
+                    allCartItemsList.value.push(_item);
+                }
             }
         })
         .catch((error) => console.error(error));
@@ -166,15 +179,41 @@ const fetchAllOrders = () => {
 const toItemDetailPage = (index: number) => {
     const item = allCartItemsList.value[index];
     itemStore.setCustomItem(item);
-}
+};
 
 onMounted(() => {
-    fetchAllOrders();
-    console.log(allCartItemsList.value);
+    console.log(isLoggedIn.value);
+    if (!isLoggedIn.value) {
+        router.push({ name: "user" });
+    } else {
+        fetchAllOrders();
+        console.log(allCartItemsList.value);
+    }
 });
 </script>
 
 <style scoped>
+.empty-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 10rem;
+}
+
+.link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+    padding: 0.6rem 3rem;
+    text-decoration: none;
+    color: black;
+    border: 2px solid black;
+    font-size: 0.88rem;
+    font-weight: bold;
+}
+
 .container-block > h2 {
     margin: 2rem 1rem;
     padding-bottom: 1rem;

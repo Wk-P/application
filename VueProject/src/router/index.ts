@@ -42,13 +42,6 @@ import orderdetailpage from "@/pages/usercenterpages/orderdetailpage.vue";
 import searchpage from "@/pages/searchpages/searchpage.vue";
 import itemdetailpage from "@/pages/detailspages/itemdetailpage.vue";
 
-import adminnav from "@/pages/adminpages/adminnav.vue";
-import adminhome from "@/pages/adminpages/adminhome.vue";
-import adminuserspage from "@/pages/adminpages/adminuserspage.vue";
-import adminitemspage from "@/pages/adminpages/adminitemspage.vue";
-import adminorderspage from "@/pages/adminpages/adminorderspage.vue";
-import admincartspage from "@/pages/adminpages/admincartspage.vue";
-
 const routes = [
     {
         path: "/",
@@ -142,23 +135,6 @@ const routes = [
         name: 'itemdetail',
         component: itemdetailpage,
     },
-    // {
-    //     path: '/admin',
-    //     name: 'admin',
-    //     redirect: { name: "adminnav" },
-    //     children: [
-    //         { path: "adminnav", name: "adminnav", component: adminnav },
-    //         {
-    //             path: "adminhome", name: "adminhome", component: adminhome, children: [
-    //                 { path: "adminitems", name: "adminitems", component: adminitemspage },
-    //                 { path: "adminusers", name: "adminusers", component: adminuserspage },
-    //                 { path: "adminorders", name: "adminorders", component: adminorderspage },
-    //                 { path: "admincarts", name: "admincarts", component: admincartspage },
-    //             ]
-    //         },
-
-    //     ]
-    // }
 ];
 
 const router = createRouter({
