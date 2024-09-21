@@ -17,7 +17,10 @@ import { RouterView } from "vue-router";
 
 <style scoped>
 .page-view-container {
-    height: calc(100% - 8rem);
+    height: calc(100% - 11rem);
+    box-sizing: border-box;
+    width: 100%;
+    padding-bottom: 4rem;
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-width: none; /* firefox */
