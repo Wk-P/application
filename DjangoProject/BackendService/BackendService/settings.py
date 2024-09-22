@@ -11,10 +11,39 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import platform 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+current_system = platform.system()
+
+if current_system == 'Linux':
+    # Linux 系统（生产环境）
+    MEDIA_URL = '/'
+    MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
+    LANGUAGE_CODE = 'en-us'
+    # LANGUAGE_CODE = 'ko'
+    # LANGUAGE_CODE = 'zh-hans'
+
+    DEBUG = False
+    
+elif current_system == 'Windows':
+    # Windows 系统（开发环境）
+    MEDIA_URL = '/'
+    MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
+    # LANGUAGE_CODE = 'en-us'
+    # LANGUAGE_CODE = 'ko'
+    LANGUAGE_CODE = 'zh-hans'
+
+    DEBUG = True
+else:
+    # macOS 或其他系统
+    MEDIA_URL = '/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+    DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -118,7 +147,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Default primary key field type
@@ -166,33 +195,3 @@ APPEND_SLASH = True
 CSRF_COOKIE_HTTPONLY = True
 
 
-import os
-import platform 
-
-current_system = platform.system()
-
-if current_system == 'Linux':
-    # Linux 系统（生产环境）
-    MEDIA_URL = '/'
-    MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
-    LANGUAGE_CODE = 'en-us'
-    # LANGUAGE_CODE = 'ko'
-    # LANGUAGE_CODE = 'zh-hans'
-
-    DEBUG = False
-    
-elif current_system == 'Windows':
-    # Windows 系统（开发环境）
-    MEDIA_URL = '/'
-    MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
-    # LANGUAGE_CODE = 'en-us'
-    # LANGUAGE_CODE = 'ko'
-    LANGUAGE_CODE = 'zh-hans'
-
-    DEBUG = True
-else:
-    # macOS 或其他系统
-    MEDIA_URL = '/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-    DEBUG = True
