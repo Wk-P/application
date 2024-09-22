@@ -4,7 +4,7 @@
     <div class="page-view-container">
         <RouterView></RouterView>
         <BrandBar />
-        <!-- 显示商品列表信息 -->
+        <ItemsViewComponents />
     </div>
 </template>
 
@@ -12,6 +12,7 @@
 import HomeHead1 from "@/components/HomeHead1.vue";
 import HomeHead2 from "@/components/HomeHead2.vue";
 import BrandBar from "@/components/BrandBar.vue";
+import ItemsViewComponents from "@/components/ItemsViewComponents.vue";
 import { RouterView } from "vue-router";
 </script>
 

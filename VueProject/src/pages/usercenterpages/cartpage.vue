@@ -15,20 +15,25 @@
                     />
                 </div>
                 <RouterLink
-                    :to="{ name: 'itemdetail' }"
+                    :to="{
+                        name: 'itemdetail',
+                        params: {
+                            itemId: item.id,
+                            itemName: item.name,
+                            brand: item.brand,
+                            itemTitle: item.title,
+                        },
+                    }"
                     class="cart-link"
                     @click="toItemDetailPage(index)"
                 >
                     <div class="img-container">
-                        <img src="/src_img/ring1.png" alt="/no" />
+                        <img :src="item.image" alt="/no" />
                     </div>
                     <div class="info-container">
-                        <div class="item-name-block">{{ item.id }}</div>
-                        <div class="time-block">2024-02-20</div>
-                        <div class="price-quantity">
-                            <div class="item-block">{{ item.name }}</div>
-                            <div class="price-block">$ 20000</div>
-                        </div>
+                        <div class="item-title-block">{{ item.title }}</div>
+                        <div class="item-block">{{ item.name }}</div>
+                        <div class="price-block">$ {{ item.price }}</div>
                     </div>
                 </RouterLink>
             </li>
@@ -41,7 +46,7 @@
         </div>
     </div>
     <div class="button-group">
-        <button @click="deleteSelectedOrders">Delete selected items</button>
+        <button @click="deleteSelectedItems">Delete selected items</button>
         <button @click="addSeletedCartToOrder">Create order</button>
         <button @click="toHome">My Page</button>
     </div>
@@ -49,7 +54,7 @@
 
 <script lang="ts" setup name="CustomOrder">
 import { ref, onMounted, computed } from "vue";
-import type { Order, Item, User } from "@/types/index";
+import type { Item } from "@/types/index";
 import { useItemsListStore, useUserStore, useItemStore } from "@/stores/index";
 import { useRouter, RouterLink } from "vue-router";
 import ReturnBar from "@/components/ReturnBar.vue";
@@ -60,14 +65,14 @@ const itemStore = useItemStore();
 const itemsListStore = useItemsListStore();
 const allCartItemsList = ref<Array<Item>>([]);
 
-const isLoggedIn = computed(() => userStore.user?.loginStatus === true);
+const isLoggedIn = computed(() => (userStore.user ? true : false));
 
 const selectedCartItems = ref<Array<Item>>([]); // 存储选中的订单项
 const toHome = () => {
     router.push({ name: "user" });
 };
 
-const deleteSelectedOrders = () => {
+const deleteSelectedItems = () => {
     if (selectedCartItems.value.length === 0) {
         alert("No orders selected for deletion.");
         return;
@@ -80,18 +85,22 @@ const deleteSelectedOrders = () => {
 
     console.log(deleteItems);
 
-    fetch("/api/items/delete/", {
-        method: "POST",
+    fetch("/api/items/cart/delete/", {
+        method: "DELETE",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
             deleteItems: deleteItems,
+            user: userStore.user,
         }),
     })
         .then((response) => {
             if (!response.ok) {
-                throw new Error(`Error! HTTP status code ${response.status}`);
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(`Error! HTTP status code ${response.status}`);
+                });
             }
             return response.json();
         })
@@ -124,28 +133,6 @@ const addSeletedCartToOrder = () => {
     console.log(addOrderItems);
     itemsListStore.setItemsList(addOrderItems);
 
-    // fetch("/api/order/create/", {
-    //     method: "POST",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //         addOrderItems: addOrderItems,
-    //     }),
-    // })
-    //     .then((response) => {
-    //         if (!response.ok) {
-    //             throw new Error(`Error! HTTP status code ${response.status}`);
-    //         }
-    //         return response.json();
-    //     })
-    //     .then((data) => {
-    //         console.log(data);
-    //         alert("주문생선됐습니다!");
-    //         router.push({ name: "order" });
-    //     })
-    //     .catch((error) => console.error(error));
-
     // 过滤出剩余订单列表（不包含已选中的订单）
     allCartItemsList.value = allCartItemsList.value.filter(
         (item) => !addOrderItems.includes(item)
@@ -156,24 +143,24 @@ const addSeletedCartToOrder = () => {
     router.push({ name: "createorder" });
 };
 
-const fetchAllOrders = () => {
+const fetchAllCartItems = () => {
     // 获取Orders
     const username = userStore.user?.username;
     fetch(`/api/items/cart/${username}/`)
         .then((response) => {
             if (!response.ok) {
-                throw new Error(`Error! HTTP status code ${response.status}`);
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(`Error! HTTP status code ${response.status}`);
+                });
             }
             return response.json();
         })
         .then((data) => {
-            console.log(data);
-            if (data) {
-                for (const d of data) {
-                    const _item: Item = d;
-                    allCartItemsList.value.push(_item);
-                }
-            }
+            allCartItemsList.value = data.map(
+                (cartItem: { item: Item }) => cartItem.item
+            );
+            console.log(allCartItemsList.value);
         })
         .catch((error) => console.error(error));
 };
@@ -188,7 +175,7 @@ onMounted(() => {
     if (!isLoggedIn.value) {
         router.push({ name: "user" });
     } else {
-        fetchAllOrders();
+        fetchAllCartItems();
         console.log(allCartItemsList.value);
     }
 });
@@ -271,10 +258,16 @@ onMounted(() => {
     padding: 0 0.5rem;
 }
 
-.price-quantity {
+.item-block,
+.item-title-block {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: left;
+}
+.price-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
 }
 
 .button-group {
@@ -294,6 +287,8 @@ onMounted(() => {
     padding: 0 0.5rem;
     background-color: white;
     color: black;
+    margin: 0 0.5rem;
     border: 1px solid black;
+    flex: 1;
 }
 </style>

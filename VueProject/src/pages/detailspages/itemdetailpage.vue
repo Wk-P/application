@@ -2,11 +2,12 @@
     <ReturnBar />
     <div class="container" v-if="item">
         <div class="img-block">
-            <img :src="item.imgLink" alt="item img" />
+            <img :src="item.image" alt="item img" />
         </div>
         <div class="info-block">
             <div class="item-title">{{ item.name }}</div>
-            <h2>$ 20,000</h2>
+            <div class="item-brand">{{ item.brand }}</div>
+            <h2>$ {{ item.price }}</h2>
         </div>
         <div class="option-buttons">
             <button class="button-1">Favorite</button>
@@ -14,26 +15,81 @@
         </div>
     </div>
     <div class="container" v-else>
-        <div class="error-block"><h3 class="error-hint">Item does not exist</h3></div>
+        <div class="error-block">
+            <h3 class="error-hint">Item does not exist</h3>
+        </div>
     </div>
 </template>
 
 <script lang="ts" setup name="detailpage">
 import ReturnBar from "@/components/ReturnBar.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import type { Item } from "@/types/index";
-import { useItemStore } from "@/stores/index";
-const itemStore = useItemStore();
+import { useItemStore, useUserStore } from "@/stores/index";
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
+const router = useRouter();
+const userStore = useUserStore();
+const item = ref<Item | null>(null);
+const isLoggedIn = computed(() => userStore.user ? true : false);
+
+const fetchItemDetails = (id: string) => {
+    if (userStore.user?.username === "admin") {
+        router.push({ name: "user" });
+    }
+    if (!isLoggedIn.value) {
+        router.push({ name: "user" });
+    }
+    fetch(`/api/items/details/${id}/`)
+        .then((response) => {
+            if (!response.ok) {
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(`Error! HTTP status code ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            item.value = data;
+        });
+};
+
 const addToCart = () => {
     fetch(`/api/items/cart/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({item}),
-    });
+        body: JSON.stringify({
+            userId: userStore.user?.id,
+            itemId: item.value?.id,
+        }),
+    })
+    .then((response) => {
+        if (!response.ok) {
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(`Error! HTTP status code ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            } else {
+                alert("Add item success");
+            }
+            window.location.reload();
+        });
 };
-const item = ref<Item | null | undefined>(itemStore.item as Item | undefined);
+
+onMounted(() => {
+    const item_params = route.params;
+    fetchItemDetails(item_params.itemId as string);
+});
 </script>
 
 <style scoped>

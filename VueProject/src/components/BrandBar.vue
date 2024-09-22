@@ -24,6 +24,8 @@ const brandList = ref<Array<string>>([
 
 <style scoped>
 .brand-bar {
+    box-sizing: border-box;
+    padding: 1rem;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -50,10 +52,12 @@ const brandList = ref<Array<string>>([
     flex-wrap: wrap;
     align-content: center;
     justify-content: center;
+    padding: .5rem;
 }
 
 .brand-bar > ul > li > div {
-    width: 80%;
+    box-sizing: border-box;
+    width: 100%;
     height: auto;
     aspect-ratio: 1 / 1;
     background-color: rgba(155, 200, 50, 0.3);

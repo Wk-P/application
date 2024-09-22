@@ -5,7 +5,7 @@
             :key="index"
             @click="pushToDetailPage(item)"
         >
-            <img :src="item.imgLink" alt="" />
+            <img :src="item.image" alt="" />
             <div class="name-block">{{ item.name }}</div>
             <!-- <div class="tool-block">
                 <span>heart | </span>
@@ -52,25 +52,18 @@ const queryItem = () => {
         fetch(`/api/items/search/${query.value}/`)
             .then((response) => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error: ${response.status}`);
+                    response.json().then((error) => {
+                        console.log(error);
+                        throw new Error(
+                            `Error! HTTP status code ${response.status}`
+                        );
+                    });
                 }
                 return response.json();
             })
             .then((data) => {
                 console.log("Search results:", data);
-                itemsList.value = []; // 清空 itemsList
-                for (let d of data) {
-                    const newItem: Item = {
-                        id: d.id,
-                        name: d.name,
-                        desc: d.desc,
-                        title: d.title,
-                        price: d.price,
-                        imgLink: `/item_img/${d.filename}`,
-                    };
-                    itemsList.value.push(newItem);
-                    console.log(itemsList.value);
-                }
+                itemsList.value = data;
                 itemsListStore.setItemsList(itemsList.value);
             })
             .catch((error) =>
@@ -83,23 +76,17 @@ const fetchAllItemLink = () => {
     fetch("/api/items/all/")
         .then((response) => {
             if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`);
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
+                });
             }
             return response.json();
         })
         .then((data) => {
-            itemsList.value = []; // 清空 itemsList
-            for (let d of data) {
-                const newItem: Item = {
-                    id: d.id,
-                    name: d.name,
-                    desc: d.desc,
-                    title: d.title,
-                    price: d.price,
-                    imgLink: `/item_img/${d.filename}`,
-                };
-                itemsList.value.push(newItem);
-            }
+            itemsList.value = data;
             itemsListStore.setItemsList(itemsList.value);
         })
         .catch((error) =>
@@ -176,12 +163,11 @@ onUnmounted(() => {
     sessionStorage.removeItem("searchQuery");
     sessionStorage.removeItem("searchQueryResult");
     queryStore.clearQuery();
-    
+
     // bind target
     if (loader.value && observer) {
         observer.unobserve(loader.value);
     }
-    
 });
 </script>
 

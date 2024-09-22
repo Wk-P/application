@@ -13,13 +13,12 @@ import datetime
 # 订单控制
 class Orders(APIView):
     def get(self, request: Request):
-        ordersSet = Order.objects.all().values('id', 'order_id', 'user_id', 'item_id', 'quantity')
+        ordersSet = Order.objects.all()
 
         result_list = list()
         for order in ordersSet:
             result_list.append(OrderSerializer(order).data)
 
-        print(result_list)
         return Response(result_list, status=status.HTTP_200_OK)
 
 
@@ -27,44 +26,44 @@ class OrderCreate(APIView):
     def post(self, request: Request):
         request_body: dict = request.data
 
-        orders: typing.List[dict[str, str]] = request_body.get('newOrders')
-        # print order request information for logger
-
-        # 遍历 orders 生成订单
-        for order in orders:
-            item = order.get("item")
-            userId = order.get("userId")
-            quantity = order.get("totalQuantity")
-
-            user = CustomUser.objects.filter(id=userId)
-            if user.exists():
-                user = user.first()
-            else:
-                return Response({"error": "User does not exist!"}, status=status.HTTP_204_NO_CONTENT)
+        try:
+            orders: typing.List[dict[str, str]] = request_body.get('newOrders')
+            # print order request information for logger
+            print(orders)
             
-            # 为每一个item生成新的订单
-            item = Item.objects.filter(id=item['id'])
+            # 遍历 orders 生成订单
+            for order in orders:
+                item_id = order.get("itemId")
+                user_id = order.get("userId")
+                quantity = order.get("quantity")
+                total_price = order.get("totalPrice")
+                user = CustomUser.objects.get(id=user_id)
+                item = Item.objects.get(id=item_id)
 
-            if item.exists():
-                item = item.first()
-
+                print(item_id)
+                if (not item_id) or (not user_id) or (quantity <= 0) or (total_price <= 0):
+                    raise Exception('Error')
+                
                 # UserCartItem 删除
-                cartItem = UserCartItem.objects.filter(item=item, user=user)
-                if cartItem.exists():
-                    cartItem = cartItem.first()
-                    cartItem.delete()
+                cartItems = UserCartItem.objects.filter(item=item, user=user)
+                print(cartItems.values())
+                if cartItems.exists():
+                    cartItems.delete()
 
                 # create order id
-                order_id = str(item.id) + str(datetime.datetime.now()).replace(
+                order_id = str(item_id) + str(datetime.datetime.now()).replace(
                 '-', '').replace(' ', 'TT').replace(':', 'EM').replace('.', 'OD')
                 order = Order.objects.create(
                     order_id=order_id, item=item, user=user, quantity=int(quantity),
-                    total_price=int(quantity) * item.price
+                    total_price=float(total_price)
                 )
                 order.save()
-                return Response({"message": "ok"}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Item does not exist"}, status=status.HTTP_200_OK)
+
+            return Response({"message": "ok"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"error": "Error"}, status=status.HTTP_400_BAD_REQUEST)
+            
 
 
 class OrdersSearch(APIView):
@@ -108,7 +107,6 @@ class OrdersSearch(APIView):
             return Response({"userId": userId, "username": username, "orders": ordersList}, status=status.HTTP_200_OK)
         else:
             return Response({"result": None}, status=status.HTTP_404_NOT_FOUND)
-
 
 class DeleteOrder(APIView):
     def post(self, request: Request):

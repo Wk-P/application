@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useUserStore } from '@/stores/index';
 import Register from "@/pages/registerpages/registerpage.vue";
 import Step1Register from "@/pages/registerpages/registerstep1.vue";
 import Step2Register from "@/pages/registerpages/registerstep2.vue";
@@ -35,9 +34,11 @@ import orderspage from "@/pages/usercenterpages/orderspage.vue";
 import cartpage from "@/pages/usercenterpages/cartpage.vue";
 import createorderpage from "@/pages/usercenterpages/createorderpage.vue";
 import orderdetailpage from "@/pages/usercenterpages/orderdetailpage.vue";
+import addressinfopage from "@/pages/usercenterpages/addressinfopage.vue";
 
 import searchpage from "@/pages/searchpages/searchpage.vue";
 import itemdetailpage from "@/pages/detailspages/itemdetailpage.vue";
+
 
 const routes = [
     {
@@ -123,10 +124,15 @@ const routes = [
         hidden: true,
     },
     {
-        path: '/details',
+        path: '/details/:itemId/:brand/:itemTitle/:itemName',
         name: 'itemdetail',
         component: itemdetailpage,
     },
+    {
+        path: '/address/info',
+        name: 'addressInfo',
+        component: addressinfopage,
+    }
 ];
 
 const router = createRouter({

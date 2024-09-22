@@ -34,7 +34,7 @@
         <div class="delivery-info">
             <h3 class="delivery-title">My Delivery</h3>
             <div class="links-block">
-                <RouterLink :to="{ name: 'order' }" class="link-block">
+                <RouterLink :to="{ name: 'addressInfo' }" class="link-block">
                     <h4>Address & Receiver</h4>
                     <img src="/src_img/rightarrow.png" alt="" />
                 </RouterLink>

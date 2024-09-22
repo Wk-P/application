@@ -5,9 +5,8 @@ from rest_framework.request import Request
 from rest_framework import status
 from users.models import CustomUser, CustomUserSerializer
 from items.models import UserCartItem, ItemSerializer, UserCartItemSerializer
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from pathlib import Path
-import platform
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.exceptions import ValidationError
 # Create your views here.
 
 
@@ -19,6 +18,36 @@ class FetchMarcketItems(APIView):
             itemsList.append(ItemSerializer(item).data)
         return Response(itemsList)
 
+class CartItemDelete(APIView):
+    def delete(self, request: Request):
+        error = list()
+        try:
+            request_body = request.data
+            delete_items = request_body.get('deleteItems')
+            user_id = request_body.get('user').get('id')
+            try:
+                user = CustomUser.objects.get(id=user_id)
+            except:
+                return Response({'error': f"User with id {user_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+            for delete_item in delete_items:
+                try:
+                    item_id = delete_item.get('id')
+                    item = Item.objects.get(id=item_id)
+                    cart_item = UserCartItem.objects.get(item=item, user=user)
+                    cart_item.delete()
+                except ObjectDoesNotExist:
+                    error.append(f"Item with id {item_id} not found for user")
+                except Exception as e:
+                    error.append(f"Failed to delete item {item_id}: {str(e)}")
+            if error:
+                return Response({'error': error, 'message': "Some items failed to delete"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': "Delete successful"}, status=status.HTTP_200_OK)
+        
+        except ValidationError as ve:
+            return Response({'error': f"Validation Error: {str(ve)}"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+            return Response({'error': f"Unexpected Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # search cart items
 class ItemsSearch(APIView):
@@ -36,66 +65,6 @@ class ItemsSearch(APIView):
             searchResults = self.search(keywords)
         print(searchResults)
         return Response(searchResults)
-
-
-class ItemFileUpload(APIView):
-    # 支持处理多部分表单数据（用于文件上传）和 JSON 数据
-    parser_classes = [MultiPartParser, FormParser, JSONParser]
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        system = platform.system()
-
-        if system == 'Windows':
-            self.directory = Path.cwd() / 'VueProject' / 'public' / 'item_img'
-        elif system in ['Linux', 'Darwin']:  # 适用于 Unix 和 macOS
-            self.directory = Path.home() / 'application' / 'VueProject' / 'public' / 'item_img'
-        else:
-            raise NotImplementedError(
-                f"Unsupported operating system: {system}")
-
-    def delete(self, request: Request):
-        file_name = request.data.get('file_name')  # 从请求中获取文件名
-        if not file_name:
-            return Response({"error": "File name not provided"}, status=status.HTTP_400_BAD_REQUEST)
-
-        file_path = self.directory / file_name
-
-        if file_path.exists() and file_path.is_file():
-            try:
-                file_path.unlink()  # 删除文件
-                return Response({"message": f"File '{file_name}' deleted successfully!"}, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response({"error": f"File '{file_name}' not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def get(self, request: Request):
-        all_file_names = [
-            f.name for f in self.directory.iterdir() if f.is_file()]
-        return Response(all_file_names, status=status.HTTP_200_OK)
-
-    def post(self, request: Request, *args, **kwargs):
-        uploaded_file = request.FILES.get('file')  # 获取上传的文件
-        request_data = request.data.get('')
-        if uploaded_file:
-            # 使用 pathlib 处理路径
-            file_path = self.directory / uploaded_file.name
-
-            # 确保目标目录存在
-            self.directory.mkdir(parents=True, exist_ok=True)
-
-            # 保存文件
-            try:
-                with file_path.open('wb+') as destination:
-                    for chunk in uploaded_file.chunks():
-                        destination.write(chunk)
-                return Response({"message": "File uploaded successfully!", "file_name": uploaded_file.name}, status=status.HTTP_200_OK)
-            except Exception as e:
-                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class FetchAllCartItems(APIView):
     def get(self, request: Request, username):
@@ -126,7 +95,6 @@ class FetchAllCartItems(APIView):
 
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-
 # add cart items
 class ItemAddToCart(APIView):
     def get(self, request: Request):
@@ -134,43 +102,38 @@ class ItemAddToCart(APIView):
 
     def post(self, request: Request):
         request_body = request.data
-        username = request_body.get('username')
-        item_id = request_body.get('item_id')
+        user_id = request_body.get('userId')
+        item_id = request_body.get('itemId')
 
-        if not username:
+        if not user_id:
             return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
 
         if not item_id:
             return Response({"error": "Itemname deficiency"}, status=status.HTTP_204_NO_CONTENT)
 
-        users = CustomUser.objects.filter(username=username)
-        if not users.exists():
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            item = Item.objects.get(id=item_id)
+
+        except:
             return Response({"error": "Username not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        items = Item.objects.filter(id=item_id)
-        if not items.exists():
-            return Response({"error": "Username not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        user = users.first()
-        item = items.first()
-
-        # UserItem
-        items = UserCartItem.objects.filter(user=user, item=item)
-
-        if items.exists():
-            return Response({"message": "Has been added to cart"}, status=status.HTTP_200_OK)
-
-        # item does not exist
-        else:
+        
+        try:
             cart_item = UserCartItem.objects.create(user=user, item=item)
             cart_item.save()
+        except:
+            return Response({"error": "Item has existed"}, status=status.HTTP_200_OK)
+        
 
-        updated_cart_items = [UserCartItemSerializer(item).data for item in UserCartItem.objects.filter(
-            user=user).values()]
-
-        return Response({"cart-items": updated_cart_items}, status=status.HTTP_200_OK)
-
+        # UserItem check
+        itemcheck = UserCartItem.objects.get(user=user, item=item).item
+        try:
+            return Response({"message": f"{itemcheck.name} has been added to cart"}, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': f"{itemcheck.name} addation failed"}, status=status.HTTP_204_NO_CONTENT)
 
 class FetchItemDetails(APIView):
-    def get(self, request: Request):
-        pass
+    def get(self, request: Request, id: str):
+        
+        item = ItemSerializer(Item.objects.get(id=id)).data
+        return Response(item, status=status.HTTP_200_OK)

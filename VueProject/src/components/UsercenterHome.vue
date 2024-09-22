@@ -26,7 +26,7 @@ import type { User } from "@/types";
 // 检查是否登录
 const userStore = useUserStore();
 const isLoggedIn = ref<boolean>(
-    userStore.user?.loginStatus === true ? true : false
+    userStore.user ? true : false
 );
 
 const user = computed(() => {

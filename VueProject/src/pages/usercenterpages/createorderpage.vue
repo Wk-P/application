@@ -5,7 +5,7 @@
         <ul class="order-items-list">
             <li v-for="(item, index) in itemsList">
                 <div class="img-block">
-                    <img :src="item.imgLink" alt="" />
+                    <img :src="item.image" alt="" />
                 </div>
                 <div class="quantity-block">
                     <h3>Quantity</h3>
@@ -16,24 +16,31 @@
                     </div>
                 </div>
                 <div class="info-block">
-                    <span><strong>{{ item.name }}</strong></span>
-                    <span class="price"><strong>$ {{ item.price }}</strong></span>
+                    <span
+                        ><strong>{{ item.name }}</strong></span
+                    >
+                    <span class="price"
+                        ><strong>$ {{ item.price }}</strong></span
+                    >
                 </div>
             </li>
         </ul>
         <div class="button-group">
-            <button @click="createOrder">Create Order</button>
+            <button @click="createOrders">Create Order</button>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup name="createorderpage">
-import type { Order, Item } from "@/types/index";
-import { useItemStore, useOrderStore, useItemsListStore, useOrdersListStore } from "@/stores/index";
+import type { Order, Item, User } from "@/types/index";
+import { useRouter, useRoute} from "vue-router";
+import { useItemStore, useOrderStore, useItemsListStore, useOrdersListStore, useUserStore } from "@/stores/index";
 import { ref, onMounted } from "vue";
 import ReturnBar from "@/components/ReturnBar.vue";
 const itemStore = useItemStore();
 const orderStore = useOrderStore();
+const router = useRouter();
+const userStore = useUserStore();
 const ordersListStore = useOrdersListStore();
 const itemsListStore = useItemsListStore();
 
@@ -50,17 +57,58 @@ const subQuantity = (index: number) => {
     }
 };
 
-const createOrder = () => {
-    const newOrders: Array<Order> = [];
+const createOrder = (item: Item, quantity: number) => {
+    const newOrder: Order = {
+        orderId: "",
+        user: userStore.user as User,
+        item: item,
+        quantity: quantity,
+        totalPrice: quantity * item.price,
+        createdTime: "",
+        updatedTime: "",
+    };
+    return newOrder;
+}
+
+const createOrders = () => {
+    let newOrders: Array<Order> = [];
+    itemsList.value.forEach(item => {
+        const quantityIndex = itemsList.value.findIndex(i => i.id === item.id);
+        newOrders.push(createOrder(item, listOfQuatity.value[quantityIndex]));
+    })
     ordersListStore.setOrdersList(newOrders);
+
+    fetch(`/api/orders/create/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            newOrders: newOrders
+        })
+    })
+        .then((response) => {
+            console.log(response);
+            if (!response.ok) {
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(`Error! HTTP status code ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            alert("주문생선됐습니다!");
+            router.push({ name: "order" });
+        })
+        .catch((error) => console.log(error.message));
 }
 
 onMounted(() => {
-    itemsList.value.forEach((item) => {
-        listOfQuatity.value.push(0);
-    });
+    itemsList.value = useItemsListStore().itemsList as Array<Item>;
+    listOfQuatity.value = Array<number>(itemsList.value.length).fill(0);
 });
-
 </script>
 
 <style scoped>
@@ -102,7 +150,6 @@ onMounted(() => {
     height: 100%;
 }
 
-
 .quantity-block {
     display: flex;
     flex-direction: row;
@@ -111,9 +158,7 @@ onMounted(() => {
     align-items: center;
 }
 
-.quantity-block
-
-.quantity-container {
+.quantity-block .quantity-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -146,7 +191,6 @@ onMounted(() => {
     text-align: center;
 }
 
-
 .info-block {
     display: flex;
     flex-direction: row;
@@ -161,20 +205,24 @@ onMounted(() => {
 }
 
 .button-group {
-    box-sizing: border-box;
     position: fixed;
-    width: 100%;
     left: 0;
     bottom: 4rem;
-    z-index: 999;
+    padding: 0.8rem 0;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
     height: 3rem;
 }
 
 .button-group button {
-    box-sizing: border-box;
-    height: 100%;
-    background-color: black;
-    color: white;
-    width: 100%;
+    padding: 0 0.5rem;
+    background-color: white;
+    margin: 0 0.5rem;
+    color: black;
+    border: 1px solid black;
+    flex: 1;
 }
 </style>

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cleanup.apps.CleanupConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'items',
@@ -172,7 +173,7 @@ current_system = platform.system()
 
 if current_system == 'Linux':
     # Linux 系统（生产环境）
-    MEDIA_URL = '/media/'
+    MEDIA_URL = '/'
     MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
     LANGUAGE_CODE = 'en-us'
     # LANGUAGE_CODE = 'ko'
@@ -182,16 +183,16 @@ if current_system == 'Linux':
     
 elif current_system == 'Windows':
     # Windows 系统（开发环境）
-    MEDIA_URL = '/media/'
+    MEDIA_URL = '/'
     MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
     # LANGUAGE_CODE = 'en-us'
-    LANGUAGE_CODE = 'ko'
-    # LANGUAGE_CODE = 'zh-hans'
+    # LANGUAGE_CODE = 'ko'
+    LANGUAGE_CODE = 'zh-hans'
 
     DEBUG = True
 else:
     # macOS 或其他系统
-    MEDIA_URL = '/media/'
+    MEDIA_URL = '/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
     DEBUG = True
