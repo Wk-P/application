@@ -27,6 +27,7 @@ if current_system == 'Linux':
     # LANGUAGE_CODE = 'ko'
     # LANGUAGE_CODE = 'zh-hans'
 
+    ALLOWED_HOSTS = ["cskbusiness.com", "localhost"]
     DEBUG = False
     
 elif current_system == 'Windows':
@@ -36,12 +37,15 @@ elif current_system == 'Windows':
     # LANGUAGE_CODE = 'en-us'
     # LANGUAGE_CODE = 'ko'
     LANGUAGE_CODE = 'zh-hans'
+    ALLOWED_HOSTS = ["*",]
+
 
     DEBUG = True
 else:
     # macOS 或其他系统
     MEDIA_URL = '/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    ALLOWED_HOSTS = ["locahost",]
 
     DEBUG = True
 
@@ -52,7 +56,6 @@ else:
 SECRET_KEY = 'django-insecure-6#6ifya0@c-$ktc%&(g2c&9xiof!tdrhl9th-0(12$)gaiz5o('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-ALLOWED_HOSTS = ["*",]
 
 # Application definition
 
@@ -147,8 +150,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, 'staticfiles')
+]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -195,3 +200,5 @@ APPEND_SLASH = True
 CSRF_COOKIE_HTTPONLY = True
 
 
+if __name__ == '__main__':
+    print(BASE_DIR)
