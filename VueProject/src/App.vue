@@ -2,12 +2,12 @@
     <div class="container">
         <RouterView></RouterView>
     </div>
-    <Footer1 />
+    <FooterBlock />
 </template>
 
 <script lang="ts" setup>
 import { RouterView } from "vue-router";
-import Footer1 from "@/components/Footer1.vue";
+import FooterBlock from "@/components/FooterBlock.vue";
 </script>
 
 <style scoped>

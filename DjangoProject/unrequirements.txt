@@ -6,3 +6,4 @@ PyMySQL
 sqlparse
 typing_extensions
 Pillow
+django-cleanup

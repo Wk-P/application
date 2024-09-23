@@ -90,7 +90,6 @@ export async function login(
             name: userData.user.name,
             tel: userData.user.tel,
             username: username,
-            loginStatus: true,
             token: token,
             cookies: userData.user.cookies,
             address: userData.user.address,

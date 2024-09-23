@@ -15,7 +15,7 @@ import LoginComponent from "@/components/LoginComponent.vue";
 import usercenterhome from "@/pages/usercenterpages/usercenterhome.vue";
 const route = useRoute();
 const userStore = useUserStore();
-const isLoggedIn = computed(() => userStore.user?.loginStatus);
+const isLoggedIn = computed(() => userStore.user ? true : false);
 
 </script>
 <style scoped>

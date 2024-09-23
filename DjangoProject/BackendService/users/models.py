@@ -16,8 +16,6 @@ class Address(models.Model):
     receiver = models.TextField(
         max_length=2048, default='Unknown', null=False, blank=False)
 
-# Create your models here.
-
 
 # 用户字段
 class CustomUser(AbstractUser):
@@ -42,7 +40,7 @@ class UserAddress(models.Model):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'name', 'tel', 'email', 'address', 'id']
+        fields = ['username', 'uid', 'name', 'tel', 'email', 'address', 'id']
 
 
 # 序列化地址字段

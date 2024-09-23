@@ -30,7 +30,7 @@ class OrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
-    class Mete:
+    class Meta:
         model = Order
         fields = ['order_id', 'item', 'user', 'quantity',
                   'total_price', 'created_at', 'updated_at']

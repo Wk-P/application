@@ -1,8 +1,15 @@
 <template>
-    <h2>ordertails page</h2>
-    <div>
-        <h3>order info</h3>
-        <strong><i>{{ order }}</i></strong>
+    <ReturnBar />
+    <h1 class="top-title">ordertails page</h1>
+    <div class="container-block">
+        <div class="img-block"><img :src="order.item?.image" alt="" /></div>
+        <div class="info-block">
+            <div><span>ORDER ID</span><span>{{ order.orderId }}</span></div>
+            <div><span>NAME</span><span>{{ order.item?.name }}</span></div>
+            <div><span>PRICE</span><span>{{ order.item?.price }}</span></div>
+            <div><span>QUANTITY</span><span>{{ order.quantity }}</span></div>
+            <div><span>TOTAL PRICE</span><span>{{ order.totalPrice }}</span></div>
+        </div>
     </div>
 </template>
 
@@ -10,6 +17,7 @@
 import type { Order } from "@/types/index";
 import { useOrderStore } from "@/stores/index";
 import { onMounted, ref } from "vue";
+import ReturnBar from "@/components/ReturnBar.vue";
 const order = ref<Order>(useOrderStore().order as Order);
 
 onMounted(() => {
@@ -17,4 +25,42 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.container-block {
+    box-sizing: border-box;
+    height: calc(100% - 6.8rem);
+    overflow-y: auto;
+    padding-bottom: 4rem;
+}
+
+.top-title {
+    margin-top: 2.8rem;
+    margin: 2.8rem 0.5rem 1rem 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid black;
+}
+
+.img-block {
+    box-sizing: border-box;
+    width: 100vw;
+}
+
+.img-block img {
+    box-sizing: border-box;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+}
+
+.info-block div {
+    padding: 0.5rem 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+</style>

@@ -11,10 +11,43 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import platform 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+current_system = platform.system()
+
+if current_system == 'Linux':
+    # Linux 系统（生产环境）
+    MEDIA_URL = '/'
+    MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
+    LANGUAGE_CODE = 'en-us'
+    # LANGUAGE_CODE = 'ko'
+    # LANGUAGE_CODE = 'zh-hans'
+
+    ALLOWED_HOSTS = ["cskbusiness.com", "localhost"]
+    DEBUG = False
+    
+elif current_system == 'Windows':
+    # Windows 系统（开发环境）
+    MEDIA_URL = '/'
+    MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
+    # LANGUAGE_CODE = 'en-us'
+    # LANGUAGE_CODE = 'ko'
+    LANGUAGE_CODE = 'zh-hans'
+    ALLOWED_HOSTS = ["*",]
+
+
+    DEBUG = True
+else:
+    # macOS 或其他系统
+    MEDIA_URL = '/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    ALLOWED_HOSTS = ["locahost",]
+
+    DEBUG = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -23,7 +56,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6#6ifya0@c-$ktc%&(g2c&9xiof!tdrhl9th-0(12$)gaiz5o('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-ALLOWED_HOSTS = ["*",]
 
 # Application definition
 
@@ -34,6 +66,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_cleanup.apps.CleanupConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'items',
@@ -117,8 +150,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'static'
-
+STATICFILES_DIR = [
+    os.path.join(BASE_DIR, 'staticfiles')
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -165,33 +200,5 @@ APPEND_SLASH = True
 CSRF_COOKIE_HTTPONLY = True
 
 
-import os
-import platform 
-
-current_system = platform.system()
-
-if current_system == 'Linux':
-    # Linux 系统（生产环境）
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
-    LANGUAGE_CODE = 'en-us'
-    # LANGUAGE_CODE = 'ko'
-    # LANGUAGE_CODE = 'zh-hans'
-
-    DEBUG = False
-    
-elif current_system == 'Windows':
-    # Windows 系统（开发环境）
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
-    # LANGUAGE_CODE = 'en-us'
-    LANGUAGE_CODE = 'ko'
-    # LANGUAGE_CODE = 'zh-hans'
-
-    DEBUG = True
-else:
-    # macOS 或其他系统
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-    DEBUG = True
+if __name__ == '__main__':
+    print(BASE_DIR)
