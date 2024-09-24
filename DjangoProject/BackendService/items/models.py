@@ -14,15 +14,6 @@ class Item(models.Model):
     desc = models.TextField(default=None)
     price = models.BigIntegerField(default=0)
     title = models.CharField(default='Notitle', max_length=255)
-    image = models.ImageField(upload_to='item_img/', null=True, blank=True)
-
-    def delete(self, *args, **kwargs):
-        if self.image:
-            image_path = self.image.path
-            if os.path.isfile(os.path.normpath(image_path)):
-                os.remove(os.path.normpath(image_path))
-        super(Item, self).delete(*args, **kwargs)
-
 
     def __str__(self):
         return self.name
@@ -42,8 +33,14 @@ class ItemImage(models.Model):
     def __str__(self):
         return f"Image for {self.item.name}"
 
-# 序列化商品字段
+    def delete(self, *args, **kwargs):
+        if self.image:
+            image_path = self.image.path
+            if os.path.isfile(os.path.normpath(image_path)):
+                os.remove(os.path.normpath(image_path))
+        super(Item, self).delete(*args, **kwargs)
 
+# 序列化商品字段
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
