@@ -64,10 +64,10 @@ export const useItemStore = defineStore('item', () => {
         }
     }
 
-    const updateCustomItemField = (field: KEY, value: Item[KEY]) => {
+    const updateCustomItemField = <KEY extends keyof Item>(field: KEY, value: Item[KEY]) => {
         if (item.value) {
             item.value[field] = value as Item[typeof field];
-            setCustomItem()
+            setCustomItem(item.value);
         }
     };
 
@@ -128,8 +128,11 @@ export const useOrderStore = defineStore('order', () => {
         }
     }
 
-    const updateOrder = (newOrder: Order) => {
-        order.value = newOrder;
+    const updateOrder = <KEY extends keyof Order>(field: KEY, value: Order[KEY]) => {
+        if (order.value) {
+            order.value[field] = value as Order[typeof field];
+            setOrder(order.value);
+        }
     };
 
     loadOrder();
@@ -251,5 +254,11 @@ export const useFavoriteItemsListStore = defineStore('favorite', () => {
 
     const updateFavoriteItemsList = (newFavoriteItemsList: Array<Item>) => {
         favoriteItemsList.value = newFavoriteItemsList;
+    }
+
+    loadFavoriteItemsList();
+
+    return {
+        favoriteItemsList, setFavoriteItemsList, clearFavoriteItemsList, loadFavoriteItemsList, updateFavoriteItemsList
     }
 })

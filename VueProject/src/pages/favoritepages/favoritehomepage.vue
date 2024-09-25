@@ -2,16 +2,16 @@
     <ReturnBar />
     <div class="container-block">
         <h2 class="title">Cart</h2>
-        <ul v-if="allCartItemsList.length !== 0">
+        <ul v-if="allFavoriteItemsList.length !== 0">
             <li
-                v-for="(item, index) of allCartItemsList"
+                v-for="(item, index) of allFavoriteItemsList"
                 class="cart-container"
             >
                 <div class="check-block">
                     <input
                         type="checkbox"
                         :value="index"
-                        v-model="selectedCartItems"
+                        v-model="selectedFavoriteItems"
                     />
                 </div>
                 <RouterLink
@@ -47,7 +47,7 @@
     </div>
     <div class="button-group">
         <button @click="deleteSelectedItems">Delete selected items</button>
-        <button @click="addSeletedToCart">Create order</button>
+        <button @click="addSeletedToCart">Add to cart</button>
         <button @click="toHome">My Page</button>
     </div>
 </template>
@@ -55,32 +55,33 @@
 <script lang="ts" setup name="favoritepage">
 import { ref, onMounted, computed } from "vue";
 import type { Item } from "@/types/index";
-import { useItemsListStore, useUserStore, useItemStore } from "@/stores/index";
+import { useFavoriteItemsListStore, useUserStore, useItemStore, useItemsListStore } from "@/stores/index";
 import { useRouter, RouterLink } from "vue-router";
 import ReturnBar from "@/components/ReturnBar.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
 const itemStore = useItemStore();
+const favoritesStore = useFavoriteItemsListStore();
 const itemsListStore = useItemsListStore();
-const allCartItemsList = ref<Array<Item>>([]);
+const allFavoriteItemsList = ref<Array<Item>>([]); // 在界面中现实的 所有 favorite 商品
 
 const isLoggedIn = computed(() => (userStore.user ? true : false));
 
-const selectedCartItems = ref<Array<Item>>([]); // 存储选中的订单项
+const selectedFavoriteItems = ref<Array<Item>>([]); // 存储选中的喜欢项
 const toHome = () => {
     router.push({ name: "user" });
 };
 
 const deleteSelectedItems = () => {
-    if (selectedCartItems.value.length === 0) {
+    if (selectedFavoriteItems.value.length === 0) {
         alert("No orders selected for deletion.");
         return;
     }
 
-    // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const deleteItems = selectedCartItems.value.map(
-        (_, index) => allCartItemsList.value[index]
+    // 使用索引从 allFavorites 过滤出选中的订单对象
+    const deleteItems = selectedFavoriteItems.value.map(
+        (_, index) => allFavoriteItemsList.value[index]
     );
 
     console.log(deleteItems);
@@ -112,38 +113,38 @@ const deleteSelectedItems = () => {
         .catch((error) => console.error(error));
 
     // 过滤出剩余订单列表（不包含已选中的订单）
-    allCartItemsList.value = allCartItemsList.value.filter(
+    allFavoriteItemsList.value = allFavoriteItemsList.value.filter(
         (item) => !deleteItems.includes(item)
     );
 
-    selectedCartItems.value = [];
+    selectedFavoriteItems.value = [];
 };
 
 const addSeletedToCart = () => {
-    if (selectedCartItems.value.length === 0) {
+    if (selectedFavoriteItems.value.length === 0) {
         alert("No orders selected for deletion.");
         return;
     }
 
     // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const addOrderItems = selectedCartItems.value.map(
-        (_, index) => allCartItemsList.value[index]
+    const addOrderItems = selectedFavoriteItems.value.map(
+        (_, index) => allFavoriteItemsList.value[index]
     );
 
     console.log(addOrderItems);
     itemsListStore.setItemsList(addOrderItems);
 
     // 过滤出剩余订单列表（不包含已选中的订单）
-    allCartItemsList.value = allCartItemsList.value.filter(
+    allFavoriteItemsList.value = allFavoriteItemsList.value.filter(
         (item) => !addOrderItems.includes(item)
     );
 
-    selectedCartItems.value = [];
+    selectedFavoriteItems.value = [];
 
     router.push({ name: "createorder" });
 };
 
-const fetchAllCartItems = () => {
+const fetchAllFavoriteItems = () => {
     // 获取Orders
     const username = userStore.user?.username;
     fetch(`/api/items/cart/${username}/`)
@@ -157,16 +158,16 @@ const fetchAllCartItems = () => {
             return response.json();
         })
         .then((data) => {
-            allCartItemsList.value = data.map(
+            allFavoriteItemsList.value = data.map(
                 (cartItem: { item: Item }) => cartItem.item
             );
-            console.log(allCartItemsList.value);
+            console.log(allFavoriteItemsList.value);
         })
         .catch((error) => console.error(error));
 };
 
 const toItemDetailPage = (index: number) => {
-    const item = allCartItemsList.value[index];
+    const item = allFavoriteItemsList.value[index];
     itemStore.setCustomItem(item);
 };
 
@@ -175,8 +176,8 @@ onMounted(() => {
     if (!isLoggedIn.value) {
         router.push({ name: "user" });
     } else {
-        fetchAllCartItems();
-        console.log(allCartItemsList.value);
+        fetchAllFavoriteItems();
+        console.log(allFavoriteItemsList.value);
     }
 });
 </script>

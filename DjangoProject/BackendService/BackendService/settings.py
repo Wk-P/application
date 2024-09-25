@@ -16,6 +16,7 @@ import platform
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 current_system = platform.system()
 
@@ -33,7 +34,7 @@ if current_system == 'Linux':
 elif current_system == 'Windows':
     # Windows 系统（开发环境）
     MEDIA_URL = '/'
-    MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
+    MEDIA_ROOT = APP_DIR / 'VueProject' / 'public'
     # LANGUAGE_CODE = 'en-us'
     # LANGUAGE_CODE = 'ko'
     LANGUAGE_CODE = 'zh-hans'
@@ -203,4 +204,4 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
 if __name__ == '__main__':
-    print(BASE_DIR)
+    print(APP_DIR)

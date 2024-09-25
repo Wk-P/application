@@ -35,8 +35,11 @@ if ($tcpConnection) {
     Write-Host "Port $port is not in use."
 }
 
+
+$appDir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)
+$vueDir = "$appDir\VueProject"
 # 进入 Vue 项目目录
-cd "D:\github\application\VueProject"
+cd $vueDir
 
 # 启动 Vue 开发服务器
 npm run dev
