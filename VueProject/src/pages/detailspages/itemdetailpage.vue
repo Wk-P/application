@@ -2,12 +2,18 @@
     <ReturnBar />
     <div class="container" v-if="item">
         <div class="img-block">
-            <img :src="item.image" alt="item img" />
+            <!-- 多个图片轮播显示 -->
+            <ul>
+                <li v-for="(i) in item.images">
+                    <img :src="i.image" alt="">
+                </li>
+            </ul>
         </div>
         <div class="info-block">
             <div class="item-title">{{ item.name }}</div>
-            <div class="item-brand">{{ item.brand }}</div>
             <h2>$ {{ item.price }}</h2>
+            <div class="item-brand">{{ item.brand }}</div>
+            <div class="item-desc">{{ item.desc }}</div>
         </div>
         <div class="option-buttons">
             <button class="button-1">Favorite</button>
@@ -25,21 +31,16 @@
 import ReturnBar from "@/components/ReturnBar.vue";
 import { ref, onMounted, computed } from "vue";
 import type { Item } from "@/types/index";
-import { useItemStore, useUserStore } from "@/stores/index";
+import { useUserStore } from "@/stores/index";
 import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 const item = ref<Item | null>(null);
-const isLoggedIn = computed(() => userStore.user ? true : false);
-
+    const isLoggedIn = ref<boolean>(
+    userStore.user && userStore.user?.username !== 'admin' ? true : false
+);
 const fetchItemDetails = (id: string) => {
-    if (userStore.user?.username === "admin") {
-        router.push({ name: "user" });
-    }
-    if (!isLoggedIn.value) {
-        router.push({ name: "user" });
-    }
     fetch(`/api/items/details/${id}/`)
         .then((response) => {
             if (!response.ok) {
@@ -56,6 +57,9 @@ const fetchItemDetails = (id: string) => {
 };
 
 const addToCart = () => {
+    if (!isLoggedIn.value) {
+        router.push({ name: "user"});
+    }
     fetch(`/api/items/cart/`, {
         method: "POST",
         headers: {
@@ -133,11 +137,28 @@ onMounted(() => {
     scroll-snap-align: center;
 }
 
-.img-block img {
-    box-sizing: border-box;
-    width: auto;
+.img-block ul {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
     height: 100%;
-    object-fit: cover;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    animation: 0.3s linear 0.1s slideIn;
+}
+
+.img-block ul::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+}
+
+.img-block > ul > li {
+    scroll-snap-align: center;
+}
+
+.img-block > ul > li > img {
+    height: 100%;
+    width: 100vw;
+    object-fit: contain;
 }
 
 .info-block {
@@ -148,6 +169,10 @@ onMounted(() => {
 
 .item-title {
     font-size: 1.2rem;
+}
+
+.item-brand, .item-desc {
+    padding: 0.5rem 0;
 }
 .option-buttons {
     box-sizing: border-box;

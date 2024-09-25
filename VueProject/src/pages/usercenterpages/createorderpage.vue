@@ -5,7 +5,7 @@
         <ul class="order-items-list">
             <li v-for="(item, index) in itemsList">
                 <div class="img-block">
-                    <img :src="item.image" alt="" />
+                    <img :src="item.images[0].image" alt="" />
                 </div>
                 <div class="quantity-block">
                     <h3>Quantity</h3>

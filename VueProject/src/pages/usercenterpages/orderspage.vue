@@ -17,7 +17,7 @@
                     @click="storeOrder(index)"
                 >
                     <div class="img-container">
-                        <img :src="order.item?.image" alt="/no" />
+                        <img :src="order.item?.images[0].image" alt="/no" />
                     </div>
                     <div class="info-container">
                         <div class="item-name-block">{{ order.orderId }}</div>

@@ -2,7 +2,7 @@
     <ReturnBar />
     <h1 class="top-title">ordertails page</h1>
     <div class="container-block">
-        <div class="img-block"><img :src="order.item?.image" alt="" /></div>
+        <div class="img-block"><img :src="order.item?.images[0].image" alt="" /></div>
         <div class="info-block">
             <div><span>ORDER ID</span><span>{{ order.orderId }}</span></div>
             <div><span>NAME</span><span>{{ order.item?.name }}</span></div>

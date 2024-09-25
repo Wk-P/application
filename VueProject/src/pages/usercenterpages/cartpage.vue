@@ -28,7 +28,7 @@
                     @click="toItemDetailPage(index)"
                 >
                     <div class="img-container">
-                        <img :src="item.image" alt="/no" />
+                        <img :src="item.images[0].image" alt="/no" />
                     </div>
                     <div class="info-container">
                         <div class="item-title-block">{{ item.title }}</div>

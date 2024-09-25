@@ -6,7 +6,6 @@ export interface User {
     email: string,
     username: string,
     token: string | null,
-    cookies: string | null,
     address: string | null,
 }
 
@@ -15,9 +14,10 @@ export interface Item {
     name: string,
     desc: string,
     brand: string,
+    class: string,
     title: string,
     price: number,
-    image: string,
+    images: Array<Image>,
 }
 
 export interface Order {
@@ -33,4 +33,8 @@ export interface Order {
 export interface AdminUser {
     username: string,
     token: string | null,
+}
+
+export interface Image {
+    image: string
 }

@@ -64,9 +64,10 @@ export const useItemStore = defineStore('item', () => {
         }
     }
 
-    const updateCustomItemField = <KEY extends keyof Item>(field: KEY, value: Item[KEY]) => {
+    const updateCustomItemField = (field: KEY, value: Item[KEY]) => {
         if (item.value) {
             item.value[field] = value as Item[typeof field];
+            setCustomItem()
         }
     };
 
@@ -226,5 +227,29 @@ export const useAdminStore = defineStore('adminuser', () => {
 
     return {
         adminuser, setAdminUser, clearAdminUser, loadAdminUser, updateAdminUser
+    }
+})
+
+
+export const useFavoriteItemsListStore = defineStore('favorite', () => {
+    const favoriteItemsList = ref<Array<Item> | null>();
+    const setFavoriteItemsList = (newFavoriteItemsList: Array<Item>) => {
+        favoriteItemsList.value = newFavoriteItemsList;
+        localStorage.setItem('favorites', JSON.stringify(newFavoriteItemsList));
+    }
+
+    const clearFavoriteItemsList = () => {
+        localStorage.removeItem('favorites');
+    }
+
+    const loadFavoriteItemsList = () => {
+        const storedFavoriteItemsList = localStorage.getItem('favorites');
+        if (storedFavoriteItemsList) {
+            favoriteItemsList.value = JSON.parse(storedFavoriteItemsList);
+        }
+    }
+
+    const updateFavoriteItemsList = (newFavoriteItemsList: Array<Item>) => {
+        favoriteItemsList.value = newFavoriteItemsList;
     }
 })

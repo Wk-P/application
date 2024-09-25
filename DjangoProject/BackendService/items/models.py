@@ -14,6 +14,7 @@ class Item(models.Model):
     desc = models.TextField(default=None)
     price = models.BigIntegerField(default=0)
     title = models.CharField(default='Notitle', max_length=255)
+    class_name = models.CharField(default='Unknown', max_length=255)
 
     def __str__(self):
         return self.name
@@ -40,12 +41,21 @@ class ItemImage(models.Model):
                 os.remove(os.path.normpath(image_path))
         super(Item, self).delete(*args, **kwargs)
 
+
+class ItemImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemImage
+        fields = ['image']
+
+
 # 序列化商品字段
 
 class ItemSerializer(serializers.ModelSerializer):
+    images = ItemImageSerializer(many=True, read_only=True)  # 添加关联图片的序列化
+
     class Meta:
         model = Item
-        fields = ['id', 'name', 'desc', 'price', 'brand', 'title', 'image']
+        fields = ['id', 'name', 'desc', 'price', 'brand', 'title', 'class_name', 'images']  # 包含 images 字段
 
 
 # 用户购物车商品字段

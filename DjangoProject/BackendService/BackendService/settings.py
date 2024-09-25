@@ -32,7 +32,7 @@ if current_system == 'Linux':
     
 elif current_system == 'Windows':
     # Windows 系统（开发环境）
-    MEDIA_URL = '/media/'
+    MEDIA_URL = '/'
     MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
     # LANGUAGE_CODE = 'en-us'
     # LANGUAGE_CODE = 'ko'
