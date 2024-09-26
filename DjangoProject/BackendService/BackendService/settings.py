@@ -204,4 +204,4 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
 if __name__ == '__main__':
-    print(APP_DIR)
+    print(MEDIA_ROOT)

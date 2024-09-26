@@ -3,12 +3,12 @@ $appDir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definit
 $managePyDir = "$appDir\DjangoProject\BackendService"
 
 # Navigate to the Django project root directory
-cd "$appDir\DjangoProject"
+Set-Location "$appDir\DjangoProject"
 
 # Activate virtual environment (if applicable)
 .\.venv\Scripts\Activate
 
-cd "$appDir"
+Set-Location "$appDir"
 
 # Navigate to the Django project's BackendService directory
 

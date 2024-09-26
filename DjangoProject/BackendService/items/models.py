@@ -24,13 +24,6 @@ class ItemImage(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='images')  # 关联到 Item
     image = models.ImageField(upload_to='item_img/')
 
-    def delete(self, *args, **kwargs):
-        if self.image:
-            image_path = self.image.path
-            if os.path.isfile(os.path.normpath(image_path)):
-                os.remove(os.path.normpath(image_path))
-        super(ItemImage, self).delete(*args, **kwargs)
-
     def __str__(self):
         return f"Image for {self.item.name}"
 
@@ -39,8 +32,7 @@ class ItemImage(models.Model):
             image_path = self.image.path
             if os.path.isfile(os.path.normpath(image_path)):
                 os.remove(os.path.normpath(image_path))
-        super(Item, self).delete(*args, **kwargs)
-
+        super(ItemImage, self).delete(*args, **kwargs)  # 修正为 ItemImage
 
 class ItemImageSerializer(serializers.ModelSerializer):
     class Meta:

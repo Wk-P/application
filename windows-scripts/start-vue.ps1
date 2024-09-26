@@ -39,7 +39,7 @@ if ($tcpConnection) {
 $appDir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Definition)
 $vueDir = "$appDir\VueProject"
 # 进入 Vue 项目目录
-cd $vueDir
+Set-Location $vueDir
 
 # 启动 Vue 开发服务器
 npm run dev
