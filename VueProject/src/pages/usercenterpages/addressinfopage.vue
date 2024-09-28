@@ -2,24 +2,16 @@
     <ReturnBar />
     <div class="container">
         <h2 class="page-title">Address & Receiver Info</h2>
-        <div class="address-container">
-            <h3>Address</h3>
-            <input type="text" />
-        </div>
-        <div class="receiver-container">
-            <h3>Receiver</h3>
-            <input type="text" />
-        </div>
-        <div class="tel-container">
-            <h3>telephone</h3>
-            <input type="text" />
-        </div>
-        <div class="email-container">
-            <h3>email</h3>
-            <input type="text" />
-        </div>
+        <ul>
+            <li v-for="addr_recv in addressReceiverList">
+                <RouterLink :to="{name: 'address_modify', params: {'addrRecvId': addr_recv.id, 'addr': addr_recv.address, 'recv': addr_recv.receiver}}">
+                    <span>{{ addr_recv.address }}</span>
+                    <span>{{ addr_recv.receiver }}</span>
+                </RouterLink>
+            </li>
+        </ul>
         <div class="button-group">
-            <button @click="modifyInfomation">Save</button>
+            <button @click="toAddInfomation">Add</button>
             <button @click="toUsercenterHome">My Page</button>
         </div>
     </div>
@@ -27,16 +19,44 @@
 
 <script lang="ts" setup name="addressinfopage">
 import ReturnBar from "@/components/ReturnBar.vue";
-import { useRouter } from "vue-router";
+import type { AddressReceiver } from "@/types/index";
+import { useRouter, RouterLink } from "vue-router";
+import { useUserStore } from "@/stores/index";
+import { ref, onMounted } from "vue";
 
 const router = useRouter();
-const modifyInfomation = () => {
-    alert("Waiting...");
-}
-const toUsercenterHome = () => {
-    router.push({ name: 'user'});
-}
+const userStore = useUserStore();
+const addressReceiverList = ref<Array<AddressReceiver>>([]);
 
+const getAllAddressReceiver = () => {
+    const user_id = userStore.user?.id;
+    fetch(`/api/user/address/${user_id}/`)
+        .then((response) => {
+            if (!response.ok) {
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(error);
+                });
+            } else {
+                return response.json();
+            }
+        })
+        .then((data) => {
+            addressReceiverList.value = data;
+        });
+};
+
+const toAddInfomation = () => {
+    router.push({ name: "address_add" });
+};
+
+const toUsercenterHome = () => {
+    router.push({ name: "user" });
+};
+
+onMounted(() => {
+    getAllAddressReceiver();
+});
 </script>
 
 <style scoped>

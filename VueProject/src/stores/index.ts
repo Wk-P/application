@@ -1,7 +1,7 @@
 // src/stores/index.ts
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { User, Item, Order, AdminUser } from "@/types/index";
+import type { User, Item, Order, AdminUser, AddressReceiver } from "@/types/index";
 
 
 export const useUserStore = defineStore('user', () => {

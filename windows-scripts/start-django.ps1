@@ -24,6 +24,7 @@ python $managePyDir\manage.py migrate
 
 # Create test user and admin user
 python $managePyDir\manage.py create_users
+python $managePyDir\manager.py create_item
 
 # Run the Django development server
 python $managePyDir\manage.py runserver

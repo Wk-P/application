@@ -14,9 +14,16 @@ const router = useRouter();
 const route = useRoute();
 const returnPrev = () => {
     const routeName = route.matched[0]?.name;
+    const routePath = route.path;
     if (routeName === "register") {
         router.push({ name: "user" });
-    } else if (routeName === 'class' || routeName === 'brand' || routeName === 'favorite') {
+    } else if (routePath === "class" && route.name === 'class') {
+        router.push({ name: "class" });
+    } else if (routePath === "brand" && route.name === 'brand') {
+        router.push({ name: "brand" });
+    } else if (routePath === "favorite" && route.name === 'favorite' ) {
+        router.push({ name: "favorite" });
+    } else if (routePath == "user" && route.name === 'user') {
         router.push({ name: "home" });
     } else {
         router.back();

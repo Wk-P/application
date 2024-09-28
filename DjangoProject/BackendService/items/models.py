@@ -1,9 +1,8 @@
 from django.db import models
 from users.models import CustomUser, CustomUserSerializer
 from rest_framework import serializers
-from pathlib import Path
+from django.conf import settings
 import os
-
 # Create your models here.
 # 商品字段
 
@@ -30,9 +29,10 @@ class ItemImage(models.Model):
     def delete(self, *args, **kwargs):
         if self.image:
             image_path = self.image.path
-            if os.path.isfile(os.path.normpath(image_path)):
-                os.remove(os.path.normpath(image_path))
-        super(ItemImage, self).delete(*args, **kwargs)  # 修正为 ItemImage
+            if os.path.isfile(image_path):
+                os.remove(image_path)
+
+        super(ItemImage, self).delete(*args, **kwargs) 
 
 class ItemImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,12 +54,11 @@ class ItemSerializer(serializers.ModelSerializer):
 class UserCartItem(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.BigIntegerField(default=1)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'item'], name='unique_user_item')
+                fields=['user', 'item'], name='unique_user_cart_item')
         ]
 
 
@@ -71,3 +70,39 @@ class UserCartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCartItem
         fields = ['user', 'item']
+
+
+# 用户的喜欢商品字段
+class UserFavoriteItem(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'item'], name='unique_user_favorite_item')
+        ]
+
+
+# 序列化用户的喜欢商品字段
+class UserFavoriteItemSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer()
+    item = ItemSerializer()
+
+    class Meta:
+        model = UserCartItem
+        fields = ['user', 'item']
+
+
+class RecommendItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.item.name
+
+class RecommendItemSerializer(serializers.ModelSerializer):
+    item = ItemSerializer()
+
+    class Meta:
+        model = Item
+        fields = ['item']

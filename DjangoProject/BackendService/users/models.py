@@ -2,20 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from rest_framework import serializers
 from django.db import models
 
-# 地址字段
-class Address(models.Model):
-    country = models.CharField(
-        max_length=255, default='South Korea', null=False, blank=False)
-    city = models.CharField(
-        max_length=255, default='Seoul', null=False, blank=False)
-    street = models.TextField(
-        max_length=2048, default='', null=True, blank=True)
-    room = models.CharField(max_length=255, default='', null=False, blank=True)
-    pcode = models.CharField(
-        max_length=255, default='', null=False, blank=False)
-    receiver = models.TextField(
-        max_length=2048, default='Unknown', null=False, blank=False)
-
 
 # 用户字段
 class CustomUser(AbstractUser):
@@ -24,37 +10,29 @@ class CustomUser(AbstractUser):
     name = models.CharField(max_length=255, default="Unknown")
     tel = models.CharField(max_length=11, unique=True,
                            default='', null=True, blank=True)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.username
-
-
-# 地址用户合并字段
-class UserAddress(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
 
 
 # 序列化用户字段
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username', 'uid', 'name', 'tel', 'email', 'address', 'id']
+        fields = ['username', 'uid', 'name', 'tel', 'email', 'id']
 
 
-# 序列化地址字段
-class AddressSerializer(serializers.ModelSerializer):
+# 收件人地址字段
+class AddressReceiver(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    address = models.TextField(blank=False)
+    receiver = models.CharField(max_length=255, blank=False, default='')
+
+
+class AddressReceirSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Address
-        fields = ['country', 'city', 'street', 'room', 'pcode', 'receiver']
-
-
-# 序列化地址用户合并字段
-class UserAddressSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer()
-    address = AddressSerializer()
-
-    class Meta:
-        model = UserAddress
-        fields = ['user', 'address']  # 包含 user 和 address 两个字段
+        model = AddressReceiver
+        fields = ['id', 'user', 'address', 'receiver']
+        extra_kwargs = {
+            'address': {'required': True}
+        }

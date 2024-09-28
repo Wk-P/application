@@ -19,7 +19,7 @@ if ($processInfo) {
     Write-Host "Port $port is not in use"
 }
 
-Start-Sleep -Seconds 3
+Start-Sleep -Seconds 5
 
 Write-Host "Change directory path"
 cd C:\Projects\github\application\VueProject

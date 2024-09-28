@@ -33,8 +33,14 @@
 
 <script lang="ts" setup name="createorderpage">
 import type { Order, Item, User } from "@/types/index";
-import { useRouter, useRoute} from "vue-router";
-import { useItemStore, useOrderStore, useItemsListStore, useOrdersListStore, useUserStore } from "@/stores/index";
+import { useRouter, useRoute } from "vue-router";
+import {
+    useItemStore,
+    useOrderStore,
+    useItemsListStore,
+    useOrdersListStore,
+    useUserStore,
+} from "@/stores/index";
 import { ref, onMounted } from "vue";
 import ReturnBar from "@/components/ReturnBar.vue";
 const itemStore = useItemStore();
@@ -66,16 +72,20 @@ const createOrder = (item: Item, quantity: number) => {
         totalPrice: quantity * item.price,
         createdTime: "",
         updatedTime: "",
+        status: undefined,
+        tracking_number: undefined,
     };
     return newOrder;
-}
+};
 
 const createOrders = () => {
     let newOrders: Array<Order> = [];
-    itemsList.value.forEach(item => {
-        const quantityIndex = itemsList.value.findIndex(i => i.id === item.id);
+    itemsList.value.forEach((item) => {
+        const quantityIndex = itemsList.value.findIndex(
+            (i) => i.id === item.id
+        );
         newOrders.push(createOrder(item, listOfQuatity.value[quantityIndex]));
-    })
+    });
     ordersListStore.setOrdersList(newOrders);
 
     fetch(`/api/orders/create/`, {
@@ -84,15 +94,17 @@ const createOrders = () => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            newOrders: newOrders
-        })
+            newOrders: newOrders,
+        }),
     })
         .then((response) => {
             console.log(response);
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -103,7 +115,7 @@ const createOrders = () => {
             router.push({ name: "order" });
         })
         .catch((error) => console.log(error.message));
-}
+};
 
 onMounted(() => {
     itemsList.value = useItemsListStore().itemsList as Array<Item>;

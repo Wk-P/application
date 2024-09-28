@@ -1,7 +1,7 @@
 <template>
     <ReturnBar />
     <div class="container-block">
-        <h2 class="title">Cart</h2>
+        <h2 class="title">Favorite</h2>
         <ul v-if="allFavoriteItemsList.length !== 0">
             <li
                 v-for="(item, index) of allFavoriteItemsList"
@@ -86,7 +86,7 @@ const deleteSelectedItems = () => {
 
     console.log(deleteItems);
 
-    fetch("/api/items/cart/delete/", {
+    fetch("/api/items/favorite/delete/", {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -127,27 +127,36 @@ const addSeletedToCart = () => {
     }
 
     // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const addOrderItems = selectedFavoriteItems.value.map(
+    const addCartItems = selectedFavoriteItems.value.map(
         (_, index) => allFavoriteItemsList.value[index]
     );
 
-    console.log(addOrderItems);
-    itemsListStore.setItemsList(addOrderItems);
+    fetch('/api/items/cart_add/', {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            userId: userStore.user?.id,
+            items: addCartItems 
+        })
+    })
+
+    console.log(addCartItems);
+    itemsListStore.setItemsList(addCartItems);
 
     // 过滤出剩余订单列表（不包含已选中的订单）
     allFavoriteItemsList.value = allFavoriteItemsList.value.filter(
-        (item) => !addOrderItems.includes(item)
+        (item) => !addCartItems.includes(item)
     );
 
     selectedFavoriteItems.value = [];
-
-    router.push({ name: "createorder" });
 };
 
 const fetchAllFavoriteItems = () => {
-    // 获取Orders
+    // 获取本用户所有 Favorite 商品
     const username = userStore.user?.username;
-    fetch(`/api/items/cart/${username}/`)
+    fetch(`/api/items/favorite/${username}/`)
         .then((response) => {
             if (!response.ok) {
                 response.json().then((error) => {
@@ -158,10 +167,8 @@ const fetchAllFavoriteItems = () => {
             return response.json();
         })
         .then((data) => {
-            allFavoriteItemsList.value = data.map(
-                (cartItem: { item: Item }) => cartItem.item
-            );
-            console.log(allFavoriteItemsList.value);
+            console.log(data);
+            allFavoriteItemsList.value = data.items;
         })
         .catch((error) => console.error(error));
 };

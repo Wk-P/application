@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'items',
     'orders',
     'users',
+    'notice',
 ]
 
 MIDDLEWARE = [
@@ -154,7 +155,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'staticfiles')
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

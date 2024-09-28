@@ -72,12 +72,16 @@ onMounted(() => {
 
 .li-img {
     height: 15vh;
-    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #eee;
 }
 
 .li-img img {
     box-sizing: border-box;
     height: 100%;
+    object-fit: contain;
 }
 
 .text-block {

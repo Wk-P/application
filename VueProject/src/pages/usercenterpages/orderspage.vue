@@ -24,7 +24,7 @@
                         <div class="time-block">{{ order.createdTime }}</div>
                         <div class="price-quantity">
                             <div class="quantity-block">
-                               x{{ order.quantity }}
+                                x{{ order.quantity }}
                             </div>
                             <div class="price-block">
                                 $ {{ order.totalPrice }}
@@ -91,7 +91,9 @@ const deleteSelectedOrders = () => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -118,7 +120,9 @@ const fetchAllOrders = () => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -134,6 +138,8 @@ const fetchAllOrders = () => {
                     totalPrice: element.total_price,
                     createdTime: element.created_at,
                     updatedTime: element.updated_at,
+                    status: element.status,
+                    tracking_number: element.tracking_number,
                 };
                 allOrdersList.value.push(o);
             });

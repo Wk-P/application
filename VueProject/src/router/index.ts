@@ -35,9 +35,17 @@ import cartpage from "@/pages/usercenterpages/cartpage.vue";
 import createorderpage from "@/pages/usercenterpages/createorderpage.vue";
 import orderdetailpage from "@/pages/usercenterpages/orderdetailpage.vue";
 import addressinfopage from "@/pages/usercenterpages/addressinfopage.vue";
+import addressmodifypage from "@/pages/usercenterpages/addressmodifypage.vue";
+import addressaddpage from "@/pages/usercenterpages/addressaddpage.vue";
+
 
 import searchpage from "@/pages/searchpages/searchpage.vue";
 import itemdetailpage from "@/pages/detailspages/itemdetailpage.vue";
+
+
+import annoucementpage from "@/pages/bulletinboardpages/announcementpage.vue";
+import noticedetails from "@/pages/bulletinboardpages/noticedetails.vue";
+
 
 
 const routes = [
@@ -130,8 +138,28 @@ const routes = [
     },
     {
         path: '/address/info',
-        name: 'addressInfo',
+        name: 'address_receiver',
         component: addressinfopage,
+    },
+    {
+        path: '/address/info/modify/:addrRecvId/:addr/:recv',
+        name: 'address_modify',
+        component: addressmodifypage,
+    },
+    {
+        path: '/address/info/add',
+        name: 'address_add',
+        component: addressaddpage,
+    },
+    {
+        path: '/notice/:noticeId',
+        name: 'noticepage',
+        component: noticedetails,
+    },
+    {
+        path: '/announcement',
+        name: 'annoucementpage',
+        component: annoucementpage,
     }
 ];
 

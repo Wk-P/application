@@ -61,6 +61,13 @@ try {
     Write-Host "Error creating users: $_"
 }
 
+try {
+    python $managePy create_item
+    Write-Host "Created item"
+} catch {
+    Write-Host "Error creating item: $_"
+}
+
 # Switch back to application directory
 cd C:\Projects\github\application
 
