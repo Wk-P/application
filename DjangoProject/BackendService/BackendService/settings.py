@@ -23,7 +23,7 @@ current_system = platform.system()
 if current_system == 'Linux':
     # Linux 系统（生产环境）
     MEDIA_URL = '/media/'
-    MEDIA_ROOT = Path('/home/ecs-user/application/VueProject/public')
+    MEDIA_ROOT = APP_DIR / 'VueProject' / 'public'
     LANGUAGE_CODE = 'en-us'
     # LANGUAGE_CODE = 'ko'
     # LANGUAGE_CODE = 'zh-hans'

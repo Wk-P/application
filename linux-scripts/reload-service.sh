@@ -1,6 +1,6 @@
 sudo systemctl stop nginx
 
-cd ~/application/scripts/ && \
+cd ~/application/linux-scripts/ && \
 ./reload-uwsgi.sh
 ./vue-reload.sh && \
 
