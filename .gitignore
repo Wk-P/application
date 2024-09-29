@@ -3,6 +3,6 @@
 db.sqlite3
 .vscode
 item_img
-DjangoProject/BackendService/*/migrations/
+!DjangoProject/BackendService/*/migrations/__init__.py
 linux-scripts/run/
 __pycache__
