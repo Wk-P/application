@@ -6,3 +6,5 @@ item_img
 migrations
 linux-scripts/run
 __pycache__
+uwsgi.log
+uwsgi.pid
