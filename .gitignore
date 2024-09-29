@@ -3,6 +3,6 @@
 db.sqlite3
 .vscode
 item_img
-migrations
+*/migrations/
 linux-scripts/run/
 __pycache__
