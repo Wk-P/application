@@ -28,7 +28,7 @@
                     @click="toItemDetailPage(index)"
                 >
                     <div class="img-container">
-                        <img v-if="item.images && item.images.length > 0" :src="item.images[0].image" alt="/no" />
+                        <img v-if="item.images && item.images.length >" :src="item.images[0].image" alt="/no" />
                     </div>
                     <div class="info-container">
                         <div class="item-title-block">{{ item.title }}</div>
