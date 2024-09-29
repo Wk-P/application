@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.request import Request
 from rest_framework import status
 
-from notice.models import Notice, NoticeSerializer, UserComment, UserCommentSerializer
+from notices.models import Notice, NoticeSerializer, UserComment, UserCommentSerializer
 
 # Create your views here.
 # For announcement of notice

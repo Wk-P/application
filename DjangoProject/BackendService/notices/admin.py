@@ -1,5 +1,5 @@
 from django.contrib import admin
-from notice.models import Notice, UserComment
+from notices.models import Notice, UserComment
 
 
 # Register your models here.

@@ -24,8 +24,9 @@ class UserComment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
 class UserCommentSerializer(serializers.ModelSerializer):
-    author = CustomUserSerializer()
+    author = CustomUserSerializer()  
     notice = NoticeSerializer()
     
     class Meta:
