@@ -16,7 +16,7 @@ export interface Item {
     class: string,
     title: string,
     price: number,
-    images: Array<Image>,
+    images: Array<Image> | null | undefined,
 }
 
 export interface Order {

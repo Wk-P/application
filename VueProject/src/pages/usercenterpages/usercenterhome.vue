@@ -31,11 +31,20 @@
                 </RouterLink>
             </div>
         </div>
+        <div class="address-info">
+            <h3 class="address-title">My Address & Receiver</h3>
+            <div class="links-block">
+                <RouterLink :to="{ name: 'address_receiver' }" class="link-block">
+                    <h4>Address & Receiver</h4>
+                    <img src="/src_img/rightarrow.png" alt="" />
+                </RouterLink>
+            </div>
+        </div>
         <div class="delivery-info">
             <h3 class="delivery-title">My Delivery</h3>
             <div class="links-block">
                 <RouterLink :to="{ name: 'address_receiver' }" class="link-block">
-                    <h4>Address & Receiver</h4>
+                    <h4>Delivery</h4>
                     <img src="/src_img/rightarrow.png" alt="" />
                 </RouterLink>
             </div>
@@ -98,11 +107,13 @@ const returnPrev = () => {
 
 .container {
     box-sizing: border-box;
+    height: calc(100% - 3rem);
     padding-top: 4rem;
     width: 100%;
     box-sizing: border-box;
     animation: 0.3s linear 0.1s slideIn;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .username-block {
@@ -148,13 +159,14 @@ const returnPrev = () => {
 }
 
 .shopping-info,
-.delivery-info {
+.delivery-info, 
+.address-info {
     box-sizing: border-box;
     width: 100%;
     padding: 2rem;
 }
 
-.shopping-title, .delivery-title {
+.shopping-title, .delivery-title, .address-title {
     padding-bottom: 1rem;
     border-bottom: 1px solid black;
 }

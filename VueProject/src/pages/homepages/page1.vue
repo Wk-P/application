@@ -12,7 +12,7 @@
                             itemName: item.name,
                         },
                     }"
-                    ><img :src="item.images[0].image" alt="img1"
+                    ><img v-if="item.images && item.images.length > 0" :src="item.images[0].image" alt="img1"
                 /></RouterLink>
             </li>
         </ul>
