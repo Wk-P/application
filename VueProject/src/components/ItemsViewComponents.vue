@@ -8,7 +8,7 @@
                 }"
             >
                 <div class="li-img">
-                    <img :src="item.images[0].image" alt="" />
+                    <img v-if="item.images && item.images.length > 0" :src="item.images[0].image" alt="item image" />
                 </div>
                 <div class="text-block">
                     <div class="name-block">{{ item.name }}</div>
