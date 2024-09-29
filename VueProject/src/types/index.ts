@@ -6,7 +6,6 @@ export interface User {
     email: string,
     username: string,
     token: string | null,
-    address: string | null,
 }
 
 export interface Item {

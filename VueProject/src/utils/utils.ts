@@ -91,8 +91,6 @@ export async function login(
             tel: userData.user.tel,
             username: username,
             token: token,
-            cookies: userData.user.cookies,
-            address: userData.user.address,
         };
 
         return { success: true, user: userObj };
