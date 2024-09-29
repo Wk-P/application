@@ -7,3 +7,4 @@ sqlparse
 typing_extensions
 Pillow
 django-cleanup
+uWSGI
