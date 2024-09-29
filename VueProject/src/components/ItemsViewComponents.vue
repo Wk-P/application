@@ -8,7 +8,7 @@
                 }"
             >
                 <div class="li-img">
-                    <img :src="item.image" alt="" />
+                    <img :src="item.images[0].image" alt="" />
                 </div>
                 <div class="text-block">
                     <div class="name-block">{{ item.name }}</div>
@@ -35,11 +35,13 @@ const fetchAllViewItems = () => {
         })
         .then((data) => {
             itemsList.value = data;
+            console.log(itemsList.value);
         });
 };
 
 onMounted(() => {
     fetchAllViewItems();
+    console.log(itemsList.value);
 });
 </script>
 
@@ -70,12 +72,16 @@ onMounted(() => {
 
 .li-img {
     height: 15vh;
-    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #eee;
 }
 
 .li-img img {
     box-sizing: border-box;
     height: 100%;
+    object-fit: contain;
 }
 
 .text-block {

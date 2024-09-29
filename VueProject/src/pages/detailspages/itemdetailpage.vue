@@ -2,16 +2,26 @@
     <ReturnBar />
     <div class="container" v-if="item">
         <div class="img-block">
-            <img :src="item.image" alt="item img" />
+            <!-- 多个图片轮播显示 -->
+            <ul>
+                <li v-for="i in item.images">
+                    <img :src="i.image" alt="" />
+                </li>
+            </ul>
         </div>
         <div class="info-block">
             <div class="item-title">{{ item.name }}</div>
-            <div class="item-brand">{{ item.brand }}</div>
             <h2>$ {{ item.price }}</h2>
+            <div class="item-brand">{{ item.brand }}</div>
+            <div class="item-desc">{{ item.desc }}</div>
         </div>
         <div class="option-buttons">
-            <button class="button-1">Favorite</button>
-            <button class="button-2" @click="addToCart">Add to cart</button>
+            <button class="button-1" @click="addToFavorite">
+                <img src="/src_img/heart2.png" alt="" />
+            </button>
+            <button class="button-2" @click="addToCart">
+                <img src="/src_img/cart2.png" alt="" />
+            </button>
         </div>
     </div>
     <div class="container" v-else>
@@ -25,27 +35,24 @@
 import ReturnBar from "@/components/ReturnBar.vue";
 import { ref, onMounted, computed } from "vue";
 import type { Item } from "@/types/index";
-import { useItemStore, useUserStore } from "@/stores/index";
+import { useUserStore } from "@/stores/index";
 import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
 const item = ref<Item | null>(null);
-const isLoggedIn = computed(() => userStore.user ? true : false);
-
+const isLoggedIn = ref<boolean>(
+    userStore.user && userStore.user?.username !== "admin" ? true : false
+);
 const fetchItemDetails = (id: string) => {
-    if (userStore.user?.username === "admin") {
-        router.push({ name: "user" });
-    }
-    if (!isLoggedIn.value) {
-        router.push({ name: "user" });
-    }
     fetch(`/api/items/details/${id}/`)
         .then((response) => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -55,8 +62,12 @@ const fetchItemDetails = (id: string) => {
         });
 };
 
-const addToCart = () => {
-    fetch(`/api/items/cart/`, {
+const addToFavorite = () => {
+    if (!isLoggedIn.value) {
+        router.push({ name: "user" });
+    }
+
+    fetch(`/api/items/favorite_add/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -66,11 +77,48 @@ const addToCart = () => {
             itemId: item.value?.id,
         }),
     })
-    .then((response) => {
-        if (!response.ok) {
+        .then((response) => {
+            if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            } else {
+                alert("Add item success");
+            }
+        });
+};
+
+const addToCart = () => {
+    if (!isLoggedIn.value) {
+        router.push({ name: "user" });
+    }
+    fetch(`/api/items/cart_add/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            userId: userStore.user?.id,
+            itemId: item.value?.id,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -133,11 +181,28 @@ onMounted(() => {
     scroll-snap-align: center;
 }
 
-.img-block img {
-    box-sizing: border-box;
-    width: auto;
+.img-block ul {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
     height: 100%;
-    object-fit: cover;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    animation: 0.3s linear 0.1s slideIn;
+}
+
+.img-block ul::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+}
+
+.img-block > ul > li {
+    scroll-snap-align: center;
+}
+
+.img-block > ul > li > img {
+    height: 100%;
+    width: 100vw;
+    object-fit: contain;
 }
 
 .info-block {
@@ -149,14 +214,19 @@ onMounted(() => {
 .item-title {
     font-size: 1.2rem;
 }
+
+.item-brand,
+.item-desc {
+    padding: 0.5rem 0;
+}
 .option-buttons {
     box-sizing: border-box;
     position: fixed;
-    z-index: 1000;
+    z-index: 999;
     bottom: 4rem;
     left: 0;
     height: 3rem;
-    width: 100%;
+    width: 100vw;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -168,10 +238,25 @@ onMounted(() => {
     border-right: 1px white solid;
     border-left: none;
     width: 50%;
+    height: 100%;
     border-bottom: 1px solid black;
     border-top: 1px solid black;
     background-color: black;
     color: white;
+}
+
+.button-1 img {
+    box-sizing: border-box;
+    padding: 0.2rem;
+    height: 100%;
+    background-color: black;
+}
+
+.button-2 img {
+    box-sizing: border-box;
+    padding: 0.2rem;
+    height: 100%;
+    background-color: black;
 }
 
 .option-buttons .button-2 {

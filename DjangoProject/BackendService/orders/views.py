@@ -33,8 +33,8 @@ class OrderCreate(APIView):
             
             # 遍历 orders 生成订单
             for order in orders:
-                item_id = order.get("itemId")
-                user_id = order.get("userId")
+                item_id = order.get("item").get('id')
+                user_id = order.get("user").get('id')
                 quantity = order.get("quantity")
                 total_price = order.get("totalPrice")
                 user = CustomUser.objects.get(id=user_id)

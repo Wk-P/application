@@ -16,6 +16,7 @@ import platform
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 current_system = platform.system()
 
@@ -32,8 +33,8 @@ if current_system == 'Linux':
     
 elif current_system == 'Windows':
     # Windows 系统（开发环境）
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = Path('C:/Projects/github/application/VueProject/public')
+    MEDIA_URL = '/'
+    MEDIA_ROOT = APP_DIR / 'VueProject' / 'public'
     # LANGUAGE_CODE = 'en-us'
     # LANGUAGE_CODE = 'ko'
     LANGUAGE_CODE = 'zh-hans'
@@ -72,6 +73,7 @@ INSTALLED_APPS = [
     'items',
     'orders',
     'users',
+    'notice',
 ]
 
 MIDDLEWARE = [
@@ -153,7 +155,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'staticfiles')
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -203,4 +205,4 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB
 
 if __name__ == '__main__':
-    print(BASE_DIR)
+    print(MEDIA_ROOT)

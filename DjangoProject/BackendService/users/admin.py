@@ -1,11 +1,15 @@
 from django.contrib import admin
 
 # Register your models here.
-from users.models import CustomUser
+from users.models import CustomUser, AddressReceiver
 from django.contrib.auth.admin import UserAdmin
 
 # 继承UserAdmin 网页添加用户的密码自动加密
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
 
+class AddressReceiverAdmin(admin.ModelAdmin):
+    model = AddressReceiver
+
 admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(AddressReceiver, AddressReceiverAdmin)

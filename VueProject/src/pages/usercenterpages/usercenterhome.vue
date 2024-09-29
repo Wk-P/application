@@ -25,7 +25,7 @@
                     <h4>Cart</h4>
                     <img src="/src_img/rightarrow.png" alt="" />
                 </RouterLink>
-                <RouterLink :to="{ name: 'user' }" class="link-block">
+                <RouterLink :to="{ name: 'favorite' }" class="link-block">
                     <h4>Favorite</h4>
                     <img src="/src_img/rightarrow.png" alt="" />
                 </RouterLink>
@@ -34,7 +34,7 @@
         <div class="delivery-info">
             <h3 class="delivery-title">My Delivery</h3>
             <div class="links-block">
-                <RouterLink :to="{ name: 'addressInfo' }" class="link-block">
+                <RouterLink :to="{ name: 'address_receiver' }" class="link-block">
                     <h4>Address & Receiver</h4>
                     <img src="/src_img/rightarrow.png" alt="" />
                 </RouterLink>

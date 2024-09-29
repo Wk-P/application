@@ -4,12 +4,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "vite", 
-        "build": "npm run prebuild && npm run type-check && npm run build-only", 
+        "dev": "vite",
+        "build": "npm run prebuild && npm run type-check && npm run build-only",
         "preview": "vite preview",
-        "build-only": "node --max-old-space-size=2688 node_modules/.bin/vite build", 
-        "type-check": "vue-tsc --build --force", 
-        "clean": "rm -rf dist", 
+        "build-only": "node --max-old-space-size=2688 node_modules/.bin/vite build",
+        "type-check": "vue-tsc --build --force",
+        "clean": "rm -rf dist",
         "clean-cache": "npm cache verify",
         "prebuild": "npm run clean && npm run clean-cache"
     },

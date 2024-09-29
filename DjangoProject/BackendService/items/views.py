@@ -4,7 +4,7 @@ from items.models import Item
 from rest_framework.request import Request
 from rest_framework import status
 from users.models import CustomUser, CustomUserSerializer
-from items.models import UserCartItem, ItemSerializer, UserCartItemSerializer
+from items.models import UserCartItem, ItemSerializer, UserCartItemSerializer, UserFavoriteItem, RecommendItem, RecommendItemSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import ValidationError
 # Create your views here.
@@ -17,6 +17,7 @@ class FetchMarcketItems(APIView):
         for item in items:
             itemsList.append(ItemSerializer(item).data)
         return Response(itemsList)
+
 
 class CartItemDelete(APIView):
     def delete(self, request: Request):
@@ -42,14 +43,16 @@ class CartItemDelete(APIView):
             if error:
                 return Response({'error': error, 'message': "Some items failed to delete"}, status=status.HTTP_400_BAD_REQUEST)
             return Response({'message': "Delete successful"}, status=status.HTTP_200_OK)
-        
+
         except ValidationError as ve:
             return Response({'error': f"Validation Error: {str(ve)}"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         except Exception as e:
             return Response({'error': f"Unexpected Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # search cart items
+
+
 class ItemsSearch(APIView):
     def search(self, query: str):
         searchResultList = list(Item.objects.filter(
@@ -65,6 +68,7 @@ class ItemsSearch(APIView):
             searchResults = self.search(keywords)
         print(searchResults)
         return Response(searchResults)
+
 
 class FetchAllCartItems(APIView):
     def get(self, request: Request, username):
@@ -96,6 +100,8 @@ class FetchAllCartItems(APIView):
         return Response(serialized_data, status=status.HTTP_200_OK)
 
 # add cart items
+
+
 class ItemAddToCart(APIView):
     def get(self, request: Request):
         return Response({"message": "OK"})
@@ -117,13 +123,12 @@ class ItemAddToCart(APIView):
 
         except:
             return Response({"error": "Username not found"}, status=status.HTTP_404_NOT_FOUND)
-        
+
         try:
             cart_item = UserCartItem.objects.create(user=user, item=item)
             cart_item.save()
         except:
             return Response({"error": "Item has existed"}, status=status.HTTP_200_OK)
-        
 
         # UserItem check
         itemcheck = UserCartItem.objects.get(user=user, item=item).item
@@ -132,8 +137,72 @@ class ItemAddToCart(APIView):
         except:
             return Response({'error': f"{itemcheck.name} addation failed"}, status=status.HTTP_204_NO_CONTENT)
 
+
 class FetchItemDetails(APIView):
     def get(self, request: Request, id: str):
-        
+
         item = ItemSerializer(Item.objects.get(id=id)).data
         return Response(item, status=status.HTTP_200_OK)
+
+
+class FetchAllFavoriteItems(APIView):
+    def get(self, request: Request, username):
+        if not username:
+            return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
+
+        try:
+            user = CustomUser.objects.get(username=username)
+            items = UserCartItem.objects.filter(user=user)
+
+            serialized_data = []
+
+            # 用户数据
+            user_data = CustomUserSerializer(user).data
+            serialized_data = {
+                'user': user_data,
+                'items': [ItemSerializer(item.item).data for item in items]
+            }
+
+            return Response(serialized_data, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "Username does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ItemAddToFavorite(APIView):
+    def post(self, request:Request):
+        request_body = request.data
+        user_id = request_body.get('userId')
+        item_id = request_body.get('itemId')
+
+        if not user_id:
+            return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
+
+        if not item_id:
+            return Response({"error": "Itemname deficiency"}, status=status.HTTP_204_NO_CONTENT)
+
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            item = Item.objects.get(id=item_id)
+
+        except:
+            return Response({"error": "Username not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            favorite_item = UserFavoriteItem.objects.create(user=user, item=item)
+            favorite_item.save()
+        except:
+            return Response({"error": "Item has existed"}, status=status.HTTP_200_OK)
+
+        # UserItem check
+        itemcheck = UserFavoriteItem.objects.get(user=user, item=item).item
+        try:
+            return Response({"message": f"{itemcheck.name} has been added to cart"}, status=status.HTTP_200_OK)
+        except:
+            return Response({'error': f"{itemcheck.name} addation failed"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+class FetchRecommendItem(APIView):
+    def get(self, request: Request):
+        recommendItems = RecommendItem.objects.all()
+        return Response([RecommendItemSerializer(item).data.get('item') for item in recommendItems] , status=status.HTTP_200_OK)

@@ -1,7 +1,7 @@
 // src/stores/index.ts
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { User, Item, Order, AdminUser } from "@/types/index";
+import type { User, Item, Order, AdminUser, AddressReceiver } from "@/types/index";
 
 
 export const useUserStore = defineStore('user', () => {
@@ -67,6 +67,7 @@ export const useItemStore = defineStore('item', () => {
     const updateCustomItemField = <KEY extends keyof Item>(field: KEY, value: Item[KEY]) => {
         if (item.value) {
             item.value[field] = value as Item[typeof field];
+            setCustomItem(item.value);
         }
     };
 
@@ -127,8 +128,11 @@ export const useOrderStore = defineStore('order', () => {
         }
     }
 
-    const updateOrder = (newOrder: Order) => {
-        order.value = newOrder;
+    const updateOrder = <KEY extends keyof Order>(field: KEY, value: Order[KEY]) => {
+        if (order.value) {
+            order.value[field] = value as Order[typeof field];
+            setOrder(order.value);
+        }
     };
 
     loadOrder();
@@ -226,5 +230,35 @@ export const useAdminStore = defineStore('adminuser', () => {
 
     return {
         adminuser, setAdminUser, clearAdminUser, loadAdminUser, updateAdminUser
+    }
+})
+
+
+export const useFavoriteItemsListStore = defineStore('favorite', () => {
+    const favoriteItemsList = ref<Array<Item> | null>();
+    const setFavoriteItemsList = (newFavoriteItemsList: Array<Item>) => {
+        favoriteItemsList.value = newFavoriteItemsList;
+        localStorage.setItem('favorites', JSON.stringify(newFavoriteItemsList));
+    }
+
+    const clearFavoriteItemsList = () => {
+        localStorage.removeItem('favorites');
+    }
+
+    const loadFavoriteItemsList = () => {
+        const storedFavoriteItemsList = localStorage.getItem('favorites');
+        if (storedFavoriteItemsList) {
+            favoriteItemsList.value = JSON.parse(storedFavoriteItemsList);
+        }
+    }
+
+    const updateFavoriteItemsList = (newFavoriteItemsList: Array<Item>) => {
+        favoriteItemsList.value = newFavoriteItemsList;
+    }
+
+    loadFavoriteItemsList();
+
+    return {
+        favoriteItemsList, setFavoriteItemsList, clearFavoriteItemsList, loadFavoriteItemsList, updateFavoriteItemsList
     }
 })
