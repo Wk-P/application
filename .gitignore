@@ -4,6 +4,5 @@ db.sqlite3
 .vscode
 item_img
 migrations
-linux-scripts/run
+linux-scripts/run/
 __pycache__
-linux-scripts/run
