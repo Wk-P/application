@@ -33,7 +33,7 @@ const user = computed(() => {
     return userStore.user;
 });
 
-const fieldsToShow: Array<keyof User> = ["username", "tel", "email", "name", "address"];
+const fieldsToShow: Array<keyof User> = ["username", "tel", "email", "name"];
 const filteredUser = computed(() => {
     if (!userStore.user) return null;
     const filtered: Partial<User | any> = {};

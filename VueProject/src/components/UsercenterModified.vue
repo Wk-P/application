@@ -30,7 +30,6 @@ const fieldsToShow: Array<keyof User> = [
     "tel",
     "email",
     "name",
-    "address",
 ];
 
 const filteredUser = computed(() => {

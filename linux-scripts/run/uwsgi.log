@@ -12435,3 +12435,83 @@ Python auto-reloader enabled
 spawned uWSGI worker 3 (pid: 65737, cores: 1)
 spawned uWSGI worker 4 (pid: 65739, cores: 1)
 spawned uWSGI worker 5 (pid: 65740, cores: 1)
+*** Starting uWSGI 2.0.26 (64bit) on [Sun Sep 29 11:45:00 2024] ***
+compiled with version: 11.4.0 on 19 August 2024 08:17:04
+os: Linux-5.15.0-113-generic #123-Ubuntu SMP Mon Jun 10 08:16:17 UTC 2024
+nodename: cskbusiness.com
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/ecs-user/application/linux-scripts
+writing pidfile to /home/ecs-user/application/linux-scripts/run/uwsgi.pid
+detected binary path: /home/ecs-user/application/DjangoProject/.venv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/ecs-user/application/DjangoProject/BackendService
+your processes number limit is 13936
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.10.12 (main, Sep 11 2024, 15:47:36) [GCC 11.4.0]
+PEP 405 virtualenv detected: /home/ecs-user/application/DjangoProject/.venv
+Set PythonHome to /home/ecs-user/application/DjangoProject/.venv
+Python main interpreter initialized at 0x558041a79cc0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 437424 bytes (427 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x558041a79cc0 pid: 919780 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 919780)
+spawned uWSGI worker 1 (pid: 919817, cores: 1)
+spawned uWSGI worker 2 (pid: 919818, cores: 1)
+spawned uWSGI worker 3 (pid: 919819, cores: 1)
+spawned uWSGI worker 4 (pid: 919820, cores: 1)
+spawned uWSGI worker 5 (pid: 919821, cores: 1)
+Python auto-reloader enabled
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 2 seconds
+worker 2 buried after 2 seconds
+worker 3 buried after 2 seconds
+worker 4 buried after 2 seconds
+worker 5 buried after 2 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.26 (64bit) on [Sun Sep 29 11:45:50 2024] ***
+compiled with version: 11.4.0 on 19 August 2024 08:17:04
+os: Linux-5.15.0-113-generic #123-Ubuntu SMP Mon Jun 10 08:16:17 UTC 2024
+nodename: cskbusiness.com
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /home/ecs-user/application/linux-scripts
+writing pidfile to /home/ecs-user/application/linux-scripts/run/uwsgi.pid
+detected binary path: /home/ecs-user/application/DjangoProject/.venv/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+chdir() to /home/ecs-user/application/DjangoProject/BackendService
+your processes number limit is 13936
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:8000 fd 3
+Python version: 3.10.12 (main, Sep 11 2024, 15:47:36) [GCC 11.4.0]
+PEP 405 virtualenv detected: /home/ecs-user/application/DjangoProject/.venv
+Set PythonHome to /home/ecs-user/application/DjangoProject/.venv
+Python main interpreter initialized at 0x55cc7f8b7cc0
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 437424 bytes (427 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55cc7f8b7cc0 pid: 920332 (default app)
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 920332)
+spawned uWSGI worker 1 (pid: 920373, cores: 1)
+spawned uWSGI worker 2 (pid: 920374, cores: 1)
+spawned uWSGI worker 3 (pid: 920375, cores: 1)
+spawned uWSGI worker 4 (pid: 920376, cores: 1)
+spawned uWSGI worker 5 (pid: 920377, cores: 1)
+Python auto-reloader enabled
