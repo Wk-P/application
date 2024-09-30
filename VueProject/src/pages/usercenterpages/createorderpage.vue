@@ -36,9 +36,14 @@
     <!-- 付款信息 -->
     <teleport to="body">
         <div v-if="showModal" class="modal">
-            <div class="head"><span><strong>Pay</strong></span><button @click="showModal = false;">X</button></div>
+            <div class="head">
+                <span><strong>Pay</strong></span
+                ><button @click="showModal = false">X</button>
+            </div>
             <p>Way of pay</p>
-            <button @click="closeModal(newOrders)" class="close-button">Close Modal</button>
+            <button @click="closeModal(newOrders)" class="close-button">
+                Close Modal
+            </button>
         </div>
     </teleport>
 </template>
