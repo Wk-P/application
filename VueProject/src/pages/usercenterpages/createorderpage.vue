@@ -5,7 +5,11 @@
         <ul class="order-items-list">
             <li v-for="(item, index) in itemsList">
                 <div class="img-block">
-                    <img v-if="item.images && item.images.length > 0" :src="item.images[0].image" alt="" />
+                    <img
+                        v-if="item.images && item.images.length > 0"
+                        :src="item.images[0].image"
+                        alt=""
+                    />
                 </div>
                 <div class="quantity-block">
                     <h3>Quantity</h3>
@@ -29,6 +33,14 @@
             <button @click="createOrders">Create Order</button>
         </div>
     </div>
+    <!-- 付款信息 -->
+    <teleport to="body">
+        <div v-if="showModal" class="modal">
+            <div class="head"><span><strong>Pay</strong></span><button @click="showModal = false;">X</button></div>
+            <p>Way of pay</p>
+            <button @click="closeModal(newOrders)" class="close-button">Close Modal</button>
+        </div>
+    </teleport>
 </template>
 
 <script lang="ts" setup name="createorderpage">
@@ -52,6 +64,8 @@ const itemsListStore = useItemsListStore();
 
 const listOfQuatity = ref<Array<number>>([]);
 const itemsList = ref<Array<Item>>(itemsListStore.itemsList as Array<Item>);
+
+let newOrders = Array<Order>();
 
 const addQuantity = (index: number) => {
     listOfQuatity.value[index] += 1;
@@ -78,16 +92,14 @@ const createOrder = (item: Item, quantity: number) => {
     return newOrder;
 };
 
-const createOrders = () => {
-    let newOrders: Array<Order> = [];
-    itemsList.value.forEach((item) => {
-        const quantityIndex = itemsList.value.findIndex(
-            (i) => i.id === item.id
-        );
-        newOrders.push(createOrder(item, listOfQuatity.value[quantityIndex]));
-    });
-    ordersListStore.setOrdersList(newOrders);
+const showModal = ref(false);
 
+const closeModal = (newOrders: Array<Order>) => {
+    showModal.value = false;
+    postRequestOrders(newOrders);
+};
+
+const postRequestOrders = (newOrders: Array<Order>) => {
     fetch(`/api/orders/create/`, {
         method: "POST",
         headers: {
@@ -117,6 +129,18 @@ const createOrders = () => {
         .catch((error) => console.log(error.message));
 };
 
+const createOrders = () => {
+    itemsList.value.forEach((item) => {
+        const quantityIndex = itemsList.value.findIndex(
+            (i) => i.id === item.id
+        );
+        newOrders.push(createOrder(item, listOfQuatity.value[quantityIndex]));
+    });
+    ordersListStore.setOrdersList(newOrders);
+    // 显示付款信息
+    showModal.value = true;
+};
+
 onMounted(() => {
     itemsList.value = useItemsListStore().itemsList as Array<Item>;
     listOfQuatity.value = Array<number>(itemsList.value.length).fill(0);
@@ -124,6 +148,39 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    width: 50%;
+}
+.modal .head {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.modal .head button {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid border;
+    background-color: white;
+    border-radius: 0.3rem;
+}
+
+.modal .close-button {
+    width: 100%;
+    height: 3rem;
+    margin-top: 2rem;
+    border: 1px solid border;
+    background-color: white;
+    border-radius: 0.3rem;
+}
 .container {
     padding-top: 2rem;
     overflow-y: auto;
