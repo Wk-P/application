@@ -32,33 +32,29 @@ const linkStyle = {
     initialColor: "black",
 };
 
-const linksList = ref([
-    {
-        hrefName: "classpage1",
-        textContent: "class1",
-        style: linkStyle,
-    },
-    {
-        hrefName: "classpage2",
-        textContent: "class2",
-        style: linkStyle,
-    },
-    {
-        hrefName: "classpage3",
-        textContent: "class3",
-        style: linkStyle,
-    },
-    {
-        hrefName: "classpage4",
-        textContent: "class4",
-        style: linkStyle,
-    },
-    {
-        hrefName: "classpage5",
-        textContent: "class5",
-        style: linkStyle,
-    },
-]);
+const classNameTextList = [
+    { korean: "목걸이", english: "Necklace", hrefName: "necklace" },
+    { korean: "팔찌", english: "Bracelet", hrefName: "bracelet" },
+    { korean: "반지", english: "Ring", hrefName: "ring" },
+    { korean: "귀걸이", english: "Earrings", hrefName: "earrings" },
+    { korean: "기타", english: "Others", hrefName: "others" },
+    { korean: "남성", english: "Men", hrefName: "men" },
+    { korean: "여성", english: "Women", hrefName: "women" },
+    { korean: "커플", english: "Couple", hrefName: "couple" },
+];
+
+
+const linksList = ref(
+    classNameTextList.map((textContent, index) => {
+        return {
+            hrefName: `${textContent.hrefName}`,
+            style: linkStyle,
+            textContent: textContent.korean,
+        };
+    })
+);
+
+console.log(linksList.value);
 
 let timerId: number | undefined;
 const changeHandle = (index: number, event: Event) => {
@@ -93,7 +89,6 @@ const getTextColor = (index: number) => {
     const style = linksList.value[index]?.style || linkStyle;
     return activeIndex.value === index ? style.activeColor : style.initialColor;
 };
-
 </script>
 
 <style scoped>

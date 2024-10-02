@@ -13,11 +13,14 @@ import homepage5 from "@/pages/homepages/page5.vue";
 import homepage6 from "@/pages/homepages/page6.vue";
 
 import classhomepage from "@/pages/classpages/classhomepage.vue";
-import classpage1 from "@/pages/classpages/classpage1.vue";
-import classpage2 from "@/pages/classpages/classpage2.vue";
-import classpage3 from "@/pages/classpages/classpage3.vue";
-import classpage4 from "@/pages/classpages/classpage4.vue";
-import classpage5 from "@/pages/classpages/classpage5.vue";
+import necklacepage from "@/pages/classpages/necklacepage.vue";
+import earringspage from "@/pages/classpages/earringspage.vue";
+import braceletpage from "@/pages/classpages/braceletpage.vue";
+import ringpage from "@/pages/classpages/ringpage.vue";
+import otherspage from "@/pages/classpages/otherspage.vue";
+import menpage from "@/pages/classpages/menpage.vue";
+import womenpage from "@/pages/classpages/womenpage.vue";
+import couplepage from "@/pages/classpages/couplepage.vue";
 
 import brandhomepage from "@/pages/brandpages/brandhomepage.vue";
 import brandpage1 from "@/pages/brandpages/brandpage1.vue";
@@ -67,13 +70,16 @@ const routes = [
         path: "/class",
         name: "class",
         component: classhomepage,
-        redirect: { name: "classpage1" },
+        redirect: { name: "necklace" },
         children: [
-            { path: "classpage1", name: 'classpage1', component: classpage1 },
-            { path: "classpage2", name: 'classpage2', component: classpage2 },
-            { path: "classpage3", name: 'classpage3', component: classpage3 },
-            { path: "classpage4", name: 'classpage4', component: classpage4 },
-            { path: "classpage5", name: 'classpage5', component: classpage5 },
+            { path: "necklace", name: 'necklace', component: necklacepage },
+            { path: "earrings", name: 'earrings', component: earringspage },
+            { path: "bracelet", name: 'bracelet', component: braceletpage },
+            { path: "ring", name: 'ring', component: ringpage },
+            { path: "others", name: 'others', component: otherspage },
+            { path: "men", name: 'men', component: menpage },
+            { path: "women", name: 'women', component: womenpage },
+            { path: "couple", name: 'couple', component: couplepage },
         ]
     },
     {

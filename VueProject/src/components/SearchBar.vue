@@ -11,13 +11,17 @@
 
 <script lang="ts" setup name="SearchBar">
 import { onMounted, ref } from "vue";
+
+// 根据路由判断需要查询什么
 const search = () => {
+    // 收集路由
+    // TODO
+    let queryKeyword = "";
     alert("search");
 };
 
 const searchInputTextValue = ref<string | undefined>("");
 const searchInput = ref<HTMLInputElement | null>(null);
-
 </script>
 
 <style scoped>

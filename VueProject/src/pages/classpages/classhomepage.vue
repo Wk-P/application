@@ -1,7 +1,7 @@
 <template>
     <nav class="head-bar">
         <button @click="returnPrev">
-            <img src="/src_img/backarrow.png" alt=""/>
+            <img src="/src_img/backarrow.png" alt="" />
         </button>
         <h2>Class</h2>
     </nav>
@@ -9,14 +9,20 @@
         <div class="nav-link">
             <ClassHomePageRouterLinks />
         </div>
-        <div class="page-view">
-            <RouterView></RouterView>
+        <div>
+            <div class="search-bar">
+                <SearchBar />
+            </div>
+            <div class="page-view">
+                <RouterView></RouterView>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup name="ClassHomePage">
 import { RouterView, useRouter } from "vue-router";
+import SearchBar from "@/components/SearchBar.vue";
 import ClassHomePageRouterLinks from "@/components/ClassHomePageRouterLinks.vue";
 const router = useRouter();
 const returnPrev = () => {
@@ -91,14 +97,13 @@ const returnPrev = () => {
 
 .page-view {
     box-sizing: border-box;
-    padding: 1.5rem;
+    padding-left: 0.5rem;
     flex: 1;
     height: 100%; /* 高度为父容器的 100% */
     overflow-y: auto; /* Allow vertical scroll */
     overflow-x: hidden; /* Prevent horizontal scroll */
     scrollbar-width: none; /* firefox */
     -ms-overflow-style: none; /* IE 10+ */
-    border-top: 1px solid #333;
 }
 
 .page-view::-webkit-scrollbar {
