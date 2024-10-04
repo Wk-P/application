@@ -3,26 +3,33 @@
         <button @click="returnPrev">
             <img src="/src_img/backarrow.png" alt="" />
         </button>
-        <h2>Brand</h2>
+        <h2>Class</h2>
     </nav>
     <div class="container">
         <div class="nav-link">
-            <BrandHomePageRouterLinks />
+            <ClassHomePageRouterLinks />
         </div>
-        <div class="page-view">
-            <RouterView></RouterView>
+        <div class="content-block">
+            <div class="search-bar">
+                <SearchBar />
+            </div>
+            <div class="page-view">
+                <RouterView></RouterView>
+            </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup name="ClassHomePage">
 import { RouterView, useRouter } from "vue-router";
-import BrandHomePageRouterLinks from "@/components/BrandHomePageRouterLinks.vue";
+import SearchBar from "@/components/SearchBar.vue";
+import ClassHomePageRouterLinks from "@/components/ClassHomePageRouterLinks.vue";
 const router = useRouter();
 const returnPrev = () => {
     router.push({ name: "home" });
 };
 </script>
+
 
 <style scoped>
 .head-bar {
@@ -63,7 +70,7 @@ const returnPrev = () => {
 
 .container {
     padding-top: 4rem;
-    height: calc(100vh - 4rem);
+    height: calc(100% - 4rem);
     width: 100%;
     box-sizing: border-box;
     display: flex;
@@ -89,16 +96,22 @@ const returnPrev = () => {
     display: none; /* Chrome Safari */
 }
 
+.content-block {
+    flex: 1;
+    height: calc(100% - 3.6rem);
+    padding-bottom: 1rem;
+    overflow: auto;
+}
+
 .page-view {
     box-sizing: border-box;
-    padding: 1.5rem;
+    padding: .4rem;
     flex: 1;
     height: 100%; /* 高度为父容器的 100% */
     overflow-y: auto; /* Allow vertical scroll */
     overflow-x: hidden; /* Prevent horizontal scroll */
     scrollbar-width: none; /* firefox */
     -ms-overflow-style: none; /* IE 10+ */
-    border-top: 1px solid #333;
 }
 
 .page-view::-webkit-scrollbar {

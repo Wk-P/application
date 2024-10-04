@@ -1,14 +1,17 @@
 <template>
     <ul>
         <li v-for="brand in hotBrandsList">
-            <img src="" alt="brand-img">
-            <p>{{ brand.className }}</p>
+            <RouterLink :to="{ name: '' }" class="brand-link">
+                <img src="" alt="brand-img">
+                <p>{{ brand.className }}</p>
+            </RouterLink>
         </li>
     </ul>
 </template>
 
 <script lang="ts" setup name="HotBrandBlock">
 import { ref } from "vue";
+import { RouterLink, RouterView } from "vue-router";
 
 // 从后端获取热门品牌
 const hotBrandsList = ref([
@@ -31,27 +34,32 @@ const hotBrandsList = ref([
 <style scoped>
 ul {
     box-sizing: border-box;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    padding: 0 1rem;
     list-style: none;
+    width: 100%;
+    column-gap: 1rem;
+    justify-content: center;
+    align-items: center;
 }
 
-ul li {
-    width: 50%;
-}
+
 
 ul li img {
     display: block;
+    width: 100%;
     height: 5rem;
     object-fit: contain;
     border: 1px solid black;
-    margin: 0.5rem;
 }
 
 ul li p {
     text-align: center;
 }
 
+.brand-link {
+    color: black;
+    text-decoration: none;
+}
 </style>

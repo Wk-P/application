@@ -106,3 +106,7 @@ class RecommendItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = ['item']
+
+
+class HotBrand(models.Model):
+    brand_name = models.CharField(default="Unknown", max_length=255)

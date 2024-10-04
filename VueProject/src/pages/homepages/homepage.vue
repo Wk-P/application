@@ -3,7 +3,6 @@
     <HomeHead2 />
     <div class="page-view-container">
         <RouterView></RouterView>
-        <BrandBar />
         <ItemsViewComponents />
     </div>
 </template>
@@ -11,7 +10,6 @@
 <script lang="ts" setup name="homepage">
 import HomeHead1 from "@/components/HomeHead1.vue";
 import HomeHead2 from "@/components/HomeHead2.vue";
-import BrandBar from "@/components/BrandBar.vue";
 import ItemsViewComponents from "@/components/ItemsViewComponents.vue";
 import { RouterView } from "vue-router";
 </script>

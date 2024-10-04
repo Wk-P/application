@@ -1,19 +1,11 @@
 <template>
     <nav>
         <ul>
-            <li
-                v-for="(object, index) in linksList"
-                :key="index"
-                @click="changeHandle(index, $event)"
-            >
-                <RouterLink
-                    :to="{ name: object.hrefName }"
-                    :style="{
-                        backgroundColor: getBackgroundColor(index),
-                        color: getTextColor(index),
-                    }"
-                    >{{ object.textContent }}</RouterLink
-                >
+            <li v-for="(object, index) in linksList" :key="index" @click="changeHandle(index, $event)">
+                <RouterLink :to="{ name: object.hrefName }" :style="{
+                    backgroundColor: getBackgroundColor(index),
+                    color: getTextColor(index),
+                }">{{ object.textContent }}</RouterLink>
             </li>
         </ul>
     </nav>
@@ -33,14 +25,14 @@ const linkStyle = {
 };
 
 const classNameTextList = [
-    { korean: "목걸이", english: "Necklace", hrefName: "necklace" },
-    { korean: "팔찌", english: "Bracelet", hrefName: "bracelet" },
-    { korean: "반지", english: "Ring", hrefName: "ring" },
-    { korean: "귀걸이", english: "Earrings", hrefName: "earrings" },
-    { korean: "기타", english: "Others", hrefName: "others" },
-    { korean: "남성", english: "Men", hrefName: "men" },
-    { korean: "여성", english: "Women", hrefName: "women" },
-    { korean: "커플", english: "Couple", hrefName: "couple" },
+    { korean: "목걸이", english: "Necklace", hrefName: "class_necklace" },
+    { korean: "팔찌", english: "Bracelet", hrefName: "class_bracelet" },
+    { korean: "반지", english: "Ring", hrefName: "class_ring" },
+    { korean: "귀걸이", english: "Earrings", hrefName: "class_earrings" },
+    { korean: "기타", english: "Others", hrefName: "class_others" },
+    { korean: "남성", english: "Men", hrefName: "class_men" },
+    { korean: "여성", english: "Women", hrefName: "class_women" },
+    { korean: "커플", english: "Couple", hrefName: "class_couple" },
 ];
 
 
@@ -96,7 +88,7 @@ nav {
     width: 100%;
 }
 
-nav > ul {
+nav>ul {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -104,12 +96,12 @@ nav > ul {
     list-style: none;
 }
 
-nav > ul > li {
+nav>ul>li {
     width: 100%;
     text-align: center;
 }
 
-nav > ul > li > a {
+nav>ul>li>a {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;

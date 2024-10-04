@@ -1,28 +1,20 @@
 <template>
     <nav>
         <ul>
-            <li
-                v-for="(object, index) in linksList"
-                :key="index"
-                @click="changeHandle(index, $event)"
-            >
-                <RouterLink
-                    :to="{ name: object.hrefName }"
-                    :style="{
-                        backgroundColor: getBackgroundColor(index),
-                        color: getTextColor(index),
-                    }"
-                    >{{ object.textContent }}</RouterLink
-                >
+            <li v-for="(object, index) in linksList" :key="index" @click="changeHandle(index, $event)">
+                <RouterLink :to="{ name: object.hrefName }" :style="{
+                    backgroundColor: getBackgroundColor(index),
+                    color: getTextColor(index),
+                }">{{ object.textContent }}</RouterLink>
             </li>
         </ul>
     </nav>
 </template>
 
 <script lang="ts" setup name="BrandHomePageRouterLinks">
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
+import { findChildrenRoutePath } from "@/utils/utils";
 import { ref, computed, onMounted, watch, onUnmounted, nextTick } from "vue";
-const route = useRoute();
 const activeIndex = ref<number>(0);
 const linkStyle = {
     initialBackgroundColor: "#eee",
@@ -31,7 +23,22 @@ const linkStyle = {
     initialColor: "black",
 };
 
-const linksList = ref([
+const router = useRouter();
+const childrenRoutePath = findChildrenRoutePath('brand', router);
+
+const linksTextContent = [
+    "LV", "CHANEL", "HERMES", "CARTIER", "VANCLEEF", "DIOR", "BULAGLI", "TIFFANY"
+]
+
+const linksList = ref(
+    childrenRoutePath.map((child, index) => ({
+        hrefName: child.name,
+        textContent: linksTextContent[index],
+        style: linkStyle,
+    }))
+)
+
+const linksListss = ref([
     {
         hrefName: "brandpage1",
         textContent: "brand1",
@@ -100,7 +107,7 @@ nav {
     width: 100%;
 }
 
-nav > ul {
+nav>ul {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -108,12 +115,12 @@ nav > ul {
     list-style: none;
 }
 
-nav > ul > li {
+nav>ul>li {
     width: 100%;
     text-align: center;
 }
 
-nav > ul > li > a {
+nav>ul>li>a {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;

@@ -1,8 +1,10 @@
 <template>
     <SearchBar />
+    <ClassListBlock />
 </template>
 
-<script lang="ts" setup name="brandpage3">
+<script lang="ts" setup name="LVpage">
+import ClassListBlock from "@/components/ClassListBlock.vue";
 import SearchBar from "@/components/SearchBar.vue";
 </script>
 

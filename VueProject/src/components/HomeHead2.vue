@@ -2,17 +2,12 @@
     <nav>
         <ul>
             <li v-for="(page, index) in pageLinks" :key="index">
-                <RouterLink
-                    class="head2"
-                    :to="{ name: page.herfName }"
-                    :style="{
-                        borderBottom:
-                            activeIndex === index
-                                ? page.style.activeBorderBottom
-                                : page.style.initialBorderBottom,
-                    }"
-                    @click="changeLink(index, $event)"
-                >
+                <RouterLink class="head2" :to="{ name: page.herfName }" :style="{
+                    borderBottom:
+                        activeIndex === index
+                            ? page.style.activeBorderBottom
+                            : page.style.initialBorderBottom,
+                }" @click="changeLink(index, $event)">
                     {{ page.textContent }}
                 </RouterLink>
             </li>
@@ -21,10 +16,14 @@
 </template>
 
 <script lang="ts" setup name="HomeHead2">
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink, useRoute, useRouter } from "vue-router";
+import { findChildrenRoutePath } from "@/utils/utils";
 import { ref, nextTick, onUnmounted, watch, computed, onMounted } from "vue";
 const activeIndex = ref<number>(0);
 const route = useRoute();
+
+const router = useRouter();
+const childrenRoutePath = findChildrenRoutePath('home', router);
 
 const ActiveLinkBorder = {
     weightNumber: 3,
@@ -49,44 +48,23 @@ const linkStyle = {
     activeBorderBottom: ActiveLinkBorder.getStyle(),
 };
 
-const pageLinks = ref([
-    {
-        textContent: "PAGE-1",
-        herfName: "homepage1",
+const linksTextContent = [
+    "BEST", "NEW", "HIQUAL", "VIP", "PAGE5", "PAGE6"
+]
+
+const pageLinks = ref(
+    childrenRoutePath.map((child, index) => ({
+        textContent: linksTextContent[index],
+        herfName: child.name,
         style: linkStyle,
-    },
-    {
-        textContent: "PAGE-2",
-        herfName: "homepage2",
-        style: linkStyle,
-    },
-    {
-        textContent: "PAGE-3",
-        herfName: "homepage3",
-        style: linkStyle,
-    },
-    {
-        textContent: "PAGE-4",
-        herfName: "homepage4",
-        style: linkStyle,
-    },
-    {
-        textContent: "PAGE-5",
-        herfName: "homepage5",
-        style: linkStyle,
-    },
-    {
-        textContent: "PAGE-6",
-        herfName: "homepage6",
-        style: linkStyle,
-    },
-]);
+    }))
+);
 
 let timerId: number | undefined;
 const changeLink = (index: number, event: Event) => {
     event.preventDefault();
     activeIndex.value = index;
-    
+
     nextTick(() => {
         timerId = window.setTimeout(() => {
             const target = (event.target as HTMLElement).closest("a");
@@ -160,10 +138,11 @@ nav {
 }
 
 nav::-webkit-scrollbar {
-    display: none; /* Chrome Safari */
+    display: none;
+    /* Chrome Safari */
 }
 
-nav > ul {
+nav>ul {
     box-sizing: border-box;
     background-color: white;
     padding: 0 0.6rem;
@@ -175,7 +154,7 @@ nav > ul {
     justify-content: space-around;
 }
 
-nav > ul > li {
+nav>ul>li {
     box-sizing: border-box;
     height: 100%;
     width: 6rem;
@@ -187,7 +166,7 @@ nav > ul > li {
     scroll-snap-align: center;
 }
 
-nav > ul > li > a {
+nav>ul>li>a {
     display: block;
     box-sizing: border-box;
     text-decoration: none;
@@ -204,6 +183,7 @@ nav > ul > li > a {
         opacity: 0;
         transform: translateY(-5rem);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

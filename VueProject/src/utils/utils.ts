@@ -1,7 +1,6 @@
 import type { User } from "@/types/index";
 import { useUserStore } from "@/stores/index";
-import { useRouter, useRoute } from "vue-router"
-
+import type { Router } from "vue-router";
 
 export function getCSRFToken(): Promise<string> {
     return fetch("/api/csrftoken/")
@@ -133,4 +132,9 @@ export function logout() {
         console.error(error.message);
     });
     userStore.clearUser();
+}
+
+export function findChildrenRoutePath(parentName: string, router: Router) {
+    const parentRoute = router.options.routes.find(route => route.name === parentName);
+    return parentRoute?.children || [];
 }
