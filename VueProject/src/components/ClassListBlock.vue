@@ -3,7 +3,7 @@
         <li v-for="link in linksTextContent">
             <RouterLink :to="{ name: ''}" class="link">
                 <div>{{ link.en }}</div>
-                <img src="/arrow-right.png" alt="">
+                <img src="/src_img/arrow-right.png" alt="">
             </RouterLink>
         </li>
     </ul>
@@ -71,7 +71,9 @@ ul li {
 }
 
 .link img {
+    box-sizing: border-box;
     display: block;
+    padding: .6rem;
 }
 
 </style>

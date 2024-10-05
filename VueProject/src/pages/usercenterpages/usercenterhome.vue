@@ -1,33 +1,35 @@
 <template>
-    <nav class="head-bar">
+    <!-- <nav class="head-bar">
         <button @click="returnPrev">
             <img src="/src_img/backarrow.png" alt="" />
         </button>
         <h2>My Page</h2>
         <button @click="logout" class="logout-button"><strong>logout</strong></button>
-    </nav>
+    </nav> -->
+    <ReturnBar />
     <div class="container">
         <div class="username-block">
             <div class="username-title">
                 <span>{{ userStore.user?.username }}</span
                 ><span>Welcome!</span>
             </div>
-            <div class="ring-img"><img src="/src_img/ring1.png" alt="" /></div>
+            <button @click="logout" class="logout-button">logout</button>
+            <!-- <div class="ring-img"><img src="/src_img/ring1.png" alt="" /></div> -->
         </div>
         <div class="shopping-info">
             <h3 class="shopping-title">My Shopping</h3>
             <div class="links-block">
                 <RouterLink :to="{ name: 'order' }" class="link-block">
                     <h4>Orders</h4>
-                    <img src="/src_img/rightarrow.png" alt="" />
+                    <img src="/src_img/arrow-right.png" alt="" />
                 </RouterLink>
                 <RouterLink :to="{ name: 'cart' }" class="link-block">
                     <h4>Cart</h4>
-                    <img src="/src_img/rightarrow.png" alt="" />
+                    <img src="/src_img/arrow-right.png" alt="" />
                 </RouterLink>
                 <RouterLink :to="{ name: 'favorite' }" class="link-block">
                     <h4>Favorite</h4>
-                    <img src="/src_img/rightarrow.png" alt="" />
+                    <img src="/src_img/arrow-right.png" alt="" />
                 </RouterLink>
             </div>
         </div>
@@ -36,7 +38,7 @@
             <div class="links-block">
                 <RouterLink :to="{ name: 'address_receiver' }" class="link-block">
                     <h4>Address & Receiver</h4>
-                    <img src="/src_img/rightarrow.png" alt="" />
+                    <img src="/src_img/arrow-right.png" alt="" />
                 </RouterLink>
             </div>
         </div>
@@ -45,7 +47,7 @@
             <div class="links-block">
                 <RouterLink :to="{ name: 'address_receiver' }" class="link-block">
                     <h4>Delivery</h4>
-                    <img src="/src_img/rightarrow.png" alt="" />
+                    <img src="/src_img/arrow-right.png" alt="" />
                 </RouterLink>
             </div>
         </div>
@@ -57,11 +59,10 @@ import { ref } from "vue";
 import { useUserStore } from "@/stores/index";
 import { useRouter, RouterLink } from "vue-router";
 import { logout } from "@/utils/utils";
+import ReturnBar from "@/components/ReturnBar.vue";
 const router = useRouter();
 const userStore = useUserStore();
-const returnPrev = () => {
-    router.push({ name: "home" });
-};
+
 </script>
 
 <style scoped>
@@ -97,7 +98,11 @@ const returnPrev = () => {
 }
 
 .logout-button {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: black;
+    border: none;
+    padding: 0.5rem 1rem;
 }
 
 .head-bar button img {
@@ -108,7 +113,7 @@ const returnPrev = () => {
 .container {
     box-sizing: border-box;
     height: calc(100% - 3rem);
-    padding-top: 4rem;
+    padding-top: 3rem;
     width: 100%;
     box-sizing: border-box;
     animation: 0.3s linear 0.1s slideIn;
@@ -135,7 +140,7 @@ const returnPrev = () => {
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: bolder;
 }
 

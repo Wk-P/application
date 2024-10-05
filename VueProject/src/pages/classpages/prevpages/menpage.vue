@@ -5,7 +5,7 @@
     </div>
     <RouterLink :to="{ name: 'men' }" class="link">
         <div>전채 보시</div>
-        <img src="/arrow-right.png" alt="">
+        <img src="/src_img/arrow-right.png" alt="">
     </RouterLink>
     <HotBrandBlock />
 </template>
@@ -45,6 +45,12 @@ h3 {
     flex: 1;
 }
 
+
+.link img {
+    height: 100%;
+    box-sizing: border-box;
+    padding: .6rem;
+}
 .head-img {
     height: 6rem;
     width: 100%;

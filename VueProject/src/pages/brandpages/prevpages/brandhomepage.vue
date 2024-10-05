@@ -76,13 +76,12 @@ const returnPrev = () => {
     background-color: #eee;
     box-sizing: border-box;
     height: 100%;
-    width: fit-content;
+    width: 30vw;
     flex-shrink: 0; /* 防止因内容过多导致 nav-link 缩小 */
     overflow-y: auto; /* Allow vertical scroll */
     overflow-x: hidden; /* Prevent horizontal scroll */
     scrollbar-width: none; /* firefox */
     -ms-overflow-style: none; /* IE 10+ */
-    border-top: 1px solid #333;
 }
 
 .nav-link::-webkit-scrollbar {
@@ -98,7 +97,6 @@ const returnPrev = () => {
     overflow-x: hidden; /* Prevent horizontal scroll */
     scrollbar-width: none; /* firefox */
     -ms-overflow-style: none; /* IE 10+ */
-    border-top: 1px solid #333;
 }
 
 .page-view::-webkit-scrollbar {

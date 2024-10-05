@@ -1,11 +1,19 @@
 <template>
     <nav>
         <ul>
-            <li v-for="(object, index) in linksList" :key="index" @click="changeHandle(index, $event)">
-                <RouterLink :to="{ name: object.hrefName }" :style="{
-                    backgroundColor: getBackgroundColor(index),
-                    color: getTextColor(index),
-                }">{{ object.textContent }}</RouterLink>
+            <li
+                v-for="(link, index) in linksList"
+                :key="index"
+                @click="changeHandle(index, $event)"
+            >
+                <RouterLink
+                    :to="{ name: link.hrefName }"
+                    :style="{
+                        backgroundColor: getBackgroundColor(index),
+                        color: getTextColor(index),
+                    }"
+                    >{{ link.textContent.en }}</RouterLink
+                >
             </li>
         </ul>
     </nav>
@@ -24,11 +32,19 @@ const linkStyle = {
 };
 
 const router = useRouter();
-const childrenRoutePath = findChildrenRoutePath('brand', router);
+const childrenRoutePath = findChildrenRoutePath("brand", router);
 
 const linksTextContent = [
-    "LV", "CHANEL", "HERMES", "CARTIER", "VANCLEEF", "DIOR", "BULAGLI", "TIFFANY"
-]
+    { en: "LV" },
+    { en: "CHANEL" },
+    { en: "HERMES" },
+    { en: "CARTIER" },
+    { en: "VANCLEEF" },
+    { en: "DIOR" },
+    { en: "BULAGLI" },
+    { en: "TIFFANY" },
+    { en: "OTHERS" },
+];
 
 const linksList = ref(
     childrenRoutePath.map((child, index) => ({
@@ -36,35 +52,7 @@ const linksList = ref(
         textContent: linksTextContent[index],
         style: linkStyle,
     }))
-)
-
-const linksListss = ref([
-    {
-        hrefName: "brandpage1",
-        textContent: "brand1",
-        style: linkStyle,
-    },
-    {
-        hrefName: "brandpage2",
-        textContent: "brand2",
-        style: linkStyle,
-    },
-    {
-        hrefName: "brandpage3",
-        textContent: "brand3",
-        style: linkStyle,
-    },
-    {
-        hrefName: "brandpage4",
-        textContent: "brand4",
-        style: linkStyle,
-    },
-    {
-        hrefName: "brandpage5",
-        textContent: "brand5",
-        style: linkStyle,
-    },
-]);
+);
 
 let timerId: number | undefined;
 const changeHandle = (index: number, event: Event) => {
@@ -99,7 +87,6 @@ const getTextColor = (index: number) => {
     const style = linksList.value[index]?.style || linkStyle;
     return activeIndex.value === index ? style.activeColor : style.initialColor;
 };
-
 </script>
 
 <style scoped>
@@ -107,7 +94,7 @@ nav {
     width: 100%;
 }
 
-nav>ul {
+nav > ul {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -115,12 +102,12 @@ nav>ul {
     list-style: none;
 }
 
-nav>ul>li {
+nav > ul > li {
     width: 100%;
     text-align: center;
 }
 
-nav>ul>li>a {
+nav > ul > li > a {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -129,7 +116,7 @@ nav>ul>li>a {
     height: 100%;
     width: 100%;
     color: black;
-    padding: 1.5rem 2.25rem;
+    padding: 1rem 0;
     text-decoration: none;
 }
 </style>

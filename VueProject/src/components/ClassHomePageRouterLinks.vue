@@ -1,11 +1,19 @@
 <template>
     <nav>
         <ul>
-            <li v-for="(object, index) in linksList" :key="index" @click="changeHandle(index, $event)">
-                <RouterLink :to="{ name: object.hrefName }" :style="{
-                    backgroundColor: getBackgroundColor(index),
-                    color: getTextColor(index),
-                }">{{ object.textContent }}</RouterLink>
+            <li
+                v-for="(object, index) in linksList"
+                :key="index"
+                @click="changeHandle(index, $event)"
+            >
+                <RouterLink
+                    :to="{ name: object.hrefName }"
+                    :style="{
+                        backgroundColor: getBackgroundColor(index),
+                        color: getTextColor(index),
+                    }"
+                    >{{ object.textContent }}</RouterLink
+                >
             </li>
         </ul>
     </nav>
@@ -34,7 +42,6 @@ const classNameTextList = [
     { korean: "여성", english: "Women", hrefName: "class_women" },
     { korean: "커플", english: "Couple", hrefName: "class_couple" },
 ];
-
 
 const linksList = ref(
     classNameTextList.map((textContent, index) => {
@@ -88,7 +95,7 @@ nav {
     width: 100%;
 }
 
-nav>ul {
+nav > ul {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -96,12 +103,12 @@ nav>ul {
     list-style: none;
 }
 
-nav>ul>li {
+nav > ul > li {
     width: 100%;
     text-align: center;
 }
 
-nav>ul>li>a {
+nav > ul > li > a {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -110,7 +117,7 @@ nav>ul>li>a {
     height: 100%;
     width: 100%;
     color: black;
-    padding: 1.5rem 2.25rem;
+    padding: 1rem 0;
     text-decoration: none;
 }
 </style>

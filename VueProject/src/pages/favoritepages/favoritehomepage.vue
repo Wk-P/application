@@ -1,7 +1,6 @@
 <template>
     <ReturnBar />
     <div class="container-block">
-        <h2 class="title">Favorite</h2>
         <ul v-if="allFavoriteItemsList.length !== 0">
             <li
                 v-for="(item, index) of allFavoriteItemsList"
@@ -195,7 +194,8 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 10rem;
+    height: 100%;
+    width: 100%;
 }
 
 .link {
