@@ -1,11 +1,4 @@
 <template>
-    <!-- <nav class="head-bar">
-        <button @click="returnPrev">
-            <img src="/src_img/backarrow.png" alt="" />
-        </button>
-        <h2>My Page</h2>
-        <button @click="logout" class="logout-button"><strong>logout</strong></button>
-    </nav> -->
     <ReturnBar />
     <div class="container">
         <div class="username-block">
@@ -66,48 +59,12 @@ const userStore = useUserStore();
 </script>
 
 <style scoped>
-.head-bar {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row;
-    height: 4rem;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    animation: 0.3s linear 0.1s slideIn1;
-}
-.head-bar h2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    box-sizing: border-box;
-    padding: 1rem;
-    height: 100%;
-    width: 100%;
-    background-color: white;
-}
-
-.head-bar button {
-    box-sizing: border-box;
-    height: 100%;
-    padding: 1rem;
-    background-color: white;
-    border: none;
-}
-
 .logout-button {
     font-size: 1.1rem;
     color: white;
     background-color: black;
     border: none;
     padding: 0.5rem 1rem;
-}
-
-.head-bar button img {
-    box-sizing: border-box;
-    height: 100%;
 }
 
 .container {

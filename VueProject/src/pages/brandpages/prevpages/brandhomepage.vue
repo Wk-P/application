@@ -1,10 +1,5 @@
 <template>
-    <nav class="head-bar">
-        <button @click="returnPrev">
-            <img src="/src_img/backarrow.png" alt="" />
-        </button>
-        <h2>Brand</h2>
-    </nav>
+    <ReturnBar />
     <div class="container">
         <div class="nav-link">
             <BrandHomePageRouterLinks />
@@ -16,53 +11,15 @@
 </template>
 
 <script lang="ts" setup name="ClassHomePage">
-import { RouterView, useRouter } from "vue-router";
+import { RouterView } from "vue-router";
 import BrandHomePageRouterLinks from "@/components/BrandHomePageRouterLinks.vue";
-const router = useRouter();
-const returnPrev = () => {
-    router.push({ name: "home" });
-};
+import ReturnBar from "@/components/ReturnBar.vue";
+
 </script>
 
 <style scoped>
-.head-bar {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row;
-    height: 4rem;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    animation: 0.3s linear 0.1s slideIn1;
-}
-.head-bar h2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    box-sizing: border-box;
-    padding: 1rem;
-    height: 100%;
-    width: 100%;
-    background-color: white;
-}
-
-.head-bar button {
-    box-sizing: border-box;
-    height: 100%;
-    padding: 1rem;
-    background-color: white;
-    border: none;
-}
-
-.head-bar button img {
-    box-sizing: border-box;
-    height: 100%;
-}
-
 .container {
-    padding-top: 4rem;
+    padding-top: 3rem;
     height: calc(100% - 4rem);
     width: 100%;
     box-sizing: border-box;

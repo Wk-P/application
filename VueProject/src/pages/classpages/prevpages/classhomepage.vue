@@ -1,10 +1,5 @@
 <template>
-    <nav class="head-bar">
-        <button @click="returnPrev">
-            <img src="/src_img/backarrow.png" alt="" />
-        </button>
-        <h2>Class</h2>
-    </nav>
+    <ReturnBar />
     <div class="container">
         <div class="nav-link">
             <ClassHomePageRouterLinks />
@@ -23,6 +18,7 @@
 <script lang="ts" setup name="ClassHomePage">
 import { RouterView, useRouter } from "vue-router";
 import SearchBar from "@/components/SearchBar.vue";
+import ReturnBar from "@/components/ReturnBar.vue";
 import ClassHomePageRouterLinks from "@/components/ClassHomePageRouterLinks.vue";
 const router = useRouter();
 const returnPrev = () => {
@@ -30,46 +26,10 @@ const returnPrev = () => {
 };
 </script>
 
-
 <style scoped>
-.head-bar {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: row;
-    height: 4rem;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    animation: 0.3s linear 0.1s slideIn1;
-}
-.head-bar h2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    box-sizing: border-box;
-    padding: 1rem;
-    height: 100%;
-    width: 100%;
-    background-color: white;
-}
-
-.head-bar button {
-    box-sizing: border-box;
-    height: 100%;
-    padding: 1rem;
-    background-color: white;
-    border: none;
-}
-
-.head-bar button img {
-    box-sizing: border-box;
-    height: 100%;
-}
 
 .container {
-    padding-top: 4rem;
+    padding-top: 3rem;
     height: calc(100% - 4rem);
     width: 100%;
     box-sizing: border-box;
@@ -84,15 +44,21 @@ const returnPrev = () => {
     box-sizing: border-box;
     height: 100%;
     width: 30vw;
-    flex-shrink: 0; /* 防止因内容过多导致 nav-link 缩小 */
-    overflow-y: auto; /* Allow vertical scroll */
-    overflow-x: hidden; /* Prevent horizontal scroll */
-    scrollbar-width: none; /* firefox */
-    -ms-overflow-style: none; /* IE 10+ */
+    flex-shrink: 0;
+    /* 防止因内容过多导致 nav-link 缩小 */
+    overflow-y: auto;
+    /* Allow vertical scroll */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+    scrollbar-width: none;
+    /* firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
 }
 
 .nav-link::-webkit-scrollbar {
-    display: none; /* Chrome Safari */
+    display: none;
+    /* Chrome Safari */
 }
 
 .content-block {
@@ -104,17 +70,23 @@ const returnPrev = () => {
 
 .page-view {
     box-sizing: border-box;
-    padding: .4rem;
+    padding: 1rem;
     flex: 1;
-    height: 100%; /* 高度为父容器的 100% */
-    overflow-y: auto; /* Allow vertical scroll */
-    overflow-x: hidden; /* Prevent horizontal scroll */
-    scrollbar-width: none; /* firefox */
-    -ms-overflow-style: none; /* IE 10+ */
+    height: 100%;
+    /* 高度为父容器的 100% */
+    overflow-y: auto;
+    /* Allow vertical scroll */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+    scrollbar-width: none;
+    /* firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
 }
 
 .page-view::-webkit-scrollbar {
-    display: none; /* Chrome Safari */
+    display: none;
+    /* Chrome Safari */
 }
 
 @keyframes slideIn {
@@ -122,6 +94,7 @@ const returnPrev = () => {
         transform: translateX(-2rem);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -133,6 +106,7 @@ const returnPrev = () => {
         transform: translateY(-2rem);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;

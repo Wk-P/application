@@ -1,9 +1,13 @@
 <template>
     <ul>
         <li v-for="link in linksTextContent">
-            <RouterLink :to="{ name: ''}" class="link">
+            <RouterLink
+                :to="{ name: '' }"
+                class="link">
                 <div>{{ link.en }}</div>
-                <img src="/src_img/arrow-right.png" alt="">
+                <img
+                    src="/src_img/arrow-right.png"
+                    alt="" />
             </RouterLink>
         </li>
     </ul>
@@ -13,7 +17,6 @@
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
-
 const linksTextContent = ref([
     {
         en: "All",
@@ -22,7 +25,7 @@ const linksTextContent = ref([
         en: "necklace",
     },
     {
-        en: "bracelet"
+        en: "bracelet",
     },
     {
         en: "ring",
@@ -40,7 +43,6 @@ const linksTextContent = ref([
         en: "women",
     },
 ]);
-
 </script>
 
 <style scoped>
@@ -73,7 +75,6 @@ ul li {
 .link img {
     box-sizing: border-box;
     display: block;
-    padding: .6rem;
+    padding: 0.6rem;
 }
-
 </style>

@@ -1,7 +1,6 @@
 <template>
     <ReturnBar />
     <div class="container-block">
-        <h2 class="title">Orders</h2>
         <ul v-if="allOrdersList.length > 0">
             <li v-for="(order, index) of allOrdersList" class="order-container">
                 <div class="check-block">
@@ -163,7 +162,7 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 10rem;
+    height: 100%;
 }
 
 .link {

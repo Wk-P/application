@@ -1,8 +1,12 @@
 <template>
     <ul>
         <li v-for="brand in hotBrandsList">
-            <RouterLink :to="{ name: '' }" class="brand-link">
-                <img src="" alt="brand-img">
+            <RouterLink
+                :to="{ name: '' }"
+                class="brand-link">
+                <img
+                    src=""
+                    alt="brand-img" />
                 <p>{{ brand.className }}</p>
             </RouterLink>
         </li>
@@ -28,7 +32,6 @@ const hotBrandsList = ref([
         image: "",
     },
 ]);
-
 </script>
 
 <style scoped>
@@ -43,8 +46,6 @@ ul {
     justify-content: center;
     align-items: center;
 }
-
-
 
 ul li img {
     display: block;

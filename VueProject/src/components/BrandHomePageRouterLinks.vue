@@ -4,8 +4,7 @@
             <li
                 v-for="(link, index) in linksList"
                 :key="index"
-                @click="changeHandle(index, $event)"
-            >
+                @click="changeHandle(index, $event)">
                 <RouterLink
                     :to="{ name: link.hrefName }"
                     :style="{
@@ -34,17 +33,7 @@ const linkStyle = {
 const router = useRouter();
 const childrenRoutePath = findChildrenRoutePath("brand", router);
 
-const linksTextContent = [
-    { en: "LV" },
-    { en: "CHANEL" },
-    { en: "HERMES" },
-    { en: "CARTIER" },
-    { en: "VANCLEEF" },
-    { en: "DIOR" },
-    { en: "BULAGLI" },
-    { en: "TIFFANY" },
-    { en: "OTHERS" },
-];
+const linksTextContent = [{ en: "LV" }, { en: "CHANEL" }, { en: "HERMES" }, { en: "CARTIER" }, { en: "VANCLEEF" }, { en: "DIOR" }, { en: "BULAGLI" }, { en: "TIFFANY" }, { en: "OTHERS" }];
 
 const linksList = ref(
     childrenRoutePath.map((child, index) => ({
@@ -77,9 +66,7 @@ const changeHandle = (index: number, event: Event) => {
 // 获取背景颜色
 const getBackgroundColor = (index: number) => {
     const style = linksList.value[index]?.style || linkStyle;
-    return activeIndex.value === index
-        ? style.activeBackgroundColor
-        : style.initialBackgroundColor;
+    return activeIndex.value === index ? style.activeBackgroundColor : style.initialBackgroundColor;
 };
 
 // 获取文本颜色

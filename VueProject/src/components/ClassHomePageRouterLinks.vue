@@ -4,8 +4,7 @@
             <li
                 v-for="(object, index) in linksList"
                 :key="index"
-                @click="changeHandle(index, $event)"
-            >
+                @click="changeHandle(index, $event)">
                 <RouterLink
                     :to="{ name: object.hrefName }"
                     :style="{
@@ -78,9 +77,7 @@ const changeHandle = (index: number, event: Event) => {
 // 获取背景颜色
 const getBackgroundColor = (index: number) => {
     const style = linksList.value[index]?.style || linkStyle;
-    return activeIndex.value === index
-        ? style.activeBackgroundColor
-        : style.initialBackgroundColor;
+    return activeIndex.value === index ? style.activeBackgroundColor : style.initialBackgroundColor;
 };
 
 // 获取文本颜色

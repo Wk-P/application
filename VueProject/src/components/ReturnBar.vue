@@ -2,13 +2,20 @@
     <div class="nav-bar">
         <button @click="returnPrev">
             <div class="img-block">
-                <img src="/src_img/backarrow.png" alt="" />
+                <img
+                    src="/src_img/backarrow.png"
+                    alt="" />
             </div>
         </button>
-        <div><strong>{{ routePathTitle }}</strong></div>
+        <div>
+            <strong>{{ routePathTitle }}</strong>
+        </div>
         <button @click="toHome">
             <div class="img-block">
-                <img src="/src_img/home1.png" alt="" />
+                <img
+                    src="/src_img/home1.png"
+                    alt=""
+                    class="home-img" />
             </div>
         </button>
     </div>
@@ -45,17 +52,29 @@ const toHome = () => {
 const routePathTitle = ref<string | undefined>("");
 
 onMounted(() => {
-    if (route.name === 'favorite') {
-        routePathTitle.value = route.name?.toString();
-    } else if (route.name === 'usercenternav') {
-        routePathTitle.value = "Usercenter";
+    const parentPathMatched0 = route.matched[0]?.path;
+    const parentPathMatched1 = route.matched[1]?.path;
+
+    if (parentPathMatched0 === "/favorite") {
+        routePathTitle.value = parentPathMatched0.split("/")[1];
+    } else if (parentPathMatched0 === "/user") {
+        if (parentPathMatched1 === "/user/order") {
+            routePathTitle.value = parentPathMatched1.split('/')[2];
+        } else if (parentPathMatched1 === '/user/cart') {
+            routePathTitle.value = parentPathMatched1.split('/')[2];
+        } else { // login
+            routePathTitle.value = parentPathMatched0.split('/')[1];
+        }
+    } else if (parentPathMatched0 === "/brand") {       // brand
+        routePathTitle.value = parentPathMatched0.split("/")[1];
+    } else if (parentPathMatched0 === "/class") {       // class
+        routePathTitle.value = parentPathMatched0.split("/")[1];
+    } else if (parentPathMatched0 === '/address/info') { // address info
+        routePathTitle.value = parentPathMatched0.split("/")[1];
     }
-})
+});
 
-console.log(route.name);
 console.log(routePathTitle.value);
-
-
 </script>
 
 <style scoped>
@@ -72,6 +91,8 @@ console.log(routePathTitle.value);
     flex-direction: row;
     box-sizing: border-box;
     justify-content: space-between;
+    padding-right: 0.8rem;
+    border-bottom: 1px solid #eee;
 }
 
 .nav-bar > div {
@@ -92,6 +113,10 @@ console.log(routePathTitle.value);
     box-sizing: border-box;
     height: 100%;
     background-color: white;
+}
+
+.home-img {
+    padding: 0.2rem;
 }
 
 @keyframes slideIn1 {

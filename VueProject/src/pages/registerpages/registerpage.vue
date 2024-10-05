@@ -15,7 +15,7 @@ import ReturnBar from "@/components/ReturnBar.vue";
 .page-block {
     height: calc(100% - 5rem);
     box-sizing: border-box;
-    padding: 0 1rem 5rem 1rem;
+    padding: 3rem 1rem 5rem 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;

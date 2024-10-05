@@ -1,7 +1,6 @@
 <template>
     <ReturnBar />
     <div class="container-block">
-        <h2 class="title">Cart</h2>
         <ul v-if="allCartItemsList.length !== 0">
             <li
                 v-for="(item, index) of allCartItemsList"
@@ -187,7 +186,7 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 10rem;
+    height: 100%;
 }
 
 .link {

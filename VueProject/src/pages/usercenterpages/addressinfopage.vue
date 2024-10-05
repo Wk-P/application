@@ -1,7 +1,6 @@
 <template>
     <ReturnBar />
     <div class="container">
-        <h2 class="page-title">Address & Receiver Info</h2>
         <ul>
             <li v-for="addr_recv in addressReceiverList">
                 <RouterLink :to="{name: 'address_modify', params: {'addrRecvId': addr_recv.id, 'addr': addr_recv.address, 'recv': addr_recv.receiver}}">
