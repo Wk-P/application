@@ -7,6 +7,21 @@ import os
 # 商品字段
 
 
+class Option(models.Model):
+    # 允许管理员自由定义类型，如 "color", "size"
+    option_type = models.CharField(default='', max_length=50)  # 例如颜色、尺寸等
+    option_value = models.CharField(default='', max_length=255)  # 例如 "red", "M"
+
+    def __str__(self):
+        return f"{self.option_type}: {self.option_value}"
+
+
+class OptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Option
+        fields = ['option_type', 'option_value']  # 选择需要序列化的字段
+
+
 class Item(models.Model):
     name = models.CharField(default="Noname", max_length=255)
     brand = models.CharField(default='Unknown', max_length=255)
@@ -14,6 +29,7 @@ class Item(models.Model):
     price = models.BigIntegerField(default=0)
     title = models.CharField(default='Notitle', max_length=255)
     class_name = models.CharField(default='Unknown', max_length=255)
+    options = models.ManyToManyField(Option, related_name='items')
 
     def __str__(self):
         return self.name
@@ -44,10 +60,11 @@ class ItemImageSerializer(serializers.ModelSerializer):
 
 class ItemSerializer(serializers.ModelSerializer):
     images = ItemImageSerializer(many=True, read_only=True)  # 添加关联图片的序列化
-
+    options = OptionSerializer(many=True)
+    
     class Meta:
         model = Item
-        fields = ['id', 'name', 'desc', 'price', 'brand', 'title', 'class_name', 'images']  # 包含 images 字段
+        fields = ['id', 'name', 'desc', 'price', 'brand', 'title', 'class_name', 'images', 'options']  # 包含 images 字段
 
 
 # 用户购物车商品字段

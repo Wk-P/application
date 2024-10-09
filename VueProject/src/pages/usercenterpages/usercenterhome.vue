@@ -29,7 +29,10 @@
         <div class="address-info">
             <h3 class="address-title">My Address & Receiver</h3>
             <div class="links-block">
-                <RouterLink :to="{ name: 'address_receiver' }" class="link-block">
+                <RouterLink
+                    :to="{ name: 'address_receiver' }"
+                    class="link-block"
+                >
                     <h4>Address & Receiver</h4>
                     <img src="/src_img/arrow-right.png" alt="" />
                 </RouterLink>
@@ -38,7 +41,10 @@
         <div class="delivery-info">
             <h3 class="delivery-title">My Delivery</h3>
             <div class="links-block">
-                <RouterLink :to="{ name: 'address_receiver' }" class="link-block">
+                <RouterLink
+                    :to="{ name: 'address_receiver' }"
+                    class="link-block"
+                >
                     <h4>Delivery</h4>
                     <img src="/src_img/arrow-right.png" alt="" />
                 </RouterLink>
@@ -55,12 +61,11 @@ import { logout } from "@/utils/utils";
 import ReturnBar from "@/components/ReturnBar.vue";
 const router = useRouter();
 const userStore = useUserStore();
-
 </script>
 
 <style scoped>
 .logout-button {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: white;
     background-color: black;
     border: none;
@@ -86,8 +91,7 @@ const userStore = useUserStore();
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-top: 1px solid #333;
-    padding: 0 2rem;
+    padding: 0.5rem 1rem;
 }
 
 .username-title {
@@ -97,44 +101,35 @@ const userStore = useUserStore();
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
     font-size: 1.2rem;
     font-weight: bolder;
 }
 
+.username-title span {
+    padding-right: 1rem;
+}
+
 .username-title span:nth-child(1) {
-    padding-right: 0.5rem;
-}
-
-.username-title span:nth-child(2) {
-    padding: 0 1rem;
-}
-
-.ring-img {
-    box-sizing: border-box;
-    height: 100%;
-}
-
-.ring-img img {
-    box-sizing: border-box;
-    padding: 1.6rem 1rem 1.6rem 1.6rem;
-    height: 100%;
+    flex: 1;
 }
 
 .shopping-info,
-.delivery-info, 
+.delivery-info,
 .address-info {
     box-sizing: border-box;
     width: 100%;
-    padding: 2rem;
+    padding: 1rem;
 }
 
-.shopping-title, .delivery-title, .address-title {
+.shopping-title,
+.delivery-title,
+.address-title {
     padding-bottom: 1rem;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #eee;
 }
 
 .links-block {
-    padding-top: 0.5rem;
     box-sizing: border-box;
     width: 100%;
     display: flex;
@@ -143,7 +138,6 @@ const userStore = useUserStore();
 
 .link-block {
     box-sizing: border-box;
-    padding: 0.3rem 0;
     color: black;
     display: flex;
     flex-direction: row;
@@ -161,6 +155,8 @@ const userStore = useUserStore();
 }
 
 .link-block img {
+    box-sizing: border-box;
+    padding: 0.2rem;
     height: 2rem;
 }
 

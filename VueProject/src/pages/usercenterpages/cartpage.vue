@@ -6,12 +6,16 @@
                 v-for="(item, index) of allCartItemsList"
                 class="cart-container"
             >
-                <div class="check-block">
-                    <input
-                        type="checkbox"
-                        :value="index"
-                        v-model="selectedCartItems"
-                    />
+                <div class="check-delete-block">
+                    <div class="check-block">
+                        <input
+                            type="checkbox"
+                            :value="index"
+                            v-model="selectedCartItems"
+                        />
+                    </div>
+                    <!-- 删除单个item 按钮 -->
+                    <button @click="deteleSingleItem(index)">delete</button>
                 </div>
                 <RouterLink
                     :to="{
@@ -27,11 +31,18 @@
                     @click="toItemDetailPage(index)"
                 >
                     <div class="img-container">
-                        <img v-if="item.images && item.images.length > 0" :src="item.images[0].image" alt="/no" />
+                        <img
+                            v-if="item.images && item.images.length > 0"
+                            :src="item.images[0].image"
+                            alt="/no"
+                        />
                     </div>
                     <div class="info-container">
-                        <div class="item-title-block">{{ item.title }}</div>
-                        <div class="item-block">{{ item.name }}</div>
+                        <div class="item-brand">[{{ item.brand }}]</div>
+                        <div class="item-title-block">
+                            {{ item.title }} / Name
+                        </div>
+                        <div class="options">options</div>
                         <div class="price-block">$ {{ item.price }}</div>
                     </div>
                 </RouterLink>
@@ -71,6 +82,10 @@ const toHome = () => {
     router.push({ name: "user" });
 };
 
+const deteleSingleItem = (index: number) => {
+    console.log('deleteSingleItem');
+}
+
 const deleteSelectedItems = () => {
     if (selectedCartItems.value.length === 0) {
         alert("No orders selected for deletion.");
@@ -98,7 +113,9 @@ const deleteSelectedItems = () => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -150,7 +167,9 @@ const fetchAllCartItems = () => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -218,14 +237,28 @@ onMounted(() => {
     box-sizing: border-box;
     padding: 0.5rem;
     display: flex;
-    flex-direction: row;
-    border: 1px solid #ccc;
+    flex-direction: column;
+    border-bottom: 1px solid #ccc;
 }
 
-.check-block {
+.check-delete-block {
     padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
+.check-delete-block button {
+    color: white;
+    background-color: black;
+    border: none;
+    padding: 0.3rem 0.5rem;
+}
+
+.check-delete-block .check-block input {
+    box-sizing: border-box;
+    height: 100%;
+}
 .cart-link {
     box-sizing: border-box;
     display: flex;
@@ -244,7 +277,7 @@ onMounted(() => {
 .img-container img {
     box-sizing: border-box;
     height: 100%;
-    padding: 0.5rem;
+    padding: 0.1rem;
     border: 1px solid #ccc;
 }
 
@@ -266,7 +299,6 @@ onMounted(() => {
 .price-block {
     display: flex;
     flex-direction: row;
-    justify-content: right;
 }
 
 .button-group {

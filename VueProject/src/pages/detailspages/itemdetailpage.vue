@@ -1,19 +1,21 @@
 <template>
     <ReturnBar />
     <div class="container" v-if="item">
-        <div class="img-block">
-            <!-- 多个图片轮播显示 -->
-            <ul>
-                <li v-for="i in item.images">
-                    <img :src="i.image" alt="" />
-                </li>
-            </ul>
-        </div>
-        <div class="info-block">
-            <div class="item-title">{{ item.name }}</div>
-            <h2>$ {{ item.price }}</h2>
-            <div class="item-brand">{{ item.brand }}</div>
-            <div class="item-desc">{{ item.desc }}</div>
+        <div class="sub-container-1">
+            <div class="img-block">
+                <!-- 多个图片轮播显示 -->
+                <ul>
+                    <li v-for="i in item.images">
+                        <img :src="i.image" alt="" />
+                    </li>
+                </ul>
+            </div>
+            <div class="info-block">
+                <div class="item-title">{{ item.name }}</div>
+                <h2>$ {{ item.price }}</h2>
+                <div class="item-brand">{{ item.brand }}</div>
+                <div class="item-desc">{{ item.desc }}</div>
+            </div>
         </div>
         <div class="option-buttons">
             <button class="button-1" @click="addToFavorite">
@@ -59,6 +61,7 @@ const fetchItemDetails = (id: string) => {
         })
         .then((data) => {
             item.value = data;
+            console.log(item.value);
         });
 };
 
@@ -153,20 +156,24 @@ onMounted(() => {
 }
 
 .container {
-    box-sizing: border-box;
-    padding-top: 2.8rem;
-    height: calc(100% - 9.8rem);
-    width: 100%;
     overflow: auto;
-    animation: 0.3s linear 0.1s slideIn;
-    overflow-y: auto;
-    scrollbar-width: none; /* firefox */
-    -ms-overflow-style: none; /* IE 10+ */
-    scroll-snap-type: x mandatory;
+    height: calc(100% - 9.8rem);
 }
 
 .container::-webkit-scrollbar {
     display: none;
+}
+
+.sub-container-1 {
+    box-sizing: border-box;
+    padding-top: 2.6rem;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    scroll-snap-type: x mandatory;
+    animation: 0.3s linear 0.1s slideIn1;
 }
 
 .img-block {
@@ -188,7 +195,7 @@ onMounted(() => {
     height: 100%;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    animation: 0.3s linear 0.1s slideIn;
+    animation: 0.3s linear 0.1s slideIn1;
 }
 
 .img-block ul::-webkit-scrollbar {
@@ -221,16 +228,15 @@ onMounted(() => {
 }
 .option-buttons {
     box-sizing: border-box;
-    position: fixed;
-    z-index: 999;
-    bottom: 4rem;
-    left: 0;
+    position: absolute;
     height: 3rem;
+    bottom: 4rem;
     width: 100vw;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
     border: 0.5rem solid black;
+    z-index: 1000;
+    animation: 0.3s linear 0.1s slideIn2;
 }
 
 .option-buttons .button-1 {
@@ -239,8 +245,8 @@ onMounted(() => {
     border-left: none;
     width: 50%;
     height: 100%;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
     background-color: black;
     color: white;
 }
@@ -264,14 +270,15 @@ onMounted(() => {
     border-right: none;
     box-sizing: border-box;
     width: 50%;
-    border-bottom: 1px solid black;
-    border-top: 1px solid black;
+    height: 100%;
+    border-bottom: 2px solid black;
+    border-top: 2px solid black;
     background-color: black;
     color: white;
 }
 
 /* animation */
-@keyframes slideIn {
+@keyframes slideIn1 {
     from {
         opacity: 0;
         transform: translateX(-5rem);
@@ -279,6 +286,17 @@ onMounted(() => {
     to {
         opacity: 1;
         transform: translateX(0);
+    }
+}
+
+@keyframes slideIn2 {
+    from {
+        opacity: 0;
+        transform: translateY(5rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 </style>

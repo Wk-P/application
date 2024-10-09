@@ -16,6 +16,7 @@ export interface Item {
     class: string,
     title: string,
     price: number,
+    options: Array<string> | undefined,
     images: Array<Image> | null | undefined,
 }
 
@@ -30,6 +31,7 @@ export interface Order {
     status: string | undefined,
     tracking_number: string | undefined,
 }
+
 
 export interface AdminUser {
     username: string,

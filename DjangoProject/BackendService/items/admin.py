@@ -1,5 +1,5 @@
 from django.contrib import admin
-from items.models import Item, UserCartItem, ItemImage, UserFavoriteItem, RecommendItem, HotBrand
+from items.models import Item, UserCartItem, ItemImage, UserFavoriteItem, RecommendItem, HotBrand, Option
 
 class ItemImageInline(admin.TabularInline):
     model = ItemImage
@@ -25,6 +25,13 @@ class HotBrandAdmin(admin.ModelAdmin):
 @admin.register(RecommendItem)
 class RecommendItemAdmin(admin.ModelAdmin):
     list_display = ('item',)  # 显示 item 字段
+
+
+@admin.register(Option)
+class OptionAdmin(admin.ModelAdmin):
+    list_display = ('option_type', 'option_value',)
+    search_fields = ('option_type', 'option_value',)
+    list_filter = ('option_type', 'option_value',)
 
 # 正确注册模型与管理类
 admin.site.register(Item, ItemModelAdmin)        # 注册 Item 模型及其管理类
