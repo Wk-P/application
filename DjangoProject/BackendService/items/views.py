@@ -4,7 +4,7 @@ from items.models import Item
 from rest_framework.request import Request
 from rest_framework import status
 from users.models import CustomUser, CustomUserSerializer
-from items.models import UserCartItem, ItemSerializer, UserCartItemSerializer, UserFavoriteItem, RecommendItem, RecommendItemSerializer
+from items.models import UserCartItem, ItemSerializer, UserCartItemSerializer, UserFavoriteItem, RecommendItem, RecommendItemSerializer, Option, OptionSerializer
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.exceptions import ValidationError
 # Create your views here.
@@ -50,9 +50,8 @@ class CartItemDelete(APIView):
         except Exception as e:
             return Response({'error': f"Unexpected Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 # search cart items
-
-
 class ItemsSearch(APIView):
     def search(self, query: str):
         searchResultList = list(Item.objects.filter(
@@ -110,6 +109,9 @@ class ItemAddToCart(APIView):
         request_body = request.data
         user_id = request_body.get('userId')
         item_id = request_body.get('itemId')
+        
+        # 添加cart options
+        options_list: list[dict] = request_body.get('options')
 
         if not user_id:
             return Response({"error": "Username deficiency"}, status=status.HTTP_204_NO_CONTENT)
@@ -126,6 +128,12 @@ class ItemAddToCart(APIView):
 
         try:
             cart_item = UserCartItem.objects.create(user=user, item=item)
+            for option_data in options_list:
+                option_data = Option.objects.create(
+                    option_type=option_data.get('option_type'),
+                    option_value=option_data.get('option_value')
+                )
+                cart_item.options.add(option_data)
             cart_item.save()
         except:
             return Response({"error": "Item has existed"}, status=status.HTTP_200_OK)

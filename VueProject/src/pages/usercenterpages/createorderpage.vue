@@ -3,7 +3,11 @@
     <div class="container">
         <div class="address-block">
             <span><strong>배송지</strong></span>
-            <RouterLink :to="{ name: ''}" class="link">배송지 관리</RouterLink>
+            <RouterLink
+                :to="{ name: '' }"
+                class="link"
+                >배송지 관리</RouterLink
+            >
         </div>
         <div class="address-block-1">
             <div></div>
@@ -14,14 +18,15 @@
                     <img
                         v-if="item.images && item.images.length > 0"
                         :src="item.images[0].image"
-                        alt=""
-                    />
+                        alt="" />
                 </div>
                 <div class="quantity-block">
                     <h3>Quantity</h3>
                     <div class="quantity-container">
                         <button @click="subQuantity(index)">-</button>
-                        <input type="text" v-model="listOfQuatity[index]" />
+                        <input
+                            type="text"
+                            v-model="listOfQuatity[index]" />
                         <button @click="addQuantity(index)">+</button>
                     </div>
                 </div>
@@ -41,13 +46,17 @@
     </div>
     <!-- 付款信息 -->
     <teleport to="body">
-        <div v-if="showModal" class="modal">
+        <div
+            v-if="showModal"
+            class="modal">
             <div class="head">
                 <span><strong>Pay</strong></span
                 ><button @click="showModal = false">X</button>
             </div>
             <p>Way of pay</p>
-            <button @click="closeModal(newOrders)" class="close-button">
+            <button
+                @click="closeModal(newOrders)"
+                class="close-button">
                 Close Modal
             </button>
         </div>
@@ -57,13 +66,7 @@
 <script lang="ts" setup name="createorderpage">
 import type { Order, Item, User } from "@/types/index";
 import { useRouter, useRoute } from "vue-router";
-import {
-    useItemStore,
-    useOrderStore,
-    useItemsListStore,
-    useOrdersListStore,
-    useUserStore,
-} from "@/stores/index";
+import { useItemStore, useOrderStore, useItemsListStore, useOrdersListStore, useUserStore } from "@/stores/index";
 import { ref, onMounted } from "vue";
 import ReturnBar from "@/components/ReturnBar.vue";
 const itemStore = useItemStore();
@@ -125,9 +128,7 @@ const postRequestOrders = (newOrders: Array<Order>) => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(
-                        `Error! HTTP status code ${response.status}`
-                    );
+                    throw new Error(`Error! HTTP status code ${response.status}`);
                 });
             }
             return response.json();
@@ -142,9 +143,7 @@ const postRequestOrders = (newOrders: Array<Order>) => {
 
 const createOrders = () => {
     itemsList.value.forEach((item) => {
-        const quantityIndex = itemsList.value.findIndex(
-            (i) => i.id === item.id
-        );
+        const quantityIndex = itemsList.value.findIndex((i) => i.id === item.id);
         newOrders.push(createOrder(item, listOfQuatity.value[quantityIndex]));
     });
     ordersListStore.setOrdersList(newOrders);
@@ -186,6 +185,7 @@ onMounted(() => {
     z-index: 1000;
     width: 50%;
 }
+
 .modal .head {
     display: flex;
     flex-direction: row;
@@ -208,6 +208,7 @@ onMounted(() => {
     background-color: white;
     border-radius: 0.3rem;
 }
+
 .container {
     padding-top: 3rem;
     overflow-y: auto;
@@ -219,6 +220,7 @@ onMounted(() => {
     padding: 1rem;
     text-align: center;
 }
+
 .order-items-list {
     box-sizing: border-box;
     list-style: none;

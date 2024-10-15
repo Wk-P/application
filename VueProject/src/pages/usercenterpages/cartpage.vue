@@ -36,7 +36,7 @@
                     <div class="info-container">
                         <div class="item-brand">[{{ item.brand }}]</div>
                         <div class="item-title-block">{{ item.title }} / Name</div>
-                        <div class="options">[ options ]</div>  
+                        <div class="options">[ options ]</div>
                         <div class="price-block">$ {{ item.price }}</div>
                     </div>
                 </RouterLink>
@@ -107,7 +107,6 @@ const changeOptionsButton = () => {
 
 const buyButton = () => {
     // 直接购买 跳转至订单界面
-    
 };
 
 const deleteSelectedItems = () => {

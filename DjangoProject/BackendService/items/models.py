@@ -29,7 +29,6 @@ class Item(models.Model):
     price = models.BigIntegerField(default=0)
     title = models.CharField(default='Notitle', max_length=255)
     class_name = models.CharField(default='Unknown', max_length=255)
-    options = models.ManyToManyField(Option, related_name='items')
 
     def __str__(self):
         return self.name
@@ -60,17 +59,17 @@ class ItemImageSerializer(serializers.ModelSerializer):
 
 class ItemSerializer(serializers.ModelSerializer):
     images = ItemImageSerializer(many=True, read_only=True)  # 添加关联图片的序列化
-    options = OptionSerializer(many=True)
     
     class Meta:
         model = Item
-        fields = ['id', 'name', 'desc', 'price', 'brand', 'title', 'class_name', 'images', 'options']  # 包含 images 字段
+        fields = ['id', 'name', 'desc', 'price', 'brand', 'title', 'class_name', 'images']  # 包含 images 字段
 
 
 # 用户购物车商品字段
 class UserCartItem(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    options = models.ManyToManyField(Option, on_delete=models.CASCADE, related_name='cart_options_list')
 
     class Meta:
         constraints = [
@@ -83,10 +82,11 @@ class UserCartItem(models.Model):
 class UserCartItemSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     item = ItemSerializer()
+    
 
     class Meta:
         model = UserCartItem
-        fields = ['user', 'item']
+        fields = ['user', 'item', 'options']
 
 
 # 用户的喜欢商品字段

@@ -1,5 +1,5 @@
 from django.db import models
-from items.models import Item, ItemSerializer
+from items.models import Item, ItemSerializer, Option, OptionSerializer
 from users.models import CustomUser, CustomUserSerializer
 from rest_framework import serializers
 from django.core.validators import MinValueValidator
@@ -19,6 +19,10 @@ class Order(models.Model):
     order_id = models.CharField(default="", max_length=255)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    # item option    
+    options = models.ManyToManyField(Option, on_delete=models.CASCADE)
+
     quantity = models.PositiveBigIntegerField(
         default=0, validators=[MinValueValidator(0)])
     total_price = models.DecimalField(max_digits=20, decimal_places=2)
