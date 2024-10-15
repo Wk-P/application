@@ -4,15 +4,13 @@
         <ul v-if="allCartItemsList.length !== 0">
             <li
                 v-for="(item, index) of allCartItemsList"
-                class="cart-container"
-            >
+                class="item-container">
                 <div class="check-delete-block">
                     <div class="check-block">
                         <input
                             type="checkbox"
-                            :value="index"
-                            v-model="selectedCartItems"
-                        />
+                            :value="item"
+                            v-model="selectedCartItems" />
                     </div>
                     <!-- 删除单个item 按钮 -->
                     <button @click="deteleSingleItem(index)">delete</button>
@@ -27,38 +25,47 @@
                             itemTitle: item.title,
                         },
                     }"
-                    class="cart-link"
-                    @click="toItemDetailPage(index)"
-                >
+                    class="item-link"
+                    @click="toItemDetailPage(index)">
                     <div class="img-container">
                         <img
                             v-if="item.images && item.images.length > 0"
                             :src="item.images[0].image"
-                            alt="/no"
-                        />
+                            alt="/no" />
                     </div>
                     <div class="info-container">
                         <div class="item-brand">[{{ item.brand }}]</div>
-                        <div class="item-title-block">
-                            {{ item.title }} / Name
-                        </div>
-                        <div class="options">options</div>
+                        <div class="item-title-block">{{ item.title }} / Name</div>
+                        <div class="options">[ options ]</div>  
                         <div class="price-block">$ {{ item.price }}</div>
                     </div>
                 </RouterLink>
+                <div class="options-button">
+                    <button @click="changeOptionsButton">Options Change</button>
+                    <button @click="buyButton">Buy</button>
+                </div>
             </li>
         </ul>
-        <div v-else class="empty-block">
+        <div
+            v-else
+            class="empty-block">
             <strong> - No Items - </strong>
-            <RouterLink :to="{ name: 'home' }" class="link"
+            <RouterLink
+                :to="{ name: 'home' }"
+                class="link"
                 >Go to shopping</RouterLink
             >
         </div>
     </div>
     <div class="button-group">
-        <button @click="deleteSelectedItems">Delete selected items</button>
-        <button @click="addSeletedCartToOrder">Create order</button>
-        <button @click="toHome">My Page</button>
+        <button @click="addSeletedCartToOrder">
+            <span
+                ><strong>Total {{ selectedCartItems.length }} Selected</strong></span
+            >
+            <span
+                ><strong>$ {{ totalPrice }}</strong></span
+            >
+        </button>
     </div>
 </template>
 
@@ -78,13 +85,30 @@ const allCartItemsList = ref<Array<Item>>([]);
 const isLoggedIn = computed(() => (userStore.user ? true : false));
 
 const selectedCartItems = ref<Array<Item>>([]); // 存储选中的订单项
-const toHome = () => {
-    router.push({ name: "user" });
-};
+
+// 累加所有选中的商品金额
+const totalPrice = computed(() =>
+    selectedCartItems.value.reduce((total, item) => {
+        console.log(`total: ${typeof total}`);
+        console.log(`item.price: ${typeof item.price}`);
+        console.log(`item.price value: ${item.price}`);
+        console.log(`selectedCartItems: ${selectedCartItems.value}`);
+        return total + Number(item.price) || 0;
+    }, 0)
+);
 
 const deteleSingleItem = (index: number) => {
-    console.log('deleteSingleItem');
-}
+    console.log("deleteSingleItem");
+};
+
+const changeOptionsButton = () => {
+    // 改变当前item options 选项
+};
+
+const buyButton = () => {
+    // 直接购买 跳转至订单界面
+    
+};
 
 const deleteSelectedItems = () => {
     if (selectedCartItems.value.length === 0) {
@@ -93,9 +117,7 @@ const deleteSelectedItems = () => {
     }
 
     // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const deleteItems = selectedCartItems.value.map(
-        (_, index) => allCartItemsList.value[index]
-    );
+    const deleteItems = selectedCartItems.value.map((_, index) => allCartItemsList.value[index]);
 
     console.log(deleteItems);
 
@@ -113,9 +135,7 @@ const deleteSelectedItems = () => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(
-                        `Error! HTTP status code ${response.status}`
-                    );
+                    throw new Error(`Error! HTTP status code ${response.status}`);
                 });
             }
             return response.json();
@@ -128,9 +148,7 @@ const deleteSelectedItems = () => {
         .catch((error) => console.error(error));
 
     // 过滤出剩余订单列表（不包含已选中的订单）
-    allCartItemsList.value = allCartItemsList.value.filter(
-        (item) => !deleteItems.includes(item)
-    );
+    allCartItemsList.value = allCartItemsList.value.filter((item) => !deleteItems.includes(item));
 
     selectedCartItems.value = [];
 };
@@ -142,17 +160,13 @@ const addSeletedCartToOrder = () => {
     }
 
     // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const addOrderItems = selectedCartItems.value.map(
-        (_, index) => allCartItemsList.value[index]
-    );
+    const addOrderItems = selectedCartItems.value.map((_, index) => allCartItemsList.value[index]);
 
     console.log(addOrderItems);
     itemsListStore.setItemsList(addOrderItems);
 
     // 过滤出剩余订单列表（不包含已选中的订单）
-    allCartItemsList.value = allCartItemsList.value.filter(
-        (item) => !addOrderItems.includes(item)
-    );
+    allCartItemsList.value = allCartItemsList.value.filter((item) => !addOrderItems.includes(item));
 
     selectedCartItems.value = [];
 
@@ -167,17 +181,13 @@ const fetchAllCartItems = () => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(
-                        `Error! HTTP status code ${response.status}`
-                    );
+                    throw new Error(`Error! HTTP status code ${response.status}`);
                 });
             }
             return response.json();
         })
         .then((data) => {
-            allCartItemsList.value = data.map(
-                (cartItem: { item: Item }) => cartItem.item
-            );
+            allCartItemsList.value = data.map((cartItem: { item: Item }) => cartItem.item);
             console.log(allCartItemsList.value);
         })
         .catch((error) => console.error(error));
@@ -233,7 +243,7 @@ onMounted(() => {
     overflow: auto;
 }
 
-.cart-container {
+.item-container {
     box-sizing: border-box;
     padding: 0.5rem;
     display: flex;
@@ -257,9 +267,9 @@ onMounted(() => {
 
 .check-delete-block .check-block input {
     box-sizing: border-box;
-    height: 100%;
 }
-.cart-link {
+
+.item-link {
     box-sizing: border-box;
     display: flex;
     flex: 1;
@@ -316,10 +326,39 @@ onMounted(() => {
 
 .button-group button {
     padding: 0 0.5rem;
-    background-color: white;
-    color: black;
+    background-color: black;
+    color: white;
+    font-size: 1rem;
     margin: 0 0.5rem;
     border: 1px solid black;
     flex: 1;
+}
+
+.button-group button span:nth-child(1) {
+    padding-right: 0.5rem;
+    border-right: 2px solid white;
+}
+
+.button-group button span:nth-child(2) {
+    padding-left: 0.5rem;
+}
+
+.options-button {
+    width: 100%;
+    height: 3.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.options-button button {
+    box-sizing: border-box;
+    width: 50%;
+    border: 1px solid #ccc;
+    outline: none;
+    margin: 0.4rem;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    color: black;
 }
 </style>

@@ -1,7 +1,13 @@
 <template>
     <ReturnBar />
     <div class="container">
-        <h2>Create Order page</h2>
+        <div class="address-block">
+            <span><strong>배송지</strong></span>
+            <RouterLink :to="{ name: ''}" class="link">배송지 관리</RouterLink>
+        </div>
+        <div class="address-block-1">
+            <div></div>
+        </div>
         <ul class="order-items-list">
             <li v-for="(item, index) in itemsList">
                 <div class="img-block">
@@ -153,6 +159,22 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.address-block {
+    box-sizing: border-box;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.address-block .link {
+    display: block;
+    color: #aaa;
+    text-decoration: none;
+    border: 1px solid #aaa;
+    padding: 0 0.5rem;
+}
+
 .modal {
     position: fixed;
     top: 50%;
@@ -187,7 +209,7 @@ onMounted(() => {
     border-radius: 0.3rem;
 }
 .container {
-    padding-top: 2rem;
+    padding-top: 3rem;
     overflow-y: auto;
     height: calc(100% - 4rem);
 }
@@ -211,7 +233,6 @@ onMounted(() => {
     margin: 0.4rem 0;
     box-sizing: border-box;
     height: auto;
-    border: 1px solid black;
     padding: 0.4rem;
 }
 

@@ -4,14 +4,16 @@
         <ul v-if="allFavoriteItemsList.length !== 0">
             <li
                 v-for="(item, index) of allFavoriteItemsList"
-                class="cart-container"
-            >
-                <div class="check-block">
-                    <input
-                        type="checkbox"
-                        :value="index"
-                        v-model="selectedFavoriteItems"
-                    />
+                class="item-container">
+                <div class="check-delete-block">
+                    <div class="check-block">
+                        <input
+                            type="checkbox"
+                            :value="index"
+                            v-model="selectedFavoriteItems" />
+                    </div>
+                    <!-- 删除单个item 按钮 -->
+                    <button @click="deleteSingleItem(index)">delete</button>
                 </div>
                 <RouterLink
                     :to="{
@@ -23,23 +25,30 @@
                             itemTitle: item.title,
                         },
                     }"
-                    class="cart-link"
-                    @click="toItemDetailPage(index)"
-                >
+                    class="item-link"
+                    @click="toItemDetailPage(index)">
                     <div class="img-container">
-                        <img v-if="item.images && item.images.length > 0" :src="item.images[0].image" alt="/no" />
+                        <img
+                            v-if="item.images && item.images.length > 0"
+                            :src="item.images[0].image"
+                            alt="/no" />
                     </div>
                     <div class="info-container">
-                        <div class="item-title-block">{{ item.title }}</div>
-                        <div class="item-block">{{ item.name }}</div>
+                        <div class="item-brand">[{{ item.brand }}]</div>
+                        <div class="item-title-block">{{ item.title }} / Name</div>
+                        <div class="options">options</div>
                         <div class="price-block">$ {{ item.price }}</div>
                     </div>
                 </RouterLink>
             </li>
         </ul>
-        <div v-else class="empty-block">
+        <div
+            v-else
+            class="empty-block">
             <strong> - No Items - </strong>
-            <RouterLink :to="{ name: 'home' }" class="link"
+            <RouterLink
+                :to="{ name: 'home' }"
+                class="link"
                 >Go to shopping</RouterLink
             >
         </div>
@@ -72,6 +81,10 @@ const toHome = () => {
     router.push({ name: "user" });
 };
 
+const deleteSingleItem = (index: number) => {
+    alert(`Item {}`)
+}
+
 const deleteSelectedItems = () => {
     if (selectedFavoriteItems.value.length === 0) {
         alert("No orders selected for deletion.");
@@ -79,9 +92,7 @@ const deleteSelectedItems = () => {
     }
 
     // 使用索引从 allFavorites 过滤出选中的订单对象
-    const deleteItems = selectedFavoriteItems.value.map(
-        (_, index) => allFavoriteItemsList.value[index]
-    );
+    const deleteItems = selectedFavoriteItems.value.map((_, index) => allFavoriteItemsList.value[index]);
 
     console.log(deleteItems);
 
@@ -112,9 +123,7 @@ const deleteSelectedItems = () => {
         .catch((error) => console.error(error));
 
     // 过滤出剩余订单列表（不包含已选中的订单）
-    allFavoriteItemsList.value = allFavoriteItemsList.value.filter(
-        (item) => !deleteItems.includes(item)
-    );
+    allFavoriteItemsList.value = allFavoriteItemsList.value.filter((item) => !deleteItems.includes(item));
 
     selectedFavoriteItems.value = [];
 };
@@ -126,28 +135,24 @@ const addSeletedToCart = () => {
     }
 
     // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const addCartItems = selectedFavoriteItems.value.map(
-        (_, index) => allFavoriteItemsList.value[index]
-    );
+    const addCartItems = selectedFavoriteItems.value.map((_, index) => allFavoriteItemsList.value[index]);
 
-    fetch('/api/items/cart_add/', {
+    fetch("/api/items/cart_add/", {
         method: "POST",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
             userId: userStore.user?.id,
-            items: addCartItems 
-        })
-    })
+            items: addCartItems,
+        }),
+    });
 
     console.log(addCartItems);
     itemsListStore.setItemsList(addCartItems);
 
     // 过滤出剩余订单列表（不包含已选中的订单）
-    allFavoriteItemsList.value = allFavoriteItemsList.value.filter(
-        (item) => !addCartItems.includes(item)
-    );
+    allFavoriteItemsList.value = allFavoriteItemsList.value.filter((item) => !addCartItems.includes(item));
 
     selectedFavoriteItems.value = [];
 };
@@ -223,19 +228,33 @@ onMounted(() => {
     overflow: auto;
 }
 
-.cart-container {
+.item-container {
     box-sizing: border-box;
     padding: 0.5rem;
     display: flex;
-    flex-direction: row;
-    border: 1px solid #ccc;
+    flex-direction: column;
+    border-bottom: 1px solid #ccc;
 }
-
-.check-block {
+.check-delete-block {
     padding: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.cart-link {
+.check-delete-block button {
+    color: white;
+    background-color: black;
+    border: none;
+    padding: 0.3rem 0.5rem;
+}
+
+.check-delete-block .check-block input {
+    box-sizing: border-box;
+    height: 100%;
+}
+
+.item-link {
     box-sizing: border-box;
     display: flex;
     flex: 1;
@@ -253,7 +272,7 @@ onMounted(() => {
 .img-container img {
     box-sizing: border-box;
     height: 100%;
-    padding: 0.5rem;
+    padding: 0.1rem;
     border: 1px solid #ccc;
 }
 
@@ -275,7 +294,6 @@ onMounted(() => {
 .price-block {
     display: flex;
     flex-direction: row;
-    justify-content: right;
 }
 
 .button-group {

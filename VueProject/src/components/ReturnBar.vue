@@ -27,7 +27,7 @@ import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 const returnPrev = () => {
-    const routeName = route.matched[0]?.name;
+    const routeName = route.name;
     const routePath = route.path;
     if (routeName === "register") {
         router.push({ name: "user" });
@@ -55,21 +55,30 @@ onMounted(() => {
     const parentPathMatched0 = route.matched[0]?.path;
     const parentPathMatched1 = route.matched[1]?.path;
 
+    console.log(parentPathMatched0, parentPathMatched1);
+    console.log(parentPathMatched1 === '/user/createorder');
+
     if (parentPathMatched0 === "/favorite") {
         routePathTitle.value = parentPathMatched0.split("/")[1];
     } else if (parentPathMatched0 === "/user") {
         if (parentPathMatched1 === "/user/order") {
-            routePathTitle.value = parentPathMatched1.split('/')[2];
-        } else if (parentPathMatched1 === '/user/cart') {
-            routePathTitle.value = parentPathMatched1.split('/')[2];
-        } else { // login
-            routePathTitle.value = parentPathMatched0.split('/')[1];
+            routePathTitle.value = parentPathMatched1.split("/")[2];
+        } else if (parentPathMatched1 === "/user/cart") {
+            routePathTitle.value = parentPathMatched1.split("/")[2];
+        }  else if (parentPathMatched1 === '/user/createorder') {
+            routePathTitle.value = "주문/결제";
+        } else {
+            // login
+            routePathTitle.value = parentPathMatched0.split("/")[1];
         }
-    } else if (parentPathMatched0 === "/brand") {       // brand
+    } else if (parentPathMatched0 === "/brand") {
+        // brand
         routePathTitle.value = parentPathMatched0.split("/")[1];
-    } else if (parentPathMatched0 === "/class") {       // class
+    } else if (parentPathMatched0 === "/class") {
+        // class
         routePathTitle.value = parentPathMatched0.split("/")[1];
-    } else if (parentPathMatched0 === '/address/info') { // address info
+    } else if (parentPathMatched0 === "/address/info") {
+        // address info
         routePathTitle.value = parentPathMatched0.split("/")[1];
     }
 });
