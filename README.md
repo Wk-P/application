@@ -34,3 +34,8 @@ sudo nginx -t
 sudo systemctl restart nginx
 
 ```
+
+
+# Django 类使用
+## 1. 类本身
+## 2. 类字段序列化
