@@ -69,7 +69,7 @@ class ItemSerializer(serializers.ModelSerializer):
 class UserCartItem(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    options = models.ManyToManyField(Option, on_delete=models.CASCADE, related_name='cart_options_list')
+    options = models.ManyToManyField(Option, related_name='cart_options_list')
 
     class Meta:
         constraints = [
@@ -82,7 +82,7 @@ class UserCartItem(models.Model):
 class UserCartItemSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     item = ItemSerializer()
-    
+    options = OptionSerializer()
 
     class Meta:
         model = UserCartItem

@@ -21,7 +21,7 @@ class Order(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     # item option    
-    options = models.ManyToManyField(Option, on_delete=models.CASCADE)
+    options = models.ManyToManyField(Option)
 
     quantity = models.PositiveBigIntegerField(
         default=0, validators=[MinValueValidator(0)])
