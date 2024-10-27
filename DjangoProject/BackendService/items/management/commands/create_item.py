@@ -1,6 +1,6 @@
 # ~/application/DjangoProject/BackendService/items/management/commands/create_item.py
 from django.core.management.base import BaseCommand
-from items.models import Item, ItemImage
+from items.models import Item, ItemImage, ItemOption, OptionName
 from pathlib import Path
 from django.core.files import File
 from django.conf import settings
@@ -19,8 +19,9 @@ class Command(BaseCommand):
                 desc='This is a description of item1.',
                 price=1000,  # 商品价格
                 title='Item1 Title',
-                class_name='ClassA'  # 类别名称
+                class_name='ClassA',  # 类别名称
             )
+            
 
             # 创建并关联 ItemImage
             media_dir_path = Path(settings.MEDIA_ROOT)
@@ -31,15 +32,31 @@ class Command(BaseCommand):
                     try:
                         image_file = File(f)
                         image_file.name = sub_dir_path
-                        ItemImage.objects.create(item=new_item, image=image_file)
+                        ItemImage.objects.create(
+                            item=new_item, image=image_file)
                     except Exception as e:
                         print(e)
                         # print(image_path)
             else:
                 print(f"Image file does not exist at: {image_path}")
+            
+
+            options_data = [
+                {"name": "Color", "values": ["red", "white", "black"]},
+                {"name": "Size", "values": ["S", "M", "L", "XL"]},
+            ]
+
+            for option_data in options_data:
+                for value in option_data.get('values'):
+                    option_name = OptionName.objects.create(name=option_data['name'])
+                    ItemOption.objects.create(
+                        item=new_item,
+                        name=option_name,
+                        value=value
+                    )
 
             self.stdout.write(self.style.SUCCESS(
-                f'Item "{item_name}" created successfully'
+                f'Item "{item_name}" created successfully\nOptions create successfully'
             ))
         else:
             self.stdout.write(self.style.WARNING(

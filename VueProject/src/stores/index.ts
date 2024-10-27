@@ -1,7 +1,7 @@
 // src/stores/index.ts
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { User, Item, Order, AdminUser, AddressReceiver } from "@/types/index";
+import type { User, Item, Order, AdminUser, AddressReceiver, CartItem } from "@/types/index";
 
 
 export const useUserStore = defineStore('user', () => {
@@ -144,14 +144,14 @@ export const useOrderStore = defineStore('order', () => {
 
 
 export const useOrdersListStore = defineStore('orders', () => {
-    const ordersList = ref<Array<Order> | null>(null);
+    const ordersList = ref<Array<Order>>([]);
     const setOrdersList = (newOrdersList: Array<Order>) => {
         ordersList.value = newOrdersList;
         localStorage.setItem("orders", JSON.stringify(newOrdersList));
     };
 
     const clearOrdersList = () => {
-        ordersList.value = null;
+        ordersList.value = [];
         localStorage.removeItem("orders");
     }
 
@@ -260,5 +260,37 @@ export const useFavoriteItemsListStore = defineStore('favorite', () => {
 
     return {
         favoriteItemsList, setFavoriteItemsList, clearFavoriteItemsList, loadFavoriteItemsList, updateFavoriteItemsList
+    }
+})
+
+
+export const useSelectedCartItemsStore = defineStore('cart_items_to_order', () => {
+    const selectedItems = ref<Array<CartItem | null | undefined>>([]);
+    const localStorageKeyName = 'selected_items';
+    const setSeletedCartItems = (newItems: Array<CartItem | null | undefined>) => {
+        selectedItems.value = newItems;
+        localStorage.setItem(localStorageKeyName, JSON.stringify(newItems));
+    }
+
+    const clearSelectedItems = () => {
+        localStorage.removeItem(localStorageKeyName);
+    }
+
+    const loadSelectedItems = () => {
+        const storedSelectedItems = localStorage.getItem(localStorageKeyName);
+        if (storedSelectedItems) {
+            selectedItems.value = JSON.parse(storedSelectedItems);
+        }
+    }
+
+    const updateSelectedItems = (newItems: Array<CartItem | null | undefined>) => {
+        selectedItems.value = newItems;
+        localStorage.setItem(localStorageKeyName, JSON.stringify(newItems));
+    }
+
+    loadSelectedItems();
+
+    return {
+        selectedItems, localStorageKeyName, setSeletedCartItems, clearSelectedItems, updateSelectedItems
     }
 })

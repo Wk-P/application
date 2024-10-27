@@ -1,5 +1,5 @@
 from django.db import models
-from items.models import Item, ItemSerializer, Option, OptionSerializer
+from items.models import Item, ItemSerializer, OptionName, OptionNameSerializer
 from users.models import CustomUser, CustomUserSerializer
 from rest_framework import serializers
 from django.core.validators import MinValueValidator
@@ -10,7 +10,8 @@ from django.core.validators import MinValueValidator
 
 class Order(models.Model):
     ORDER_STATUS_CHOICES = [
-        ('unconfirmed', 'Unconfirmed'),
+        ('unpay', 'Unpay'),
+        ('paid unconfirmed', 'Paid, Not Unconfirmed'),
         ('confirmed_not_shipped', 'Confirmed, Not Shipped'),
         ('shipped', 'Shipped'),
         ('delivered', 'Delivered'),
@@ -20,15 +21,12 @@ class Order(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
-    # item option    
-    options = models.ManyToManyField(Option)
-
     quantity = models.PositiveBigIntegerField(
         default=0, validators=[MinValueValidator(0)])
     total_price = models.DecimalField(max_digits=20, decimal_places=2)
 
     status = models.CharField(
-        max_length=50, choices=ORDER_STATUS_CHOICES, default='unconfirmed'
+        max_length=50, choices=ORDER_STATUS_CHOICES, default='unpay'
     )
     # 运单号
     tracking_number = models.CharField(
@@ -47,8 +45,24 @@ class OrderSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     updated_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-
+    
     class Meta:
         model = Order
         fields = ['order_id', 'item', 'user', 'quantity', 'total_price',
                   'status', 'tracking_number', 'created_at', 'updated_at']
+
+
+class OrderItemOption(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    name = models.ForeignKey(OptionName, on_delete=models.CASCADE)
+    value = models.CharField(max_length=255, default='')
+
+
+
+class OrderItemOptionSerializer(serializers.ModelSerializer):
+    order = OrderSerializer()
+    name = OptionNameSerializer()
+    
+    class Meta:
+        model = OrderItemOption
+        fields = ['order', 'name', 'value']

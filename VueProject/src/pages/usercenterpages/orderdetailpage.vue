@@ -8,6 +8,7 @@
             <div><span>NAME</span><span>{{ order.item?.name }}</span></div>
             <div><span>PRICE</span><span>{{ order.item?.price }}</span></div>
             <div><span>QUANTITY</span><span>{{ order.quantity }}</span></div>
+            <div><span>OPTIONS</span><span>{{ order.selected_options }}</span></div>
             <div><span>TOTAL PRICE</span><span>{{ order.totalPrice }}</span></div>
         </div>
         <div class="delivery-block">

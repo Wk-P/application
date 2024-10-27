@@ -3,56 +3,132 @@
     <div class="container-block">
         <ul v-if="allCartItemsList.length !== 0">
             <li
-                v-for="(item, index) of allCartItemsList"
-                class="item-container">
+                v-for="(cart_item, itemIndex) of allCartItemsList"
+                class="item-container"
+            >
                 <div class="check-delete-block">
                     <div class="check-block">
                         <input
                             type="checkbox"
-                            :value="item"
-                            v-model="selectedCartItems" />
+                            :value="cart_item"
+                            v-model="selectedCartItems"
+                        />
                     </div>
                     <!-- 删除单个item 按钮 -->
-                    <button @click="deteleSingleItem(index)">delete</button>
+                    <button @click="deteleSingleItem(itemIndex)">delete</button>
                 </div>
                 <RouterLink
                     :to="{
                         name: 'itemdetail',
                         params: {
-                            itemId: item.id,
-                            itemName: item.name,
-                            brand: item.brand,
-                            itemTitle: item.title,
+                            itemId: cart_item.item.id,
+                            itemName: cart_item.item.name,
+                            brand: cart_item.item.brand,
+                            itemTitle: cart_item.item.title,
                         },
                     }"
                     class="item-link"
-                    @click="toItemDetailPage(index)">
+                    @click="toItemDetailPage(itemIndex)"
+                >
                     <div class="img-container">
                         <img
-                            v-if="item.images && item.images.length > 0"
-                            :src="item.images[0].image"
-                            alt="/no" />
-                    </div>
-                    <div class="info-container">
-                        <div class="item-brand">[{{ item.brand }}]</div>
-                        <div class="item-title-block">{{ item.title }} / Name</div>
-                        <div class="options">[ options ]</div>
-                        <div class="price-block">$ {{ item.price }}</div>
+                            v-if="
+                                cart_item.item.images &&
+                                cart_item.item.images.length > 0
+                            "
+                            :src="cart_item.item.images[0].image"
+                            alt="/no"
+                        />
                     </div>
                 </RouterLink>
-                <div class="options-button">
-                    <button @click="changeOptionsButton">Options Change</button>
-                    <button @click="buyButton">Buy</button>
+                <div class="info-container">
+                    <div class="item-brand">[{{ cart_item.item.brand }}]</div>
+                    <div class="item-title-block">
+                        {{ cart_item.item.title }} / {{ cart_item.item.name }}
+                    </div>
+                    <div class="selected-options">
+                        <div
+                            v-for="option in cart_item.selected_options"
+                            class="item-options-labels"
+                        >
+                            <span>[{{ option.option_key }}</span
+                            ><span>{{ option.value }}]</span>
+                        </div>
+                    </div>
+                    <div class="quantity-container">
+                        <span>Quantity</span>
+                        <input
+                            type="text"
+                            v-model="listOfQuatity[itemIndex]"
+                            :placeholder="placeholderText"
+                        />
+                    </div>
+                    <div class="price-block">$ {{ cart_item.item.price }}</div>
                 </div>
+                <div class="options-button">
+                    <button @click="changeOptionsButton(itemIndex)">
+                        Options Change
+                    </button>
+                    <button @click="buyButton(itemIndex)">Buy</button>
+                </div>
+                <teleport to="body">
+                    <div class="item-option-view" v-if="showOptionsView">
+                        <ul
+                            v-if="
+                                allCartItemsList[itemIndex]?.item !==
+                                    undefined &&
+                                allCartItemsList[itemIndex]?.item !==
+                                    null
+                            "
+                        >
+                            <li
+                                v-for="(
+                                    option, optionIndex
+                                ) in allCartItemsList[itemIndex]?.item.options"
+                            >
+                                <h3 class="item-option-title">
+                                    {{ option.name }}
+                                </h3>
+                                <div class="item-option-buttons">
+                                    <button
+                                        v-for="(
+                                            value, valueIndex
+                                        ) in option.values"
+                                        @click="
+                                            selectItemOption(
+                                                itemIndex,
+                                                optionIndex,
+                                                valueIndex
+                                            )
+                                        "
+                                        :style="
+                                            getButtonStyle(
+                                                itemIndex,
+                                                optionIndex,
+                                                valueIndex
+                                            )
+                                        "
+                                        class="item-option-button"
+                                    >
+                                        {{ value }}
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                        <div v-else>Empty options</div>
+                        <button
+                            @click="confirmChangeOptions(itemIndex)"
+                            class="confirm-button"
+                        >
+                            CONFIRM
+                        </button>
+                    </div>
+                </teleport>
             </li>
         </ul>
-        <div
-            v-else
-            class="empty-block">
+        <div v-else class="empty-block">
             <strong> - No Items - </strong>
-            <RouterLink
-                :to="{ name: 'home' }"
-                class="link"
+            <RouterLink :to="{ name: 'home' }" class="link"
                 >Go to shopping</RouterLink
             >
         </div>
@@ -60,7 +136,9 @@
     <div class="button-group">
         <button @click="addSeletedCartToOrder">
             <span
-                ><strong>Total {{ selectedCartItems.length }} Selected</strong></span
+                ><strong
+                    >Total {{ selectedCartItems.length }} Selected</strong
+                ></span
             >
             <span
                 ><strong>$ {{ totalPrice }}</strong></span
@@ -71,54 +149,209 @@
 
 <script lang="ts" setup name="CustomOrder">
 import { ref, onMounted, computed } from "vue";
-import type { Item } from "@/types/index";
-import { useItemsListStore, useUserStore, useItemStore } from "@/stores/index";
+import type {
+    Item,
+    CartItem,
+    SelectedOption,
+    Option,
+    Order,
+    User,
+    OptionValue,
+} from "@/types/index";
+import {
+    useItemsListStore,
+    useUserStore,
+    useItemStore,
+    useSelectedCartItemsStore,
+    useOrdersListStore,
+} from "@/stores/index";
 import { useRouter, RouterLink } from "vue-router";
 import ReturnBar from "@/components/ReturnBar.vue";
 
 const router = useRouter();
 const userStore = useUserStore();
 const itemStore = useItemStore();
-const itemsListStore = useItemsListStore();
-const allCartItemsList = ref<Array<Item>>([]);
+const ordersListStore = useOrdersListStore();
+const cartItemsStore = useSelectedCartItemsStore();
+const allCartItemsList = ref<Array<CartItem>>([]);
+const placeholderText = "Quantity";
+const listOfQuatity = ref<Array<number>>([]);
+const showOptionsView = ref(false);
+
+// 用于 记录 cartItem
 
 const isLoggedIn = computed(() => (userStore.user ? true : false));
 
-const selectedCartItems = ref<Array<Item>>([]); // 存储选中的订单项
+const selectedCartItems = ref<Array<CartItem>>([]); // 存储选中的订单项
+
+const selectedItemOption = ref<Record<string, OptionValue | null>>({});
+
+const createOrder = (cart_item: CartItem, quantity: number) => {
+    // 强制转换 quantity
+    const newOrder: Order = {
+        orderId: "",
+        user: userStore.user as User,
+        item: cart_item.item,
+        quantity: Number(quantity),
+        totalPrice: Number(quantity) * cart_item.item.price,
+        createdTime: "",
+        updatedTime: "",
+        status: undefined,
+        tracking_number: undefined,
+        selected_options: cart_item.selected_options,
+    };
+    return newOrder;
+};
+
+const postRequestOrders = (newOrders: Array<Order>) => {
+    console.log(newOrders);
+    fetch(`/api/orders/create/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            newOrders: newOrders,
+        }),
+    })
+        .then((response) => {
+            console.log(response);
+            if (!response.ok) {
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data);
+            alert("주문생선됐습니다!");
+            router.push({ name: "order" });
+        })
+        .catch((error) => console.log(error.message));
+};
+
+const createOrders = () => {
+    try {
+        for (let index = 0; index < selectedCartItems.value.length; index++) {
+            const cart_item = selectedCartItems.value[index];
+            console.log(listOfQuatity.value[index]);
+            console.log(index);
+            console.log(cart_item.selected_options);
+            if (
+                listOfQuatity.value[index] <= 0 ||
+                listOfQuatity.value[index] === undefined
+            ) {
+                alert(`Please enter quantity more than 0!`);
+                throw new Error("Invalid quantity");
+            }
+            if (
+                cart_item.selected_options.length <= 0 ||
+                cart_item.selected_options === undefined ||
+                cart_item.selected_options === ([] as Array<SelectedOption>)
+            ) {
+                alert(`Please select options`);
+                throw new Error("No options selected");
+            }
+            const newOrder = createOrder(cart_item, listOfQuatity.value[index]);
+            console.log(typeof ordersListStore.ordersList);
+            ordersListStore?.ordersList?.push(newOrder);
+            console.log(typeof ordersListStore.ordersList);
+        }
+        console.log(
+            `ordersListStore?.ordersList: ${ordersListStore.ordersList}`
+        );
+        console.assert(ordersListStore?.ordersList !== null);
+        postRequestOrders(ordersListStore?.ordersList as Array<Order>);
+        return true;
+    } catch (error: any) {
+        console.error(error);
+        return false;
+    }
+};
+
+const confirmChangeOptions = (itemIndex: number) => {
+    showOptionsView.value = false;
+
+    // patch 方式
+    fetch(`/api/items/cart_add/`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            userId: userStore.user?.id,
+            itemId: allCartItemsList.value[itemIndex].item.id,
+            options: selectedItemOption.value,
+        }),
+    })
+        .then((response) => {
+            if (!response.ok) {
+                response.json().then((error) => {
+                    console.log(error);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
+                });
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            } else {
+                alert("Change options success");
+            }
+            window.location.reload();
+        });
+};
+
+const getButtonStyle = (
+    itemIndex: number,
+    optionIndex: number,
+    valueIndex: number
+) => {
+    const optionKey =
+        allCartItemsList.value[itemIndex].item.options[optionIndex].name;
+    const selectedValue =
+        allCartItemsList.value[itemIndex].item.options[optionIndex].values[
+            valueIndex
+        ];
+
+    if (selectedItemOption.value[optionKey] === selectedValue) {
+        // 检查 optionIndex 和 valueIndex 的匹配
+        return {
+            backgroundColor: "black",
+            color: "white",
+        };
+    } else {
+        return {
+            backgroundColor: "#eee",
+            color: "black",
+        };
+    }
+};
 
 // 累加所有选中的商品金额
 const totalPrice = computed(() =>
-    selectedCartItems.value.reduce((total, item) => {
+    selectedCartItems.value.reduce((total, cart_item) => {
         console.log(`total: ${typeof total}`);
-        console.log(`item.price: ${typeof item.price}`);
-        console.log(`item.price value: ${item.price}`);
+        console.log(`item.price: ${typeof cart_item.item.price}`);
+        console.log(`item.price value: ${cart_item.item.price}`);
         console.log(`selectedCartItems: ${selectedCartItems.value}`);
-        return total + Number(item.price) || 0;
+        return total + Number(cart_item.item.price) || 0;
     }, 0)
 );
 
+// 删除单个商品
 const deteleSingleItem = (index: number) => {
     console.log("deleteSingleItem");
-};
 
-const changeOptionsButton = () => {
-    // 改变当前item options 选项
-};
-
-const buyButton = () => {
-    // 直接购买 跳转至订单界面
-};
-
-const deleteSelectedItems = () => {
-    if (selectedCartItems.value.length === 0) {
-        alert("No orders selected for deletion.");
-        return;
-    }
-
-    // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const deleteItems = selectedCartItems.value.map((_, index) => allCartItemsList.value[index]);
-
-    console.log(deleteItems);
+    const deleteItem = allCartItemsList.value[index];
 
     fetch("/api/items/cart/delete/", {
         method: "DELETE",
@@ -126,7 +359,7 @@ const deleteSelectedItems = () => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            deleteItems: deleteItems,
+            deleteItem: deleteItem,
             user: userStore.user,
         }),
     })
@@ -134,7 +367,9 @@ const deleteSelectedItems = () => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
@@ -142,16 +377,39 @@ const deleteSelectedItems = () => {
         .then((data) => {
             console.log(data);
             alert("삭제돴습니다!");
-            router.push({ name: "cart" });
+            // router.push({ name: "cart" });
+            window.location.reload();
         })
         .catch((error) => console.error(error));
 
-    // 过滤出剩余订单列表（不包含已选中的订单）
-    allCartItemsList.value = allCartItemsList.value.filter((item) => !deleteItems.includes(item));
-
-    selectedCartItems.value = [];
+    allCartItemsList.value.filter((item) => item !== deleteItem);
 };
 
+const selectItemOption = (
+    itemIndex: number,
+    optionIndex: number,
+    valueIndex: number
+) => {
+    const optionKey =
+        allCartItemsList.value[itemIndex].item.options[optionIndex].name;
+    selectedItemOption.value[optionKey] =
+        allCartItemsList.value[itemIndex].item.options[optionIndex].values[
+            valueIndex
+        ];
+};
+
+const changeOptionsButton = (itemIndex: number) => {
+    // 改变当前item options 选项
+    showOptionsView.value = true;
+    const changeOptionItem = allCartItemsList.value[itemIndex];
+    console.log(changeOptionItem);
+};
+
+const buyButton = (index: number) => {
+    // 直接购买 跳转至订单界面
+};
+
+// 购买以上用品
 const addSeletedCartToOrder = () => {
     if (selectedCartItems.value.length === 0) {
         alert("No orders selected for deletion.");
@@ -159,13 +417,20 @@ const addSeletedCartToOrder = () => {
     }
 
     // 使用索引从 allOrdersList 过滤出选中的订单对象
-    const addOrderItems = selectedCartItems.value.map((_, index) => allCartItemsList.value[index]);
+    const addOrderItems = selectedCartItems.value.map(
+        (_, index) => allCartItemsList.value[index]
+    );
 
-    console.log(addOrderItems);
-    itemsListStore.setItemsList(addOrderItems);
+    cartItemsStore.setSeletedCartItems(addOrderItems);
+
+    if (createOrders() === false) {
+        return;
+    }
 
     // 过滤出剩余订单列表（不包含已选中的订单）
-    allCartItemsList.value = allCartItemsList.value.filter((item) => !addOrderItems.includes(item));
+    allCartItemsList.value = allCartItemsList.value.filter(
+        (item) => !addOrderItems.includes(item)
+    );
 
     selectedCartItems.value = [];
 
@@ -173,20 +438,37 @@ const addSeletedCartToOrder = () => {
 };
 
 const fetchAllCartItems = () => {
-    // 获取Orders
+    // 所有CartItems
     const username = userStore.user?.username;
     fetch(`/api/items/cart/${username}/`)
         .then((response) => {
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
             }
             return response.json();
         })
         .then((data) => {
-            allCartItemsList.value = data.map((cartItem: { item: Item }) => cartItem.item);
+            console.log(data);
+            allCartItemsList.value = data.map(
+                (element: {
+                    item: CartItem;
+                    options: Array<Option>;
+                    selected_options: Array<SelectedOption>;
+                }) => {
+                    const cart_item: CartItem = {
+                        item: element.item.item,
+                        user: element.item.user,
+                        selected_options: element.selected_options
+                    }
+
+                    cart_item.item.options = element.options;
+                    return cart_item;
+                });
             console.log(allCartItemsList.value);
         })
         .catch((error) => console.error(error));
@@ -194,7 +476,7 @@ const fetchAllCartItems = () => {
 
 const toItemDetailPage = (index: number) => {
     const item = allCartItemsList.value[index];
-    itemStore.setCustomItem(item);
+    itemStore.setCustomItem(item.item);
 };
 
 onMounted(() => {
@@ -299,6 +581,10 @@ onMounted(() => {
     padding: 0 0.5rem;
 }
 
+.info-container > div {
+    margin-top: 0.2rem;
+}
+
 .item-block,
 .item-title-block {
     display: flex;
@@ -359,5 +645,92 @@ onMounted(() => {
     padding: 0.5rem 1rem;
     background-color: white;
     color: black;
+}
+
+.selected-options {
+    box-sizing: border-box;
+    display: flex;
+    height: 3rem;
+    flex-direction: column;
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.item-options-labels {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.item-option-view {
+    position: absolute;
+    top: calc((100vh - 40vh) * 0.4);
+    left: calc((100vw - 60vw) * 0.5);
+    height: 40vh;
+    width: 60vw;
+    z-index: 1000;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item-option-view ul {
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.item-option-view ul li {
+    height: 4rem;
+    width: 100%;
+}
+
+.item-option-view > div {
+    width: 100%;
+    height: 4rem;
+}
+
+.confirm-button {
+    display: block;
+    box-sizing: border-box;
+    width: 80%;
+    padding: 0.5rem 1rem;
+    height: 2rem;
+    background-color: white;
+}
+
+.item-option-buttons {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 0.4rem;
+}
+
+.item-option-button {
+    box-sizing: border-box;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #eee;
+    width: 100%;
+}
+
+.item-option-title {
+    padding: 0.4rem 0.5rem;
+}
+
+.quantity-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.quantity-container input {
+    box-sizing: border-box;
+    outline: none;
+    text-align: center;
 }
 </style>

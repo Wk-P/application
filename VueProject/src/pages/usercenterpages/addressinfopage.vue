@@ -1,7 +1,7 @@
 <template>
     <ReturnBar />
     <div class="container">
-        <ul>
+        <ul v-if="addressReceiverList.length > 0" class="address-ul">
             <li v-for="addr_recv in addressReceiverList">
                 <RouterLink :to="{name: 'address_modify', params: {'addrRecvId': addr_recv.id, 'addr': addr_recv.address, 'recv': addr_recv.receiver}}">
                     <span>{{ addr_recv.address }}</span>
@@ -9,6 +9,9 @@
                 </RouterLink>
             </li>
         </ul>
+        <div v-else class="add-new-address-link">
+            <RouterLink :to="{ name: 'address_add'}">Add new address</RouterLink>
+        </div>
         <div class="button-group">
             <button @click="toAddInfomation">Add</button>
             <button @click="toUsercenterHome">My Page</button>
@@ -61,6 +64,7 @@ onMounted(() => {
 <style scoped>
 .container {
     height: calc(100% - 6.8rem);
+    width: 100%;
     padding-top: 2.8rem;
     padding-bottom: 4rem;
     overflow-y: auto;
@@ -114,5 +118,56 @@ onMounted(() => {
     border: 1px solid black;
     margin: 0 0.5rem;
     flex: 1;
+}
+
+.add-new-address-link {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 60%;
+    width: 100%;
+}
+
+.add-new-address-link a {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 2rem;
+    padding: 1rem;
+    text-decoration: none;
+    border: 2px solid black;
+    color: black;
+}
+
+.address-ul {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    list-style: none;
+}
+
+.address-ul li {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.address-ul li a {
+    box-sizing: border-box;
+    padding: 1rem 1rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    color: white;
+    background-color: black;
+    margin: 1rem;
+    height: 3.6rem;
+    border-radius: 1.5rem;
 }
 </style>

@@ -29,7 +29,9 @@ class AddressReceiver(models.Model):
     receiver = models.CharField(max_length=255, blank=False, default='')
 
 
+
 class AddressReceirSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer()
     class Meta:
         model = AddressReceiver
         fields = ['id', 'user', 'address', 'receiver']

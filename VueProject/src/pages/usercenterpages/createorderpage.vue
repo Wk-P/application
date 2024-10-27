@@ -1,62 +1,82 @@
 <template>
     <ReturnBar />
     <div class="container">
+        <!-- 信息管理 -->
         <div class="address-block">
             <span><strong>배송지</strong></span>
-            <RouterLink
-                :to="{ name: '' }"
-                class="link"
+            <RouterLink :to="{ name: 'address_receiver' }" class="link"
                 >배송지 관리</RouterLink
             >
         </div>
+        <!-- 订单地址 -->
         <div class="address-block-1">
-            <div></div>
+            <ul
+                class="address-first-content"
+                v-if="addressInformationList.length > 0"
+            >
+                <!-- <div>{{ addressInformationList[0]?.address }}</div> -->
+                <li
+                    v-for="(address, index) in addressInformationList"
+                    @click="selectAddress(index)"
+                    :style="isSelectedAddress(index) ? selectedAddressStyle : unSelectedAddressStyle"
+                >
+                    {{ address.receiver }}
+                </li>
+            </ul>
+            <div v-else>Please add new address and receiver</div>
         </div>
+        <!-- 付款信息 -->
+        <div class="send-money-info">
+            <h4>结算方式</h4>
+            <div>$ {{ orderStore?.order?.totalPrice }} 请转账至下列账户</div>
+            <div>NH 1234-5678-9999</div>
+        </div>
+        <!-- 订单商品展示区 -->
         <ul class="order-items-list">
-            <li v-for="(item, index) in itemsList">
+            <li v-for="(cart_item, item_index) in fromCartItems">
                 <div class="img-block">
                     <img
-                        v-if="item.images && item.images.length > 0"
-                        :src="item.images[0].image"
-                        alt="" />
+                        v-if="
+                            cart_item?.item.images &&
+                            cart_item?.item.images.length > 0
+                        "
+                        :src="cart_item?.item.images[0].image"
+                        alt=""
+                    />
                 </div>
                 <div class="quantity-block">
-                    <h3>Quantity</h3>
-                    <div class="quantity-container">
-                        <button @click="subQuantity(index)">-</button>
-                        <input
-                            type="text"
-                            v-model="listOfQuatity[index]" />
-                        <button @click="addQuantity(index)">+</button>
-                    </div>
+                    <span>Quantity</span>
+                    <span> </span>
                 </div>
                 <div class="info-block">
-                    <span
-                        ><strong>{{ item.name }}</strong></span
+                    <div class="block-1">
+                        <span>{{ cart_item?.item.name }}</span>
+                        <span>$ {{ cart_item?.item.price }}</span>
+                    </div>
+                    <div
+                        class="options-block"
+                        v-for="option in cart_item?.selected_options"
                     >
-                    <span class="price"
-                        ><strong>$ {{ item.price }}</strong></span
-                    >
+                        <span>{{ option.option_key }}</span>
+                        <span>{{ option.value }}</span>
+                    </div>
                 </div>
             </li>
         </ul>
         <div class="button-group">
-            <button @click="createOrders">Create Order</button>
+            <button @click="toOrderDetail">Send money confirm</button>
+            <button @click="kakaoInfo">Contact us</button>
         </div>
     </div>
-    <!-- 付款信息 -->
+    <!-- kakao信息 -->
     <teleport to="body">
-        <div
-            v-if="showModal"
-            class="modal">
+        <div v-if="showModal" class="modal">
             <div class="head">
                 <span><strong>Pay</strong></span
                 ><button @click="showModal = false">X</button>
             </div>
-            <p>Way of pay</p>
-            <button
-                @click="closeModal(newOrders)"
-                class="close-button">
+            <p>Kakao Information</p>
+            <button @click="closeModal()" class="close-button">
                 Close Modal
             </button>
         </div>
@@ -64,9 +84,16 @@
 </template>
 
 <script lang="ts" setup name="createorderpage">
-import type { Order, Item, User } from "@/types/index";
+import type { Order, Item, User, AddressReceiver } from "@/types/index";
 import { useRouter, useRoute } from "vue-router";
-import { useItemStore, useOrderStore, useItemsListStore, useOrdersListStore, useUserStore } from "@/stores/index";
+import {
+    useItemStore,
+    useOrderStore,
+    useItemsListStore,
+    useOrdersListStore,
+    useUserStore,
+    useSelectedCartItemsStore,
+} from "@/stores/index";
 import { ref, onMounted } from "vue";
 import ReturnBar from "@/components/ReturnBar.vue";
 const itemStore = useItemStore();
@@ -74,90 +101,96 @@ const orderStore = useOrderStore();
 const router = useRouter();
 const userStore = useUserStore();
 const ordersListStore = useOrdersListStore();
-const itemsListStore = useItemsListStore();
+const fromCartItemsStore = useSelectedCartItemsStore();
 
-const listOfQuatity = ref<Array<number>>([]);
-const itemsList = ref<Array<Item>>(itemsListStore.itemsList as Array<Item>);
+// const itemsList = ref<Array<Item>>(itemsListStore.itemsList as Array<Item>);
 
-let newOrders = Array<Order>();
+// 地址信息
+const addressInformationList = ref<Array<AddressReceiver>>([]);
 
-const addQuantity = (index: number) => {
-    listOfQuatity.value[index] += 1;
+// 当前选中的地址
+const selectedAddressInfo = ref<AddressReceiver>();
+
+// 检查是否为当前选中地址
+const isSelectedAddress = (index: number) => {
+    return addressInformationList.value[index] === selectedAddressInfo.value;
+}
+
+// 未选择的地址css
+const unSelectedAddressStyle = {
+    backgroundColor: 'white',
+    color: 'black',
+}
+
+// 选择的地址css
+const selectedAddressStyle = {
+    backgroundColor: 'black',
+    color: 'white'
+}
+
+const selectAddress = (index: number) => {
+    selectedAddressInfo.value = addressInformationList.value[index];
 };
 
-const subQuantity = (index: number) => {
-    if (listOfQuatity.value[index] >= 1) {
-        listOfQuatity.value[index] -= 1;
-    }
-};
+// 从 cartItems 获取 items
+const fromCartItems = fromCartItemsStore.selectedItems;
 
-const createOrder = (item: Item, quantity: number) => {
-    const newOrder: Order = {
-        orderId: "",
-        user: userStore.user as User,
-        item: item,
-        quantity: quantity,
-        totalPrice: quantity * item.price,
-        createdTime: "",
-        updatedTime: "",
-        status: undefined,
-        tracking_number: undefined,
-    };
-    return newOrder;
-};
-
+// kakao 信息展示控制
 const showModal = ref(false);
 
-const closeModal = (newOrders: Array<Order>) => {
-    showModal.value = false;
-    postRequestOrders(newOrders);
-};
 
-const postRequestOrders = (newOrders: Array<Order>) => {
-    fetch(`/api/orders/create/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            newOrders: newOrders,
-        }),
-    })
+// 关闭浮窗
+const closeModal = () => {
+    showModal.value =  false;
+}
+
+
+// 跳转用户 Order details 界面展示订单详情
+const toOrderDetail = () => {
+    if (confirm(`Did you pay for this order?`) === true) {
+        router.push({ name: "orderdetail"});
+    } 
+    return;
+}
+
+const fetchAddressInformation = async () => {
+    fetch(`/api/user/address/${userStore?.user?.id}`)
         .then((response) => {
-            console.log(response);
             if (!response.ok) {
                 response.json().then((error) => {
                     console.log(error);
-                    throw new Error(`Error! HTTP status code ${response.status}`);
+                    throw new Error(
+                        `Error! HTTP status code ${response.status}`
+                    );
                 });
+            } else {
+                return response.json();
             }
-            return response.json();
         })
         .then((data) => {
             console.log(data);
-            alert("주문생선됐습니다!");
-            router.push({ name: "order" });
-        })
-        .catch((error) => console.log(error.message));
+            addressInformationList.value = data;
+            // 设置默认地址
+            selectedAddressInfo.value = addressInformationList.value[0];
+        });
+
+    
 };
 
-const createOrders = () => {
-    itemsList.value.forEach((item) => {
-        const quantityIndex = itemsList.value.findIndex((i) => i.id === item.id);
-        newOrders.push(createOrder(item, listOfQuatity.value[quantityIndex]));
-    });
-    ordersListStore.setOrdersList(newOrders);
-    // 显示付款信息
+const kakaoInfo = () => {
     showModal.value = true;
 };
 
 onMounted(() => {
-    itemsList.value = useItemsListStore().itemsList as Array<Item>;
-    listOfQuatity.value = Array<number>(itemsList.value.length).fill(0);
+    fetchAddressInformation();
 });
 </script>
 
 <style scoped>
+ul {
+    list-style: none;
+}
+
 .address-block {
     box-sizing: border-box;
     padding: 0 1rem;
@@ -172,6 +205,7 @@ onMounted(() => {
     text-decoration: none;
     border: 1px solid #aaa;
     padding: 0 0.5rem;
+    font-size: 0.8rem;
 }
 
 .modal {
@@ -212,6 +246,7 @@ onMounted(() => {
 .container {
     padding-top: 3rem;
     overflow-y: auto;
+    overflow-x: hidden;
     height: calc(100% - 4rem);
 }
 
@@ -271,10 +306,10 @@ onMounted(() => {
     justify-content: center;
     height: 100%;
     box-sizing: border-box;
-    border: black 1px solid;
     background-color: black;
+    border: none;
     color: white;
-    width: 2rem;
+    width: 1.5rem;
     font-size: 1.1rem;
 }
 
@@ -284,21 +319,40 @@ onMounted(() => {
     padding: 0.2rem;
     width: 7rem;
     outline: none;
-    border: 2px solid black;
+    border: 1px solid black;
     text-align: center;
+    border-radius: 0.3rem;
 }
 
 .info-block {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
     width: 100%;
 }
 
-.price {
-    font-size: 1.5rem;
-    text-align: right;
+.info-block .block-1 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 0.1rem solid #ccc;
+    padding-bottom: 0.3rem;
+    height: auto;
+}
+
+.info-block .options-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.options-block:nth-child(2) {
+    padding-top: 0.3rem;
+}
+
+.options-block:last-child {
+    border-bottom: 0.1rem solid #ccc;
+    padding-bottom: 0.3rem;
 }
 
 .button-group {
@@ -321,5 +375,30 @@ onMounted(() => {
     color: black;
     border: 1px solid black;
     flex: 1;
+}
+
+.address-first-content {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+}
+
+.address-first-content li {
+    list-style: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+    border: 2px solid black,
+}
+
+
+.send-money-info {
+    width: 100%;
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
 }
 </style>

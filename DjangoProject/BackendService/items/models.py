@@ -3,23 +3,21 @@ from users.models import CustomUser, CustomUserSerializer
 from rest_framework import serializers
 from django.conf import settings
 import os
+
 # Create your models here.
-# 商品字段
 
-
-class Option(models.Model):
-    # 允许管理员自由定义类型，如 "color", "size"
-    option_type = models.CharField(default='', max_length=50)  # 例如颜色、尺寸等
-    option_value = models.CharField(default='', max_length=255)  # 例如 "red", "M"
+# key col
+class OptionName(models.Model):
+    name = models.CharField(max_length=255, default='')
 
     def __str__(self):
-        return f"{self.option_type}: {self.option_value}"
+        return self.name
 
 
-class OptionSerializer(serializers.ModelSerializer):
+class OptionNameSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Option
-        fields = ['option_type', 'option_value']  # 选择需要序列化的字段
+        model = OptionName
+        fields = '__all__'
 
 
 class Item(models.Model):
@@ -30,12 +28,15 @@ class Item(models.Model):
     title = models.CharField(default='Notitle', max_length=255)
     class_name = models.CharField(default='Unknown', max_length=255)
 
+
     def __str__(self):
         return self.name
 
+
 # 商品对应图片
 class ItemImage(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='images')  # 关联到 Item
+    item = models.ForeignKey(
+        Item, on_delete=models.CASCADE, related_name='images')  # 关联到 Item
     image = models.ImageField(upload_to='item_img/')
 
     def __str__(self):
@@ -47,8 +48,10 @@ class ItemImage(models.Model):
             if os.path.isfile(image_path):
                 os.remove(image_path)
 
-        super(ItemImage, self).delete(*args, **kwargs) 
+        super(ItemImage, self).delete(*args, **kwargs)
 
+
+# 序列化商品图片
 class ItemImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemImage
@@ -56,20 +59,38 @@ class ItemImageSerializer(serializers.ModelSerializer):
 
 
 # 序列化商品字段
-
 class ItemSerializer(serializers.ModelSerializer):
     images = ItemImageSerializer(many=True, read_only=True)  # 添加关联图片的序列化
-    
+
     class Meta:
         model = Item
-        fields = ['id', 'name', 'desc', 'price', 'brand', 'title', 'class_name', 'images']  # 包含 images 字段
+        fields = ['id', 'name', 'desc', 'price', 'brand', 'title',
+                  'class_name', 'images']  # 包含 images 字段
+
+
+# 商品 option
+class ItemOption(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='options')
+    name = models.ForeignKey(OptionName, on_delete=models.CASCADE)
+    value = models.CharField(max_length=255, default='')
+
+
+# 商品 option 序列化
+class ItemOptionSerializer(serializers.ModelSerializer):
+    item = ItemSerializer()
+    name = OptionNameSerializer()
+    
+    class Meta:
+        model = ItemOption
+        fields = ['item', 'name', 'value']
+
+
 
 
 # 用户购物车商品字段
 class UserCartItem(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    options = models.ManyToManyField(Option, related_name='cart_options_list')
 
     class Meta:
         constraints = [
@@ -82,11 +103,28 @@ class UserCartItem(models.Model):
 class UserCartItemSerializer(serializers.ModelSerializer):
     user = CustomUserSerializer()
     item = ItemSerializer()
-    options = OptionSerializer()
 
     class Meta:
         model = UserCartItem
-        fields = ['user', 'item', 'options']
+        fields = ['user', 'item',]
+
+
+# 购物车商品 option
+class CartItemOption(models.Model):
+    cart_item = models.ForeignKey(UserCartItem, on_delete=models.CASCADE, related_name='options')
+    name = models.ForeignKey(OptionName, on_delete=models.CASCADE)
+    value = models.CharField(max_length=255, default='')
+
+
+# 购物车商品 option 序列化
+class CartItemOptionSerializer(serializers.ModelSerializer):
+    item = UserCartItemSerializer()
+    name = OptionNameSerializer()
+    
+    class Meta:
+        model = ItemOption
+        fields = ['cart_item', 'name', 'value']
+
 
 
 # 用户的喜欢商品字段
@@ -111,12 +149,15 @@ class UserFavoriteItemSerializer(serializers.ModelSerializer):
         fields = ['user', 'item']
 
 
+# 推荐商品
 class RecommendItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return self.item.name
 
+
+# 序列化推荐商品
 class RecommendItemSerializer(serializers.ModelSerializer):
     item = ItemSerializer()
 
@@ -125,5 +166,9 @@ class RecommendItemSerializer(serializers.ModelSerializer):
         fields = ['item']
 
 
+# 入门品牌
 class HotBrand(models.Model):
     brand_name = models.CharField(default="Unknown", max_length=255)
+
+
+

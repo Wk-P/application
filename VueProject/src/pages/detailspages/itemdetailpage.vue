@@ -31,21 +31,81 @@
             <h3 class="error-hint">Item does not exist</h3>
         </div>
     </div>
+    <teleport to="body">
+        <div class="item-option-view" v-if="showOptionsView">
+            <div class="close-button">
+                <button @click="closeModal">X</button>
+            </div>
+            <ul v-if="item?.options !== undefined && item?.options !== null">
+                <li v-for="(option, optionIndex) in item?.options">
+                    <h3 class="item-option-title">{{ option.name }}</h3>
+                    <div class="item-option-buttons">
+                        <button
+                            v-for="(value, valueIndex) in option.values"
+                            @click="selectItemOption(optionIndex, valueIndex)"
+                            :style="getButtonStyle(optionIndex, valueIndex)"
+                            class="item-option-button"
+                        >
+                            {{ value }}
+                        </button>
+                    </div>
+                </li>
+            </ul>
+            <div v-else>Empty options</div>
+            <button @click="confirmOptions()" class="confirm-button">
+                CONFIRM
+            </button>
+        </div>
+    </teleport>
 </template>
 
 <script lang="ts" setup name="detailpage">
 import ReturnBar from "@/components/ReturnBar.vue";
 import { ref, onMounted, computed } from "vue";
-import type { Item } from "@/types/index";
+import type { Item, Option, OptionValue } from "@/types/index";
 import { useUserStore } from "@/stores/index";
 import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 const userStore = useUserStore();
-const item = ref<Item | null>(null);
+const item = ref<Item>();
 const isLoggedIn = ref<boolean>(
     userStore.user && userStore.user?.username !== "admin" ? true : false
 );
+
+// 所有选项
+const allItemOptions = computed(() => item?.value?.options as Array<Option>);
+
+// 已选择选项
+const selectedItemOption = ref<Record<string, OptionValue | null>>({});
+
+// 选择商品 option 选项
+const selectItemOption = (optionIndex: number, valueIndex: number) => {
+    const optionKey = allItemOptions.value[optionIndex].name;
+    const selectedValue = allItemOptions.value[optionIndex].values[valueIndex];
+
+    selectedItemOption.value[optionKey] = selectedValue;
+};
+
+const getButtonStyle = (optionIndex: number, valueIndex: number) => {
+    const optionKey = allItemOptions.value[optionIndex].name;
+    const selectedValue = allItemOptions.value[optionIndex].values[valueIndex];
+
+    if (selectedItemOption.value[optionKey] === selectedValue) {
+        // 检查 optionIndex 和 valueIndex 的匹配
+        return {
+            backgroundColor: "black",
+            color: "white",
+        };
+    } else {
+        return {
+            backgroundColor: "#eee",
+            color: "black",
+        };
+    }
+};
+
+const showOptionsView = ref(false);
 const fetchItemDetails = (id: string) => {
     fetch(`/api/items/details/${id}/`)
         .then((response) => {
@@ -60,9 +120,15 @@ const fetchItemDetails = (id: string) => {
             return response.json();
         })
         .then((data) => {
-            item.value = data;
-            console.log(item.value);
+            item.value = data.item;
+            if (item.value) {
+                item.value.options = data.options;
+            }
         });
+};
+
+const closeModal = () => {
+    showOptionsView.value = false;
 };
 
 const addToFavorite = () => {
@@ -101,10 +167,9 @@ const addToFavorite = () => {
         });
 };
 
-const addToCart = () => {
-    if (!isLoggedIn.value) {
-        router.push({ name: "user" });
-    }
+const confirmOptions = () => {
+    showOptionsView.value = false;
+
     fetch(`/api/items/cart_add/`, {
         method: "POST",
         headers: {
@@ -113,6 +178,7 @@ const addToCart = () => {
         body: JSON.stringify({
             userId: userStore.user?.id,
             itemId: item.value?.id,
+            options: selectedItemOption.value,
         }),
     })
         .then((response) => {
@@ -133,8 +199,18 @@ const addToCart = () => {
             } else {
                 alert("Add item success");
             }
-            window.location.reload();
+            router.push({ name: "" });
         });
+};
+
+const addToCart = () => {
+    showOptionsView.value = true;
+
+    if (!isLoggedIn.value) {
+        router.push({ name: "user" });
+    }
+
+    console.log(item.value);
 };
 
 onMounted(() => {
@@ -275,6 +351,82 @@ onMounted(() => {
     border-top: 2px solid black;
     background-color: black;
     color: white;
+}
+
+.item-option-view {
+    position: absolute;
+    top: calc((100vh - 40vh) * 0.4);
+    left: calc((100vw - 60vw) * 0.5);
+    height: 40vh;
+    width: 60vw;
+    z-index: 1000;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item-option-view ul {
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.item-option-view ul li {
+    height: 4rem;
+    width: 100%;
+}
+
+.item-option-view > div {
+    width: 100%;
+    height: 4rem;
+}
+
+.confirm-button {
+    display: block;
+    box-sizing: border-box;
+    width: 80%;
+    padding: 0.5rem 1rem;
+    height: 2rem;
+    background-color: black;
+    border: none;
+    color: white;
+}
+
+.item-option-buttons {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 0.4rem;
+}
+
+.item-option-button {
+    box-sizing: border-box;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid #eee;
+    width: 100%;
+}
+
+.item-option-title {
+    padding: 0.4rem 0.5rem;
+}
+
+.close-button {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 0.5rem;
+}
+
+.close-button button {
+    font-size: 0.8rem;
+    padding: 0 0.6rem;
+    border: 1px solid #ddd;
+    background-color: #ddd;
 }
 
 /* animation */

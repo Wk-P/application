@@ -10,5 +10,5 @@ urlpatterns = [
     path('address/modified/<str:user_id>/<str:addr_recv_id>/',
          ModifyUserAddressReceiverInfo.as_view()),
     path('address/<str:user_id>/', FetchUserAllAddressReceiver.as_view()),
-    path('address/add/<str:user_id>/', AddUserAddressReceiverInfo.as_view())
+    path('address/add/<str:user_id>/', AddUserAddressReceiverInfo.as_view()),
 ]

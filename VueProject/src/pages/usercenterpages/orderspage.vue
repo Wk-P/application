@@ -128,17 +128,19 @@ const fetchAllOrders = () => {
         })
         .then((data) => {
             allOrdersList.value = [];
+            console.log(data);
             data.forEach((element: any) => {
                 const o: Order = {
-                    orderId: element.order_id,
-                    user: element.user,
-                    item: element.item,
-                    quantity: element.quantity,
-                    totalPrice: element.total_price,
-                    createdTime: element.created_at,
-                    updatedTime: element.updated_at,
-                    status: element.status,
-                    tracking_number: element.tracking_number,
+                    orderId: element.order.order_id,
+                    user: element.order.user,
+                    item: element.order.item,
+                    quantity: element.order.quantity,
+                    totalPrice: element.order.total_price,
+                    createdTime: element.order.created_at,
+                    updatedTime: element.order.updated_at,
+                    status: element.order.status,
+                    tracking_number: element.order.tracking_number,
+                    selected_options: element.selected_options
                 };
                 allOrdersList.value.push(o);
             });

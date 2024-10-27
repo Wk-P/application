@@ -8,6 +8,20 @@ export interface User {
     token: string | null,
 }
 
+export interface OptionValue {
+    value: string
+}
+
+export interface Option {
+    name: string;
+    values: Array<OptionValue>;
+}
+
+export interface SelectedOption {
+    option_key: string,
+    value: string,
+}
+
 export interface Item {
     id: string,
     name: string,
@@ -16,8 +30,14 @@ export interface Item {
     class: string,
     title: string,
     price: number,
-    options: Array<string> | undefined,
+    options: Array<Option>,
     images: Array<Image> | null | undefined,
+}
+
+export interface CartItem {
+    item: Item,
+    user: User,
+    selected_options: Array<SelectedOption>,
 }
 
 export interface Order {
@@ -25,6 +45,7 @@ export interface Order {
     user: User | undefined,
     item: Item | undefined,
     quantity: number | undefined,
+    selected_options: Array<SelectedOption>,
     totalPrice: number | undefined,
     createdTime: string | undefined,
     updatedTime: string | undefined,
